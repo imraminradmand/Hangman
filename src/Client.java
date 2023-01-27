@@ -1,0 +1,82 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.net.UnknownHostException;
+import java.util.Scanner;
+
+public class Client {
+  private static InetAddress host;
+  private static final int PORT = 5599;
+
+  public Client() throws UnknownHostException {
+    host = InetAddress.getLocalHost();
+    try {
+      Socket socket = new Socket(host, PORT);
+      System.out.println("Connected");
+
+      // Socket Side
+      BufferedReader socketIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+      PrintWriter socketOut = new PrintWriter(socket.getOutputStream(), true);
+
+      // User input
+      InputStreamReader inputStreamReader = new InputStreamReader(System.in);
+      BufferedReader stdin = new BufferedReader(inputStreamReader);
+
+      String userInput;
+
+      while (true) {
+        try {
+          // Display initial prompt and read/send response
+          // prompt will come from server
+          String prompt = socketIn.readLine();
+          System.out.println(prompt);
+          userInput = stdin.readLine();
+          socketOut.println(userInput);
+
+          // Break from loop if "EXIT" is input
+          if (userInput.equalsIgnoreCase("EXIT")) {
+            System.out.println("Closing connection...");
+            break;
+          }
+          // Handle the server response
+          else if (userInput.equalsIgnoreCase("PLAY")) {
+            // Prompt user for itemID and read/send response
+            prompt = socketIn.readLine();
+            System.out.println(prompt);
+            String guess = stdin.readLine();
+            socketOut.println(guess);
+
+            // Read the server response and display it
+            String response = socketIn.readLine();
+            System.out.println(response);
+          }
+          // If the user does not input "PLAY" or "EXIT"
+          else {
+            System.out.println(socketIn.readLine());
+          }
+          System.out.println();
+        } catch (IOException e) {
+          System.out.println(e);
+        }
+      }
+
+      // Close connection
+      try {
+        stdin.close();
+        socketIn.close();
+        socketOut.close();
+        socket.close();
+      } catch (IOException e) {
+        System.out.println(e);
+      }
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
+  public static void main (String[] args) throws UnknownHostException {
+    Client client = new Client();
+  }
+}
