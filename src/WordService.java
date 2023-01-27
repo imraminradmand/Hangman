@@ -1,13 +1,21 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class WordService {
   private static ArrayList<String> words = new ArrayList<>();
+  private DatagramSocket socket;
 
-  private static String getRandomWord(int requestedLength) {
+  public WordService(int port) throws SocketException {
+    socket = new DatagramSocket(port);
+  }
+  private String getRandomWord(int requestedLength) {
     String res = "";
     List<String> wordsOfRequestSize = new ArrayList<>();
 
@@ -24,15 +32,15 @@ public class WordService {
     return res;
   }
 
-  private static void addWord(String word) {
+  private void addWord(String word) {
     words.add(word);
   }
 
-  private static void removeWord(String word) {
+  private void removeWord(String word) {
     words.remove(word);
   }
 
-  private static boolean wordExists(String word) {
+  private boolean wordExists(String word) {
     return words.contains(word);
   }
   private static void initializeArrayList() {
@@ -45,7 +53,48 @@ public class WordService {
       e.printStackTrace();
     }
   }
+
+  private void serve() {
+    while (true) {
+      try {
+        System.out.println("Listening for requests...");
+        byte[] inputBuffer = new byte[256];
+        byte[] outputBuffer;
+
+        // Receive request
+        DatagramPacket requestPacket = new DatagramPacket(inputBuffer, inputBuffer.length);
+        socket.receive(requestPacket);
+        InetAddress requestAddress = requestPacket.getAddress();
+        int requestPort = requestPacket.getPort();
+
+        // return random word for now - TESTING
+        outputBuffer = getRandomWord(Integer.parseInt(new String(requestPacket.getData()).trim())).getBytes();
+        DatagramPacket reply = new DatagramPacket(outputBuffer, outputBuffer.length, requestAddress, requestPort);
+        socket.send(reply);
+
+      } catch (IOException e) {
+        throw new RuntimeException(e);
+      }
+    }
+  }
   public static void main(String[] args) {
+    if (args.length != 1) {
+      System.exit(1);
+    }
+
     initializeArrayList();
+
+    int port = 0;
+    WordService wordService;
+
+    try {
+      port = Integer.parseInt(args[0]);
+      wordService = new WordService(port);
+    } catch (SocketException e) {
+      throw new RuntimeException(e);
+    }
+
+    wordService.serve();
+    wordService.socket.close();
   }
 }
