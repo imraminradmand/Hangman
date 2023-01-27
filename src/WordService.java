@@ -9,8 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class WordService {
-  private static ArrayList<String> words = new ArrayList<>();
-  private DatagramSocket socket;
+  private static final ArrayList<String> words = new ArrayList<>();
+  private final DatagramSocket socket;
 
   public WordService(int port) throws SocketException {
     socket = new DatagramSocket(port);
