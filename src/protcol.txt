@@ -1,0 +1,18 @@
+//Client - Server JSON structure
+
+{
+"command":""   //This should be a string that is sent to the server from the client to server. Examples are play, !, #
+"args":[]      //OPTIONAL: This should be an array of strings that form the arguments for a given command. Example: play 4 4
+}
+
+//Server -> Client JSON structure
+
+{
+"error":""     //A string of true or false if there is a server error
+"message":""   //OPTIONAL only if error is false
+"result":""    //OPTIONAL only if error is false, this is the result of the word from the server
+}
+
+
+//For the microservices, JSON will not work. We may need to implement a compression algorithm that reduces packet loss. This can
+//be done by  summing all ASCII characters into their numerical counterparts + position in string. An Integer = 4 bytes whereas a string can be any.

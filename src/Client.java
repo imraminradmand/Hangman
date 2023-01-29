@@ -9,9 +9,12 @@ import java.util.Scanner;
 
 public class Client {
   private static InetAddress host;
-  private static final int PORT = 5599;
+  private static final int PORT = 5555;
 
   public Client() throws UnknownHostException {
+    String username = "";
+    String password = "";
+
     host = InetAddress.getLocalHost();
     try {
       Socket socket = new Socket(host, PORT);
@@ -31,10 +34,7 @@ public class Client {
         try {
           // Display initial prompt and read/send response
           // prompt will come from server
-          String prompt = socketIn.readLine();
-          System.out.println(prompt);
           userInput = stdin.readLine();
-          socketOut.println(userInput);
 
           // Break from loop if "EXIT" is input
           if (userInput.equalsIgnoreCase("EXIT")) {
@@ -42,20 +42,18 @@ public class Client {
             break;
           }
           // Handle the server response
-          else if (userInput.equalsIgnoreCase("PLAY")) {
-            // Prompt user for itemID and read/send response
-            prompt = socketIn.readLine();
-            System.out.println(prompt);
-            String guess = stdin.readLine();
-            socketOut.println(guess);
+          else if (userInput.equalsIgnoreCase("$")) {
+            socketOut.println("$ " + username + " " + password);
 
-            // Read the server response and display it
-            String response = socketIn.readLine();
-            System.out.println(response);
+            System.out.println(socketIn.readLine());
+
+          }else if (userInput.equalsIgnoreCase("!")){
+            socketOut.println("! tate 2603 778847");
+
           }
           // If the user does not input "PLAY" or "EXIT"
           else {
-            System.out.println(socketIn.readLine());
+            System.out.println("Unknown command.");
           }
           System.out.println();
         } catch (IOException e) {

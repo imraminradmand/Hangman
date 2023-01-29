@@ -1,10 +1,11 @@
+import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class Server {
-  public static void main(String[] args) {
+  public static void main(String[] args) throws IOException {
     if (args.length != 1) {
       System.exit(1);
     }
@@ -12,9 +13,12 @@ public class Server {
     int port = 0;
     ServerSocket serverSocket;
 
+    File file = new File("users.txt");
+    file.createNewFile();
+
     try {
       port = Integer.parseInt(args[0]);
-      serverSocket = new ServerSocket(port);
+      serverSocket = new ServerSocket(5555);
       System.out.println("Server is running...");
       ExecutorService fixedThreadPool = Executors.newFixedThreadPool(10);
 
@@ -23,7 +27,7 @@ public class Server {
       }
     } catch (IOException e) {
       System.out.println(
-          "Exception caught when trying to listen on port " + port + " or listening for a connection");
+              "Exception caught when trying to listen on port " + port + " or listening for a connection");
       System.out.println(e.getMessage());
     }
   }
