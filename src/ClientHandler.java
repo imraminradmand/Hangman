@@ -1,17 +1,17 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.PrintStream;
-import java.io.PrintWriter;
+import netscape.javascript.JSObject;
+
+import java.io.*;
+import java.net.InetAddress;
 import java.net.Socket;
 
 public class ClientHandler implements Runnable {
 
   private Socket clientSocket;
 
+
   ClientHandler(Socket socket) {
     this.clientSocket = socket;
+
   }
 
   @Override
@@ -27,33 +27,25 @@ public class ClientHandler implements Runnable {
       // String to read message from client
       String clientResponse;
 
+        Socket socket = new Socket(InetAddress.getLocalHost(), 7777);
+        BufferedReader socketIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        PrintWriter socketOut = new PrintWriter(socket.getOutputStream(), true);
+
       // While loop to keep reading until "EXIT" is input
       while (true) {
         try {
           // Initial prompt and read response
-          socketOutput.println("Please enter a command (PLAY or EXIT)");
           clientResponse = socketInput.readLine();
 
-          // Break from loop if "EXIT" is input
-          if (clientResponse.equalsIgnoreCase("EXIT")) {
-            System.out.println("Client: " + clientSocket + " exited.");
-            break;
-          }
-          // Search the database for the item matching the ID
-          else if (clientResponse.equalsIgnoreCase("PLAY")) {
-            System.out.println("The client wishes to " + clientResponse);
-            socketOutput.println("Please enter a word: ");
-            String guess = socketInput.readLine();
+          String[] args = clientResponse.split(" ");
 
-            String response = "You guessed: " + guess;
+          if (args[0].equalsIgnoreCase("$")){
 
-            // Echo the user input back to them
-            socketOutput.println(response);
-          }
-          // If the user does not input "PLAY" or "EXIT"
-          else {
-            System.out.println("Client has chosen an invalid command.");
-            socketOutput.println("Invalid command, please try again.");
+              socketOut.println("get " + args[1] + " " + args[2]);
+
+              String result = socketIn.readLine();
+              socketOutput.println("High-score for " + result.split(" ")[0] + " is " + result.split(" ")[2]);
+
           }
 
         } catch (IOException e) {
@@ -61,9 +53,9 @@ public class ClientHandler implements Runnable {
         }
       }
       // Close connection
-      socketInput.close();
-      socketOutput.close();
-      clientSocket.close();
+     // socketInput.close();
+     // socketOutput.close();
+     // clientSocket.close();
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
