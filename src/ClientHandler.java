@@ -46,6 +46,8 @@ public class ClientHandler implements Runnable {
               String result = socketIn.readLine();
               socketOutput.println("High-score for " + result.split(" ")[0] + " is " + result.split(" ")[2]);
 
+          }else if (args[0].equalsIgnoreCase("!")){
+            socketOut.println("post " + args[1] + " " + args[2] + " " + args[3]);
           }
 
         } catch (IOException e) {

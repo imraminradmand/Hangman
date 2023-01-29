@@ -12,6 +12,9 @@ public class Client {
   private static final int PORT = 5555;
 
   public Client() throws UnknownHostException {
+    String username = "";
+    String password = "";
+
     host = InetAddress.getLocalHost();
     try {
       Socket socket = new Socket(host, PORT);
@@ -40,14 +43,17 @@ public class Client {
           }
           // Handle the server response
           else if (userInput.equalsIgnoreCase("$")) {
-            socketOut.println("$ tate 2603");
+            socketOut.println("$ " + username + " " + password);
 
             System.out.println(socketIn.readLine());
+
+          }else if (userInput.equalsIgnoreCase("!")){
+            socketOut.println("! tate 2603 778847");
 
           }
           // If the user does not input "PLAY" or "EXIT"
           else {
-            System.out.println(socketIn.readLine());
+            System.out.println("Unknown command.");
           }
           System.out.println();
         } catch (IOException e) {

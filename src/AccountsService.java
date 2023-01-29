@@ -41,7 +41,7 @@ public class AccountsService {
                             String[] clientArgs = clientResponse.split(" ");
 
                             //PROTOCOL: <get> <username> <password>
-                            //          <post> <username> <score>
+                            //          <post> <username> < password> <score>
                             File myObj = new File("users.txt");
                             Scanner myReader = new Scanner(myObj);
                             if (clientArgs[0].equalsIgnoreCase("get")) {
@@ -56,7 +56,7 @@ public class AccountsService {
                                     }
                                 }
                                 myReader.close();
-                            } else if (clientArgs[0].equalsIgnoreCase("insert")) {
+                            } else if (clientArgs[0].equalsIgnoreCase("post")) {
                                 ArrayList<String> lines = new ArrayList<>();
                                 while (myReader.hasNextLine()) {
                                     String data = myReader.nextLine();
@@ -79,7 +79,7 @@ public class AccountsService {
                                 }
 
                                 FileWriter writer = new FileWriter("users.txt");
-                                lines.add(clientResponse);
+                                lines.add(clientArgs[1]  + " " + clientArgs[2]  + " " + clientArgs[3]);
 
                                 for (String s : lines) {
                                     writer.write(s + '\n');
