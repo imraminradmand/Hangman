@@ -50,8 +50,7 @@ public class AccountsService {
                                     String data = myReader.nextLine();
                                     String[] arg = data.split(" ");
 
-                                    if (arg[0].equals(clientArgs[1])) {
-
+                                    if (arg[0].equals(clientArgs[1]) && arg[1].equals(clientArgs[2])) {
                                         result = data;
                                         break;
                                     }
