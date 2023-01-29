@@ -45,16 +45,18 @@ public class AccountsService {
                             File myObj = new File("users.txt");
                             Scanner myReader = new Scanner(myObj);
                             if (clientArgs[0].equalsIgnoreCase("get")) {
+                                String result = "!noaccount!";
                                 while (myReader.hasNextLine()) {
                                     String data = myReader.nextLine();
                                     String[] arg = data.split(" ");
 
                                     if (arg[0].equals(clientArgs[1])) {
 
-                                        socketOutput.println(data);
+                                        result = data;
                                         break;
                                     }
                                 }
+                                socketOutput.println(result);
                                 myReader.close();
                             } else if (clientArgs[0].equalsIgnoreCase("post")) {
                                 ArrayList<String> lines = new ArrayList<>();
