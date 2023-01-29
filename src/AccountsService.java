@@ -87,6 +87,7 @@ public class AccountsService {
                                     writer.write(s + '\n');
                                 }
                                 writer.close();
+                                socketOutput.println("!success!");
                             }
                         }
                     } catch (IOException e) {
