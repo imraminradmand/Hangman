@@ -53,7 +53,7 @@ public class Client {
               while (true) {
                 String res = stdin.readLine();
                 socketOut.println(res);
-                System.out.println("Word from repo: " + socketIn.readLine());
+                System.out.println("Phrase from repo: " + socketIn.readLine());
               }
             }
 

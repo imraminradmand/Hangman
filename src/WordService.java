@@ -7,6 +7,7 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringJoiner;
 
 public class WordService {
   private static final ArrayList<String> words = new ArrayList<>();
@@ -30,6 +31,23 @@ public class WordService {
       res = wordsOfRequestSize.get(rand).toLowerCase();
     }
     return res;
+  }
+
+  private String getPhrase(int length) {
+    List<String> phraseList = new ArrayList<>();
+    StringJoiner phrase = new StringJoiner(" ");
+    for (int i = 0; i < words.size(); i++) {
+      if (phraseList.size() != length) {
+        int rand = (int) ((Math.random() * (words.size() - 1)) + 1);
+        phraseList.add(words.get(rand));
+      }
+    }
+
+    for (String s : phraseList) {
+      phrase.add(s);
+    }
+
+    return phrase.toString();
   }
 
   private void addWord(String word) {
@@ -68,9 +86,8 @@ public class WordService {
         InetAddress requestAddress = requestPacket.getAddress();
         int requestPort = requestPacket.getPort();
 
-        // return random word for now - TESTING
-//        outputBuffer = getRandomWord(Integer.parseInt(new String(requestPacket.getData()).trim())).getBytes();
-        outputBuffer = getRandomWord(5).getBytes();
+        // return phrase of given length;
+        outputBuffer = getPhrase(Integer.parseInt(new String(requestPacket.getData(), 0, requestPacket.getLength()))).toString().getBytes();
         DatagramPacket reply = new DatagramPacket(outputBuffer, outputBuffer.length, requestAddress, requestPort);
         socket.send(reply);
 
