@@ -62,19 +62,39 @@ public class ClientHandler implements Runnable {
 
                 // make UDP connection to word repository
                 DatagramSocket wordRepository = new DatagramSocket();
-                byte[] buf;
+                byte[] buf = new byte[256];
                 byte[] inputBuf = new byte[256];
 
-                buf = startArgs[1].getBytes();
-                InetAddress address = InetAddress.getByName("localhost");
-                DatagramPacket packet = new DatagramPacket(buf, buf.length, address, 5599);
-                wordRepository.send(packet);
+                if (startArgs[0].equalsIgnoreCase("start")) {
+                  buf = startRes.getBytes();
 
-                DatagramPacket wordRepoReply = new DatagramPacket(inputBuf, inputBuf.length, address, 5599);
-                wordRepository.receive(wordRepoReply);
+                  InetAddress address = InetAddress.getByName("localhost");
+                  DatagramPacket packet = new DatagramPacket(buf, buf.length, address, 5599);
+                  wordRepository.send(packet);
 
-                String word = new String(wordRepoReply.getData(), 0, wordRepoReply.getLength());
-                socketOutput.println(word);
+                  DatagramPacket wordRepoReply = new DatagramPacket(inputBuf, inputBuf.length, address, 5599);
+                  wordRepository.receive(wordRepoReply);
+
+                  String word = new String(wordRepoReply.getData(), 0, wordRepoReply.getLength());
+                  socketOutput.println(word);
+                } else if (startArgs[0].equalsIgnoreCase("?")) {
+                  buf = startRes.getBytes();
+
+                  InetAddress address = InetAddress.getByName("localhost");
+                  DatagramPacket packet = new DatagramPacket(buf, buf.length, address, 5599);
+                  wordRepository.send(packet);
+
+                  DatagramPacket wordRepoReply = new DatagramPacket(inputBuf, inputBuf.length, address, 5599);
+                  wordRepository.receive(wordRepoReply);
+
+                  String word = new String(wordRepoReply.getData(), 0, wordRepoReply.getLength());
+                  System.out.println(word);
+                  String exists = "False";
+                  if (word.equalsIgnoreCase("true")) {
+                    exists = "True";
+                  }
+                  socketOutput.println(exists);
+                }
               }
             }
 

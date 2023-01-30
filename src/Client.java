@@ -52,8 +52,16 @@ public class Client {
               System.out.println(socketIn.readLine());
               while (true) {
                 String res = stdin.readLine();
-                socketOut.println(res);
-                System.out.println("Phrase from repo: " + socketIn.readLine());
+                String[] resArgs = res.split(" ");
+
+                if (resArgs[0].equals("start")) {
+                  socketOut.println(res);
+                  System.out.println("Phrase from repo: " + socketIn.readLine());
+                } else if (resArgs[0].equals("?")) {
+                  socketOut.println(res);
+                  System.out.println(resArgs[1] + ": " + socketIn.readLine());
+                }
+
               }
             }
 

@@ -6,6 +6,7 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.StringJoiner;
 
@@ -58,8 +59,11 @@ public class WordService {
     words.remove(word);
   }
 
-  private byte[] wordExists(String word) {
-    return new byte[]{(byte) (words.contains(word)?1:0)};
+  private String wordExists(String word) {
+    String res = "false";
+    if (words.contains(word)) res = "true";
+
+    return res;
   }
   private static void initializeArrayList() {
     try (BufferedReader br = new BufferedReader(new FileReader("src/resources/words.txt"))) {
@@ -93,7 +97,8 @@ public class WordService {
           // return phrase of given length;
           outputBuffer = getPhrase(Integer.parseInt(requestArgs[1])).getBytes();
         } else if (requestArgs[0].equals("?")) {
-          outputBuffer = wordExists(requestArgs[1]);
+          System.out.println("word exists: " + wordExists(requestArgs[1]));
+          outputBuffer = wordExists(requestArgs[1]).getBytes();
         }
 
         DatagramPacket reply = new DatagramPacket(outputBuffer, outputBuffer.length, requestAddress, requestPort);
