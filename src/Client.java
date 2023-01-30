@@ -12,8 +12,8 @@ public class Client {
   private static final int PORT = 5555;
 
   public Client() throws UnknownHostException {
-    String username = "tate";
-    String password = "6654";
+    String username = "";
+    String password = "";
 
     host = InetAddress.getLocalHost();
     try {
