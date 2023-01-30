@@ -43,9 +43,10 @@ public class ClientHandler implements Runnable {
 
               accountOut.println("get " + args[1] + " " + args[2]);
 
-              String result = accountIn.readLine();
-              socketOutput.println("High-score for " + result.split(" ")[0] + " is " + result.split(" ")[2]);
-
+              String[] result = accountIn.readLine().split(" ");
+              if(result.length > 1) {
+                socketOutput.println("High-score for " + result[0] + " is " + result[2]);
+              }
           }
         } catch (IOException e) {
           throw new RuntimeException(e);

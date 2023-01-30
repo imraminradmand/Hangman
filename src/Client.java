@@ -12,8 +12,8 @@ public class Client {
   private static final int PORT = 5555;
 
   public Client() throws UnknownHostException {
-    String username = "";
-    String password = "";
+    String username = "tate";
+    String password = "6654";
 
     host = InetAddress.getLocalHost();
     try {
@@ -46,9 +46,6 @@ public class Client {
             socketOut.println("$ " + username + " " + password);
 
             System.out.println(socketIn.readLine());
-
-          }else if (userInput.equalsIgnoreCase("!")){
-            socketOut.println("! tate 2603 778847");
 
           }
           // If the user does not input "PLAY" or "EXIT"
