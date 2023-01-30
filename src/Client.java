@@ -69,19 +69,16 @@ public class Client {
                   System.out.println("Exiting...");
                   break;
                 }
-
               }
             }
-
-
           } else if (clientArgs[0].equalsIgnoreCase("register")) {
             socketOut.println(userInput);
             System.out.println(socketIn.readLine());
           }
-
           // If the user does not input "PLAY" or "EXIT"
           else {
-            System.out.println("Unknown command.");
+            socketOut.println(userInput);
+            System.out.println(socketIn.readLine());
           }
           System.out.println();
         } catch (IOException e) {

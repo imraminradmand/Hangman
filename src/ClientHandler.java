@@ -107,10 +107,11 @@ public class ClientHandler implements Runnable {
                 }
               }
             }
-
           } else if (args[0].equalsIgnoreCase("register")) {
             accountOut.println("post " + args[1] + " " + args[2] + " 0");
             socketOutput.println(accountIn.readLine());
+          } else {
+            socketOutput.println("Unknown Command, try again");
           }
 
         } catch (IOException e) {
