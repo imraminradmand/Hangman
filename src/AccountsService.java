@@ -34,12 +34,12 @@ public class AccountsService {
                 while (true) {
                     try {
                         String clientResponse = socketInput.readLine();
-
+                        System.out.println(clientResponse);
                         if (clientResponse != null) {
                             String[] clientArgs = clientResponse.split(" ");
 
                             //PROTOCOL: <get> <username> <password>
-                            //          <post> <username> < password> <score>
+                            //          <post> <username> <password> <score>
                             File myObj = new File("users.txt");
                             Scanner myReader = new Scanner(myObj);
                             if (clientArgs[0].equalsIgnoreCase("get")) {

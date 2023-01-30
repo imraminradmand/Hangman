@@ -34,20 +34,28 @@ public class ClientHandler implements Runnable {
       // While loop to keep reading until "EXIT" is input
       while (true) {
         try {
+          socketOutput.println("Instruction: <login/register> <username> <password>");
           // Initial prompt and read response
           clientResponse = socketInput.readLine();
+          String[] loginArgs = clientResponse.split(" ");
 
-          String[] args = clientResponse.split(" ");
-
-          if (args[0].equalsIgnoreCase("$")){
-
-              accountOut.println("get " + args[1] + " " + args[2]);
-
-              String[] result = accountIn.readLine().split(" ");
-              if(result.length > 1) {
-                socketOutput.println("High-score for " + result[0] + " is " + result[2]);
-              }
+          if (loginArgs[0].equalsIgnoreCase("login")) {
+            accountOut.println("get " + loginArgs[1] + " " + loginArgs[2]);
+            socketOutput.println(accountIn.readLine());
+          } else if (Integer.parseInt(clientResponse) == 2) {
+            socketOutput.println("register sequence");
           }
+//          String[] args = clientResponse.split(" ");
+//
+//          if (args[0].equalsIgnoreCase("$")){
+//
+//              accountOut.println("get " + args[1] + " " + args[2]);
+//
+//              String[] result = accountIn.readLine().split(" ");
+//              if(result.length > 1) {
+//                socketOutput.println("High-score for " + result[0] + " is " + result[2]);
+//              }
+//          }
         } catch (IOException e) {
           throw new RuntimeException(e);
         }

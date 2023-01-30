@@ -33,21 +33,30 @@ public class Client {
       while (true) {
         try {
           // Display initial prompt and read/send response
+          String prompt = socketIn.readLine();
+          System.out.println(prompt);
+
           // prompt will come from server
           userInput = stdin.readLine();
+          String[] clientArgs = userInput.split(" ");
 
           // Break from loop if "EXIT" is input
           if (userInput.equalsIgnoreCase("EXIT")) {
             System.out.println("Closing connection...");
             break;
+          } else if (clientArgs[0].equalsIgnoreCase("login")) {
+            socketOut.println(userInput);
+            System.out.println(socketIn.readLine());
+          } else if (Integer.parseInt(userInput) == 2) {
+            socketOut.println("2");
           }
           // Handle the server response
-          else if (userInput.equalsIgnoreCase("$")) {
-            socketOut.println("$ " + username + " " + password);
-
-            System.out.println(socketIn.readLine());
-
-          }
+//          else if (userInput.equalsIgnoreCase("$")) {
+//            socketOut.println("$ " + username + " " + password);
+//
+//            System.out.println(socketIn.readLine());
+//
+//          }
           // If the user does not input "PLAY" or "EXIT"
           else {
             System.out.println("Unknown command.");
