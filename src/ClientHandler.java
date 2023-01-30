@@ -41,7 +41,7 @@ public class ClientHandler implements Runnable {
       // While loop to keep reading until "EXIT" is input
       while (true) {
         try {
-          socketOutput.println("Instruction: <login/register> <username> <password>");
+          socketOutput.println("Instruction: <login/register> <username> <password> OR EXIT");
           // Initial prompt and read response
           clientResponse = socketInput.readLine();
           String[] args = clientResponse.split(" ");
