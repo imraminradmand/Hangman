@@ -1,5 +1,10 @@
 # Phrase Guessing Game
-
+## How to run
+ 1. Start `AccountService`
+ 2. Start `WordService`
+ 3. Start `Server`
+ 4. Start `Client`
+ 
 ## Description
 For this assignment, you must develop a client-server distributed application in
 Java for a phrase guessing game. The client connects to the server and specifies

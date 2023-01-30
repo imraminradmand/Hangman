@@ -7,6 +7,7 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringJoiner;
 
 public class WordService {
   private static final ArrayList<String> words = new ArrayList<>();
@@ -32,6 +33,23 @@ public class WordService {
     return res;
   }
 
+  private String getPhrase(int length) {
+    List<String> phraseList = new ArrayList<>();
+    StringJoiner phrase = new StringJoiner(" ");
+    for (int i = 0; i < words.size(); i++) {
+      if (phraseList.size() != length) {
+        int rand = (int) ((Math.random() * (words.size() - 1)) + 1);
+        phraseList.add(words.get(rand));
+      }
+    }
+
+    for (String s : phraseList) {
+      phrase.add(s);
+    }
+
+    return phrase.toString();
+  }
+
   private void addWord(String word) {
     words.add(word);
   }
@@ -55,20 +73,21 @@ public class WordService {
   }
 
   private void serve() {
+    System.out.println("WordService is running...");
     while (true) {
-      try {
-        System.out.println("Listening for requests...");
-        byte[] inputBuffer = new byte[256];
-        byte[] outputBuffer;
+      byte[] inputBuffer = new byte[256];
+      byte[] outputBuffer;
 
+      try {
         // Receive request
         DatagramPacket requestPacket = new DatagramPacket(inputBuffer, inputBuffer.length);
         socket.receive(requestPacket);
+
         InetAddress requestAddress = requestPacket.getAddress();
         int requestPort = requestPacket.getPort();
 
-        // return random word for now - TESTING
-        outputBuffer = getRandomWord(Integer.parseInt(new String(requestPacket.getData()).trim())).getBytes();
+        // return phrase of given length;
+        outputBuffer = getPhrase(Integer.parseInt(new String(requestPacket.getData(), 0, requestPacket.getLength()))).toString().getBytes();
         DatagramPacket reply = new DatagramPacket(outputBuffer, outputBuffer.length, requestAddress, requestPort);
         socket.send(reply);
 
@@ -78,18 +97,18 @@ public class WordService {
     }
   }
   public static void main(String[] args) {
-    if (args.length != 1) {
-      System.exit(1);
-    }
+//    if (args.length != 1) {
+//      System.exit(1);
+//    }
 
     initializeArrayList();
 
-    int port = 0;
+//    int port = 0;
     WordService wordService;
 
     try {
-      port = Integer.parseInt(args[0]);
-      wordService = new WordService(port);
+//      port = Integer.parseInt(args[0]);
+      wordService = new WordService(5599);
     } catch (SocketException e) {
       throw new RuntimeException(e);
     }
