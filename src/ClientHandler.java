@@ -102,6 +102,8 @@ public class ClientHandler implements Runnable {
                   if(result.length > 1) {
                     socketOutput.println("High-score for " + result[0] + " is " + result[2]);
                   }
+                } else if (startRes.charAt(0) == '#') {
+                  break;
                 }
               }
             }

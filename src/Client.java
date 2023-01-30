@@ -64,6 +64,10 @@ public class Client {
                 } else if (res.equalsIgnoreCase("$")) {
                   socketOut.println("$ " + username + " " + password);
                   System.out.println(socketIn.readLine());
+                } else if (res.equalsIgnoreCase("#")) {
+                  socketOut.println(res);
+                  System.out.println("Exiting...");
+                  break;
                 }
 
               }
@@ -74,13 +78,7 @@ public class Client {
             socketOut.println(userInput);
             System.out.println(socketIn.readLine());
           }
-          // Handle the server response
-//          else if (userInput.equalsIgnoreCase("$")) {
-//            socketOut.println("$ " + username + " " + password);
-//
-//            System.out.println(socketIn.readLine());
-//
-//          }
+
           // If the user does not input "PLAY" or "EXIT"
           else {
             System.out.println("Unknown command.");
