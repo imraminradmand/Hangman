@@ -47,8 +47,9 @@ public class Client {
           } else if (clientArgs[0].equalsIgnoreCase("login")) {
             socketOut.println(userInput);
             System.out.println(socketIn.readLine());
-          } else if (Integer.parseInt(userInput) == 2) {
-            socketOut.println("2");
+          } else if (clientArgs[0].equalsIgnoreCase("register")) {
+            socketOut.println(userInput);
+            System.out.println(socketIn.readLine());
           }
           // Handle the server response
 //          else if (userInput.equalsIgnoreCase("$")) {

@@ -42,8 +42,9 @@ public class ClientHandler implements Runnable {
           if (loginArgs[0].equalsIgnoreCase("login")) {
             accountOut.println("get " + loginArgs[1] + " " + loginArgs[2]);
             socketOutput.println(accountIn.readLine());
-          } else if (Integer.parseInt(clientResponse) == 2) {
-            socketOutput.println("register sequence");
+          } else if (loginArgs[0].equalsIgnoreCase("register")) {
+            accountOut.println("post " + loginArgs[1] + " " + loginArgs[2] + " 0");
+            socketOutput.println(accountIn.readLine());
           }
 //          String[] args = clientResponse.split(" ");
 //
