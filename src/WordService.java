@@ -73,8 +73,8 @@ public class WordService {
   }
 
   private void serve() {
+    System.out.println("WordService is running...");
     while (true) {
-      System.out.println("WordService is running...");
       byte[] inputBuffer = new byte[256];
       byte[] outputBuffer;
 

@@ -53,7 +53,7 @@ public class ClientHandler implements Runnable {
             socketOutput.println(accountResponse);
 
             // start playing the game - will be refactored
-            if (accountResponse != null) {
+            if (!accountResponse.equals("!noaccount!")) {
               socketOutput.println("Start new game with the following command - start <number of words> <attempts>");
 
               while (true) {
