@@ -94,24 +94,23 @@ public class ClientHandler implements Runnable {
                     exists = "True";
                   }
                   socketOutput.println(exists);
+                } else if (startArgs[0].equalsIgnoreCase("$")) {
+                  System.out.println("here");
+                  accountOut.println("get " + args[1] + " " + args[2]);
+
+                  String[] result = accountIn.readLine().split(" ");
+                  if(result.length > 1) {
+                    socketOutput.println("High-score for " + result[0] + " is " + result[2]);
+                  }
                 }
               }
             }
-
 
           } else if (args[0].equalsIgnoreCase("register")) {
             accountOut.println("post " + args[1] + " " + args[2] + " 0");
             socketOutput.println(accountIn.readLine());
           }
-//          if (args[0].equalsIgnoreCase("$")){
-//
-//              accountOut.println("get " + args[1] + " " + args[2]);
-//
-//              String[] result = accountIn.readLine().split(" ");
-//              if(result.length > 1) {
-//                socketOutput.println("High-score for " + result[0] + " is " + result[2]);
-//              }
-//          }
+
         } catch (IOException e) {
           throw new RuntimeException(e);
         }

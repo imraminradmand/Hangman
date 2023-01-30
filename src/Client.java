@@ -46,7 +46,8 @@ public class Client {
             break;
           } else if (clientArgs[0].equalsIgnoreCase("login")) {
             socketOut.println(userInput);
-
+            username = clientArgs[1];
+            password = clientArgs[2];
             // start playing the game - will be refactored
             if (socketIn.readLine() != null) {
               System.out.println(socketIn.readLine());
@@ -60,6 +61,9 @@ public class Client {
                 } else if (resArgs[0].equals("?")) {
                   socketOut.println(res);
                   System.out.println(resArgs[1] + ": " + socketIn.readLine());
+                } else if (res.equalsIgnoreCase("$")) {
+                  socketOut.println("$ " + username + " " + password);
+                  System.out.println(socketIn.readLine());
                 }
 
               }
