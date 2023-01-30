@@ -1,3 +1,5 @@
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
 import netscape.javascript.JSObject;
 
 import java.io.*;
@@ -11,6 +13,10 @@ public class ClientHandler implements Runnable {
 
   ClientHandler(Socket socket) {
     this.clientSocket = socket;
+
+  }
+
+  private void play() {
 
   }
 
@@ -37,17 +43,45 @@ public class ClientHandler implements Runnable {
           socketOutput.println("Instruction: <login/register> <username> <password>");
           // Initial prompt and read response
           clientResponse = socketInput.readLine();
-          String[] loginArgs = clientResponse.split(" ");
+          String[] args = clientResponse.split(" ");
 
-          if (loginArgs[0].equalsIgnoreCase("login")) {
-            accountOut.println("get " + loginArgs[1] + " " + loginArgs[2]);
-            socketOutput.println(accountIn.readLine());
-          } else if (loginArgs[0].equalsIgnoreCase("register")) {
-            accountOut.println("post " + loginArgs[1] + " " + loginArgs[2] + " 0");
+          if (args[0].equalsIgnoreCase("login")) {
+            accountOut.println("get " + args[1] + " " + args[2]);
+
+            String accountResponse = accountIn.readLine();
+            socketOutput.println(accountResponse);
+
+            // start playing the game - will be refactored
+            if (accountResponse != null) {
+              socketOutput.println("Start new game with the following command - start <number of words> <attempts>");
+
+              while (true) {
+                String startRes = socketInput.readLine();
+                String[] startArgs = startRes.split(" ");
+
+                // make UDP connection to word repository
+                DatagramSocket wordRepository = new DatagramSocket();
+                byte[] buf;
+                byte[] inputBuf = new byte[256];
+
+                buf = startArgs[1].getBytes();
+                InetAddress address = InetAddress.getByName("localhost");
+                DatagramPacket packet = new DatagramPacket(buf, buf.length, address, 5599);
+                wordRepository.send(packet);
+
+                DatagramPacket wordRepoReply = new DatagramPacket(inputBuf, inputBuf.length, address, 5599);
+                wordRepository.receive(wordRepoReply);
+
+                String word = new String(wordRepoReply.getData());
+                socketOutput.println(word);
+              }
+            }
+
+
+          } else if (args[0].equalsIgnoreCase("register")) {
+            accountOut.println("post " + args[1] + " " + args[2] + " 0");
             socketOutput.println(accountIn.readLine());
           }
-//          String[] args = clientResponse.split(" ");
-//
 //          if (args[0].equalsIgnoreCase("$")){
 //
 //              accountOut.println("get " + args[1] + " " + args[2]);

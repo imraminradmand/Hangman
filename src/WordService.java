@@ -78,18 +78,18 @@ public class WordService {
     }
   }
   public static void main(String[] args) {
-    if (args.length != 1) {
-      System.exit(1);
-    }
+//    if (args.length != 1) {
+//      System.exit(1);
+//    }
 
     initializeArrayList();
 
-    int port = 0;
+//    int port = 0;
     WordService wordService;
 
     try {
-      port = Integer.parseInt(args[0]);
-      wordService = new WordService(port);
+//      port = Integer.parseInt(args[0]);
+      wordService = new WordService(5599);
     } catch (SocketException e) {
       throw new RuntimeException(e);
     }

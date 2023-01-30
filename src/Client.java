@@ -46,7 +46,18 @@ public class Client {
             break;
           } else if (clientArgs[0].equalsIgnoreCase("login")) {
             socketOut.println(userInput);
-            System.out.println(socketIn.readLine());
+
+            // start playing the game - will be refactored
+            if (socketIn.readLine() != null) {
+              System.out.println(socketIn.readLine());
+              while (true) {
+                String res = stdin.readLine();
+                socketOut.println(res);
+                System.out.println("Word from repo: " + socketIn.readLine());
+              }
+            }
+
+
           } else if (clientArgs[0].equalsIgnoreCase("register")) {
             socketOut.println(userInput);
             System.out.println(socketIn.readLine());
