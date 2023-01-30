@@ -56,19 +56,21 @@ public class WordService {
 
   private void serve() {
     while (true) {
-      try {
-        System.out.println("Listening for requests...");
-        byte[] inputBuffer = new byte[256];
-        byte[] outputBuffer;
+      System.out.println("WordService is running...");
+      byte[] inputBuffer = new byte[256];
+      byte[] outputBuffer;
 
+      try {
         // Receive request
         DatagramPacket requestPacket = new DatagramPacket(inputBuffer, inputBuffer.length);
         socket.receive(requestPacket);
+
         InetAddress requestAddress = requestPacket.getAddress();
         int requestPort = requestPacket.getPort();
 
         // return random word for now - TESTING
-        outputBuffer = getRandomWord(Integer.parseInt(new String(requestPacket.getData()).trim())).getBytes();
+//        outputBuffer = getRandomWord(Integer.parseInt(new String(requestPacket.getData()).trim())).getBytes();
+        outputBuffer = getRandomWord(5).getBytes();
         DatagramPacket reply = new DatagramPacket(outputBuffer, outputBuffer.length, requestAddress, requestPort);
         socket.send(reply);
 

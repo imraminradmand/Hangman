@@ -1,5 +1,6 @@
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.util.Arrays;
 import netscape.javascript.JSObject;
 
 import java.io.*;
@@ -72,7 +73,7 @@ public class ClientHandler implements Runnable {
                 DatagramPacket wordRepoReply = new DatagramPacket(inputBuf, inputBuf.length, address, 5599);
                 wordRepository.receive(wordRepoReply);
 
-                String word = new String(wordRepoReply.getData());
+                String word = new String(wordRepoReply.getData(), 0, wordRepoReply.getLength());
                 socketOutput.println(word);
               }
             }
