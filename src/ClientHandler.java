@@ -31,6 +31,7 @@ public class ClientHandler implements Runnable {
       byte[] buf = new byte[256];
       byte[] inputBuf = new byte[256];
 
+      // TODO: Implement actual game logic here
       if (startArgs[0].equalsIgnoreCase("start")) {
         buf = startRes.getBytes();
 
@@ -112,6 +113,7 @@ public class ClientHandler implements Runnable {
               play(socketInput, socketOutput, accountIn, accountOut, args);
             }
 
+            // TODO: Check for successful registration then start game
           } else if (args[0].equalsIgnoreCase("register")) {
             accountOut.println("post " + args[1] + " " + args[2] + " 0");
             socketOutput.println(accountIn.readLine());
