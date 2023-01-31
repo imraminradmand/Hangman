@@ -5,7 +5,6 @@ import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.Scanner;
 
 public class Client {
   private static InetAddress host;
@@ -48,10 +47,13 @@ public class Client {
             socketOut.println(userInput);
             username = clientArgs[1];
             password = clientArgs[2];
-            // start playing the game - will be refactored
+
+            // PLAY GAME
             if (socketIn.readLine() != null) {
               play(socketIn, stdin, socketOut, username, password);
             }
+
+            // TODO: Check for successful registration then start game
           } else if (clientArgs[0].equalsIgnoreCase("register")) {
             socketOut.println(userInput);
             System.out.println(socketIn.readLine());
@@ -81,6 +83,7 @@ public class Client {
     }
   }
 
+  // TODO: add actual guessing logic
   private void play(BufferedReader socketIn,
       BufferedReader stdin,
       PrintWriter socketOut,
@@ -90,6 +93,7 @@ public class Client {
       String res = stdin.readLine();
       String[] resArgs = res.split(" ");
 
+      // TODO: Actual logic goes under the start condition
       if (resArgs[0].equals("start")) {
         socketOut.println(res);
         System.out.println("Phrase from repo: " + socketIn.readLine());
