@@ -6,6 +6,7 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.StringJoiner;
 
@@ -58,8 +59,11 @@ public class WordService {
     words.remove(word);
   }
 
-  private boolean wordExists(String word) {
-    return words.contains(word);
+  private String wordExists(String word) {
+    String res = "false";
+    if (words.contains(word)) res = "true";
+
+    return res;
   }
   private static void initializeArrayList() {
     try (BufferedReader br = new BufferedReader(new FileReader("src/resources/words.txt"))) {
@@ -76,7 +80,7 @@ public class WordService {
     System.out.println("WordService is running...");
     while (true) {
       byte[] inputBuffer = new byte[256];
-      byte[] outputBuffer;
+      byte[] outputBuffer = new byte[256];
 
       try {
         // Receive request
@@ -86,8 +90,17 @@ public class WordService {
         InetAddress requestAddress = requestPacket.getAddress();
         int requestPort = requestPacket.getPort();
 
-        // return phrase of given length;
-        outputBuffer = getPhrase(Integer.parseInt(new String(requestPacket.getData(), 0, requestPacket.getLength()))).toString().getBytes();
+        String requestString = new String(requestPacket.getData(), 0, requestPacket.getLength());
+        String[] requestArgs = requestString.split(" ");
+
+        if (requestArgs[0].equalsIgnoreCase("start")) {
+          // return phrase of given length;
+          outputBuffer = getPhrase(Integer.parseInt(requestArgs[1])).getBytes();
+        } else if (requestArgs[0].equals("?")) {
+          System.out.println("word exists: " + wordExists(requestArgs[1]));
+          outputBuffer = wordExists(requestArgs[1]).getBytes();
+        }
+
         DatagramPacket reply = new DatagramPacket(outputBuffer, outputBuffer.length, requestAddress, requestPort);
         socket.send(reply);
 

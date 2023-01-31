@@ -41,7 +41,7 @@ public class ClientHandler implements Runnable {
       // While loop to keep reading until "EXIT" is input
       while (true) {
         try {
-          socketOutput.println("Instruction: <login/register> <username> <password>");
+          socketOutput.println("Instruction: <login/register> <username> <password> OR EXIT");
           // Initial prompt and read response
           clientResponse = socketInput.readLine();
           String[] args = clientResponse.split(" ");
@@ -62,36 +62,58 @@ public class ClientHandler implements Runnable {
 
                 // make UDP connection to word repository
                 DatagramSocket wordRepository = new DatagramSocket();
-                byte[] buf;
+                byte[] buf = new byte[256];
                 byte[] inputBuf = new byte[256];
 
-                buf = startArgs[1].getBytes();
-                InetAddress address = InetAddress.getByName("localhost");
-                DatagramPacket packet = new DatagramPacket(buf, buf.length, address, 5599);
-                wordRepository.send(packet);
+                if (startArgs[0].equalsIgnoreCase("start")) {
+                  buf = startRes.getBytes();
 
-                DatagramPacket wordRepoReply = new DatagramPacket(inputBuf, inputBuf.length, address, 5599);
-                wordRepository.receive(wordRepoReply);
+                  InetAddress address = InetAddress.getByName("localhost");
+                  DatagramPacket packet = new DatagramPacket(buf, buf.length, address, 5599);
+                  wordRepository.send(packet);
 
-                String word = new String(wordRepoReply.getData(), 0, wordRepoReply.getLength());
-                socketOutput.println(word);
+                  DatagramPacket wordRepoReply = new DatagramPacket(inputBuf, inputBuf.length, address, 5599);
+                  wordRepository.receive(wordRepoReply);
+
+                  String word = new String(wordRepoReply.getData(), 0, wordRepoReply.getLength());
+                  socketOutput.println(word);
+                } else if (startArgs[0].equalsIgnoreCase("?")) {
+                  buf = startRes.getBytes();
+
+                  InetAddress address = InetAddress.getByName("localhost");
+                  DatagramPacket packet = new DatagramPacket(buf, buf.length, address, 5599);
+                  wordRepository.send(packet);
+
+                  DatagramPacket wordRepoReply = new DatagramPacket(inputBuf, inputBuf.length, address, 5599);
+                  wordRepository.receive(wordRepoReply);
+
+                  String word = new String(wordRepoReply.getData(), 0, wordRepoReply.getLength());
+                  System.out.println(word);
+                  String exists = "False";
+                  if (word.equalsIgnoreCase("true")) {
+                    exists = "True";
+                  }
+                  socketOutput.println(exists);
+                } else if (startArgs[0].equalsIgnoreCase("$")) {
+                  System.out.println("here");
+                  accountOut.println("get " + args[1] + " " + args[2]);
+
+                  String[] result = accountIn.readLine().split(" ");
+                  if(result.length > 1) {
+                    socketOutput.println("High-score for " + result[0] + " is " + result[2]);
+                  }
+                } else if (startRes.charAt(0) == '#') {
+                  break;
+                }
               }
             }
-
-
           } else if (args[0].equalsIgnoreCase("register")) {
             accountOut.println("post " + args[1] + " " + args[2] + " 0");
             socketOutput.println(accountIn.readLine());
+          } else {
+            socketOutput.println("Unknown Command, try again");
           }
-//          if (args[0].equalsIgnoreCase("$")){
-//
-//              accountOut.println("get " + args[1] + " " + args[2]);
-//
-//              String[] result = accountIn.readLine().split(" ");
-//              if(result.length > 1) {
-//                socketOutput.println("High-score for " + result[0] + " is " + result[2]);
-//              }
-//          }
+
         } catch (IOException e) {
           throw new RuntimeException(e);
         }
