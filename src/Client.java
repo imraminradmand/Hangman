@@ -50,26 +50,7 @@ public class Client {
             password = clientArgs[2];
             // start playing the game - will be refactored
             if (socketIn.readLine() != null) {
-              System.out.println(socketIn.readLine());
-              while (true) {
-                String res = stdin.readLine();
-                String[] resArgs = res.split(" ");
-
-                if (resArgs[0].equals("start")) {
-                  socketOut.println(res);
-                  System.out.println("Phrase from repo: " + socketIn.readLine());
-                } else if (resArgs[0].equals("?")) {
-                  socketOut.println(res);
-                  System.out.println(resArgs[1] + ": " + socketIn.readLine());
-                } else if (res.equalsIgnoreCase("$")) {
-                  socketOut.println("$ " + username + " " + password);
-                  System.out.println(socketIn.readLine());
-                } else if (res.equalsIgnoreCase("#")) {
-                  socketOut.println(res);
-                  System.out.println("Exiting...");
-                  break;
-                }
-              }
+              play(socketIn, stdin, socketOut, username, password);
             }
           } else if (clientArgs[0].equalsIgnoreCase("register")) {
             socketOut.println(userInput);
@@ -97,6 +78,32 @@ public class Client {
       }
     } catch (IOException e) {
       throw new RuntimeException(e);
+    }
+  }
+
+  private void play(BufferedReader socketIn,
+      BufferedReader stdin,
+      PrintWriter socketOut,
+      String username, String password) throws IOException {
+    System.out.println(socketIn.readLine());
+    while (true) {
+      String res = stdin.readLine();
+      String[] resArgs = res.split(" ");
+
+      if (resArgs[0].equals("start")) {
+        socketOut.println(res);
+        System.out.println("Phrase from repo: " + socketIn.readLine());
+      } else if (resArgs[0].equals("?")) {
+        socketOut.println(res);
+        System.out.println(resArgs[1] + ": " + socketIn.readLine());
+      } else if (res.equalsIgnoreCase("$")) {
+        socketOut.println("$ " + username + " " + password);
+        System.out.println(socketIn.readLine());
+      } else if (res.equalsIgnoreCase("#")) {
+        socketOut.println(res);
+        System.out.println("Exiting...");
+        break;
+      }
     }
   }
   public static void main (String[] args) throws UnknownHostException {
