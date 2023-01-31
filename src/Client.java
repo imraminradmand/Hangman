@@ -88,15 +88,37 @@ public class Client {
       BufferedReader stdin,
       PrintWriter socketOut,
       String username, String password) throws IOException {
-    System.out.println(socketIn.readLine());
+
     while (true) {
+      System.out.println(socketIn.readLine());
       String res = stdin.readLine();
       String[] resArgs = res.split(" ");
 
       // TODO: Actual logic goes under the start condition
       if (resArgs[0].equals("start")) {
-        socketOut.println(res);
-        System.out.println("Phrase from repo: " + socketIn.readLine());
+          socketOut.println(res);
+          System.out.println(socketIn.readLine());
+          boolean gameOver = false;
+          
+          //gameplay
+          while(!gameOver) {
+              String play = stdin.readLine();
+              socketOut.println(play);
+              String display = socketIn.readLine();
+
+              
+              if(display.charAt(0) == ('#')) {
+            	  System.out.println("You lose, phrase was: " + display.replace("#", ""));
+            	  gameOver = true;
+            	  
+              }else if(display.charAt(0) == ('!')) {
+            	  System.out.println("You win!");
+            	  gameOver = true;
+              }else {
+            	  System.out.println(display.replace("#", ""));
+              }
+          }
+          
       } else if (resArgs[0].equals("?")) {
         socketOut.println(res);
         System.out.println(resArgs[1] + ": " + socketIn.readLine());
@@ -106,7 +128,6 @@ public class Client {
       } else if (res.equalsIgnoreCase("#")) {
         socketOut.println(res);
         System.out.println("Exiting...");
-        break;
       }
     }
   }
