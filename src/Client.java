@@ -48,10 +48,12 @@ public class Client {
             socketOut.println(userInput);
             username = clientArgs[1];
             password = clientArgs[2];
-            // start playing the game - will be refactored
+
+            // PLAY GAME
             if (socketIn.readLine() != null) {
               play(socketIn, stdin, socketOut, username, password);
             }
+
           } else if (clientArgs[0].equalsIgnoreCase("register")) {
             socketOut.println(userInput);
             System.out.println(socketIn.readLine());

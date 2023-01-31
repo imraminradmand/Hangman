@@ -17,8 +17,61 @@ public class ClientHandler implements Runnable {
 
   }
 
-  private void play() {
+  private void play(BufferedReader socketInput,
+      PrintWriter socketOutput,
+      BufferedReader accountIn,
+      PrintWriter accountOut,
+      String[] args) throws IOException {
+    while (true) {
+      String startRes = socketInput.readLine();
+      String[] startArgs = startRes.split(" ");
 
+      // make UDP connection to word repository
+      DatagramSocket wordRepository = new DatagramSocket();
+      byte[] buf = new byte[256];
+      byte[] inputBuf = new byte[256];
+
+      if (startArgs[0].equalsIgnoreCase("start")) {
+        buf = startRes.getBytes();
+
+        InetAddress address = InetAddress.getByName("localhost");
+        DatagramPacket packet = new DatagramPacket(buf, buf.length, address, 5599);
+        wordRepository.send(packet);
+
+        DatagramPacket wordRepoReply = new DatagramPacket(inputBuf, inputBuf.length, address, 5599);
+        wordRepository.receive(wordRepoReply);
+
+        String word = new String(wordRepoReply.getData(), 0, wordRepoReply.getLength());
+        socketOutput.println(word);
+      } else if (startArgs[0].equalsIgnoreCase("?")) {
+        buf = startRes.getBytes();
+
+        InetAddress address = InetAddress.getByName("localhost");
+        DatagramPacket packet = new DatagramPacket(buf, buf.length, address, 5599);
+        wordRepository.send(packet);
+
+        DatagramPacket wordRepoReply = new DatagramPacket(inputBuf, inputBuf.length, address, 5599);
+        wordRepository.receive(wordRepoReply);
+
+        String word = new String(wordRepoReply.getData(), 0, wordRepoReply.getLength());
+        System.out.println(word);
+        String exists = "False";
+        if (word.equalsIgnoreCase("true")) {
+          exists = "True";
+        }
+        socketOutput.println(exists);
+      } else if (startArgs[0].equalsIgnoreCase("$")) {
+        System.out.println("here");
+        accountOut.println("get " + args[1] + " " + args[2]);
+
+        String[] result = accountIn.readLine().split(" ");
+        if(result.length > 1) {
+          socketOutput.println("High-score for " + result[0] + " is " + result[2]);
+        }
+      } else if (startRes.charAt(0) == '#') {
+        break;
+      }
+    }
   }
 
   @Override
@@ -52,61 +105,12 @@ public class ClientHandler implements Runnable {
             String accountResponse = accountIn.readLine();
             socketOutput.println(accountResponse);
 
-            // start playing the game - will be refactored
+            // PLAY GAME
             if (!accountResponse.equals("!noaccount!")) {
               socketOutput.println("Start new game with the following command - start <number of words> <attempts>");
-
-              while (true) {
-                String startRes = socketInput.readLine();
-                String[] startArgs = startRes.split(" ");
-
-                // make UDP connection to word repository
-                DatagramSocket wordRepository = new DatagramSocket();
-                byte[] buf = new byte[256];
-                byte[] inputBuf = new byte[256];
-
-                if (startArgs[0].equalsIgnoreCase("start")) {
-                  buf = startRes.getBytes();
-
-                  InetAddress address = InetAddress.getByName("localhost");
-                  DatagramPacket packet = new DatagramPacket(buf, buf.length, address, 5599);
-                  wordRepository.send(packet);
-
-                  DatagramPacket wordRepoReply = new DatagramPacket(inputBuf, inputBuf.length, address, 5599);
-                  wordRepository.receive(wordRepoReply);
-
-                  String word = new String(wordRepoReply.getData(), 0, wordRepoReply.getLength());
-                  socketOutput.println(word);
-                } else if (startArgs[0].equalsIgnoreCase("?")) {
-                  buf = startRes.getBytes();
-
-                  InetAddress address = InetAddress.getByName("localhost");
-                  DatagramPacket packet = new DatagramPacket(buf, buf.length, address, 5599);
-                  wordRepository.send(packet);
-
-                  DatagramPacket wordRepoReply = new DatagramPacket(inputBuf, inputBuf.length, address, 5599);
-                  wordRepository.receive(wordRepoReply);
-
-                  String word = new String(wordRepoReply.getData(), 0, wordRepoReply.getLength());
-                  System.out.println(word);
-                  String exists = "False";
-                  if (word.equalsIgnoreCase("true")) {
-                    exists = "True";
-                  }
-                  socketOutput.println(exists);
-                } else if (startArgs[0].equalsIgnoreCase("$")) {
-                  System.out.println("here");
-                  accountOut.println("get " + args[1] + " " + args[2]);
-
-                  String[] result = accountIn.readLine().split(" ");
-                  if(result.length > 1) {
-                    socketOutput.println("High-score for " + result[0] + " is " + result[2]);
-                  }
-                } else if (startRes.charAt(0) == '#') {
-                  break;
-                }
-              }
+              play(socketInput, socketOutput, accountIn, accountOut, args);
             }
+
           } else if (args[0].equalsIgnoreCase("register")) {
             accountOut.println("post " + args[1] + " " + args[2] + " 0");
             socketOutput.println(accountIn.readLine());
