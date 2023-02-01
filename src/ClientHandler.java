@@ -80,7 +80,7 @@ public class ClientHandler implements Runnable {
       byte[] inputBuf = new byte[256];
 
       // TODO: Implement actual game logic here
-      if (startArgs[0].equalsIgnoreCase("start")) {
+      if (startArgs[0].equalsIgnoreCase("start") && startArgs.length == 3) {
         String word = responseFromWordRepository(buf, inputBuf, startRes, wordRepository);
 
         int counter = Integer.parseInt(startArgs[1]) * Integer.parseInt(startArgs[2]);
@@ -100,20 +100,25 @@ public class ClientHandler implements Runnable {
           String[] playArgs = playRes.split(" ");
 
           // Check if word exists
-          if (playArgs[0].equalsIgnoreCase("?")) {
-            message = checkWord(buf, inputBuf, playRes, wordRepository);
+          if (playRes.charAt(0) == '?') {
+        	if(playArgs.length == 2)
+        		message = checkWord(buf, inputBuf, playRes, wordRepository);
+        	else
+        		message = "error";
 
             // Get score
-          } else if (playArgs[0].equalsIgnoreCase("$")) {
+          } else if (playRes.charAt(0) == '$') {
             message = checkScore(accountOut, accountIn, playArgs);
 
             // End game
           } else if (playRes.charAt(0) == '#') {
             gameOver = true;
-            message = "#";
+            message = "#"+word;
+            
             //do a guess
-
           } else {
+        	  
+        	//if only a letter, guess letter
             if (playRes.length() == 1) {
               if (guessed.contains(playRes)) {
                 message = "You have already guessed this letter, try again!";
@@ -138,21 +143,26 @@ public class ClientHandler implements Runnable {
               newDisplay = newDisplay + " C" + counter;
               display = newDisplay;
               message = display + " Guess a letter of the phrase or guess the phrase:";
+              
+              //if longer than a letter, guess the phrase
             } else {
-              counter--;
+              
+              //if phrase is right, win game
               if (playRes.equalsIgnoreCase(word)) {
                 gameOver = true;
                 message = "!";
+                
+              //if phrase is wrong, try again
               } else {
-                if (counter == 0) {
-                  gameOver = true;
-                  message = ('#' + word);
-                } else {
+                counter--;
+                if (counter != 0) {
                   message = "Incorrect, try again! C" + counter;
                 }
               }
 
             }
+            
+            //end game if counter is 0, tell client to end
             if (counter == 0) {
               message = ('#' + word);
               gameOver = true;
@@ -201,18 +211,15 @@ public class ClientHandler implements Runnable {
             socketOutput.println(accountResponse);
 
             // PLAY GAME
+            // TODO: add else so that if account doesn't exist they have to register for account
             if (!accountResponse.equals("!noaccount!")) {
               play(socketInput, socketOutput, accountIn, accountOut, args);
             }
 
+            // TODO: Check for successful registration then start game
           } else if (args[0].equalsIgnoreCase("register")) {
             accountOut.println("post " + args[1] + " " + args[2] + " 0");
-            String accountResponse = accountIn.readLine();
-            socketOutput.println(accountResponse);
-
-            if (accountResponse.equals("!success!")) {
-              play(socketInput, socketOutput, accountIn, accountOut, args);
-            }
+            socketOutput.println(accountIn.readLine());
           } else {
             socketOutput.println("Unknown Command, try again");
           }
