@@ -50,13 +50,19 @@ public class Client {
 
             // PLAY GAME
             if (socketIn.readLine() != null) {
+              System.out.println("Welcome back, " + username + "!");
               play(socketIn, stdin, socketOut, username, password);
             }
 
             // TODO: Check for successful registration then start game
           } else if (clientArgs[0].equalsIgnoreCase("register")) {
             socketOut.println(userInput);
-            System.out.println(socketIn.readLine());
+            username = clientArgs[1];
+            password = clientArgs[2];
+
+            if (socketIn.readLine().equalsIgnoreCase("!success!")) {
+              play(socketIn, stdin, socketOut, username, password);
+            }
           }
           // If the user does not input "PLAY" or "EXIT"
           else {

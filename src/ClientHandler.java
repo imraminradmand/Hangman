@@ -209,7 +209,12 @@ public class ClientHandler implements Runnable {
             // TODO: Check for successful registration then start game
           } else if (args[0].equalsIgnoreCase("register")) {
             accountOut.println("post " + args[1] + " " + args[2] + " 0");
-            socketOutput.println(accountIn.readLine());
+            String accountResponse = accountIn.readLine();
+            socketOutput.println(accountResponse);
+
+            if (accountResponse.equals("!success!")) {
+              play(socketInput, socketOutput, accountIn, accountOut, args);
+            }
           } else {
             socketOutput.println("Unknown Command, try again");
           }
