@@ -129,9 +129,11 @@ public class Client {
       } else if (res.equalsIgnoreCase("$")) {
         socketOut.println("$ " + username + " " + password);
         System.out.println(socketIn.readLine());
+
+        // TODO: FIX THIS, NOT QUITING AS EXPECTED
       } else if (res.equalsIgnoreCase("#")) {
         socketOut.println(res);
-        System.out.println("Exiting...");
+        break;
       }
     }
   }
