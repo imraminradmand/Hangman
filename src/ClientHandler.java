@@ -8,6 +8,9 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 public class ClientHandler implements Runnable {
 
@@ -17,32 +20,33 @@ public class ClientHandler implements Runnable {
     this.clientSocket = socket;
 
   }
-  
+
   private String checkWord(byte[] buf,
       byte[] inputBuf,
       String input,
       DatagramSocket wordRepository) throws IOException {
-	  
-      String response = responseFromWordRepository(buf, inputBuf, input, wordRepository);
-      String exists = "False";
-      if (response.equalsIgnoreCase("true")) {
-        exists = "True";
-      }
-      
-      return exists;
+
+    String response = responseFromWordRepository(buf, inputBuf, input, wordRepository);
+    String exists = "False";
+    if (response.equalsIgnoreCase("true")) {
+      exists = "True";
+    }
+
+    return exists;
   }
 
-  private String checkScore(PrintWriter accountOut, BufferedReader accountIn, String[] args) throws IOException {
-	  
-      accountOut.println("get " + args[1] + " " + args[2]);
+  private String checkScore(PrintWriter accountOut, BufferedReader accountIn, String[] args)
+      throws IOException {
 
-      String[] result = accountIn.readLine().split(" ");
-      if(result.length > 1) {
-        return ("High-score for " + result[0] + " is " + result[2]);
-      }
-	  return "No highscore";
+    accountOut.println("get " + args[1] + " " + args[2]);
+
+    String[] result = accountIn.readLine().split(" ");
+    if (result.length > 1) {
+      return ("High-score for " + result[0] + " is " + result[2]);
+    }
+    return "No highscore";
   }
-  
+
   private String responseFromWordRepository(byte[] buf,
       byte[] inputBuf,
       String input,
@@ -65,7 +69,8 @@ public class ClientHandler implements Runnable {
       PrintWriter accountOut,
       String[] args) throws IOException {
     while (true) {
-    	socketOutput.println("Start new game with the following command - start <number of words> <attempts>");
+      socketOutput.println(
+          "Start new game with the following command - start <number of words> <attempts>");
       String startRes = socketInput.readLine();
       String[] startArgs = startRes.split(" ");
 
@@ -77,77 +82,86 @@ public class ClientHandler implements Runnable {
       // TODO: Implement actual game logic here
       if (startArgs[0].equalsIgnoreCase("start")) {
         String word = responseFromWordRepository(buf, inputBuf, startRes, wordRepository);
-        
-  	  	int counter = Integer.parseInt(startArgs[1])  * Integer.parseInt(startArgs[2]);
-  	  	String display = word.replaceAll("[A-z]", "-");
-  	  	display = display + " C" + counter;
-  	  	String newDisplay = display;
-  	  	ArrayList<String> guesses = new ArrayList<String>();
-  	  	boolean gameOver = false;
-  	  socketOutput.println(newDisplay + " " + "Guess a letter of the phrase or guess the phrase:");
-  	  
-        while(!gameOver) {
-        	String message = "";
-            //socketOutput.println(newDisplay + " " + "Guess a letter of the phrase or guess the phrase:");
-            
-            String playRes = socketInput.readLine();
-            String[] playArgs = playRes.split(" ");
-        	
-            // Check if word exists
-        	if (playArgs[0].equalsIgnoreCase("?")) {
-                message = checkWord(buf, inputBuf, playRes, wordRepository);
 
-                // Get score
-              } else if (playArgs[0].equalsIgnoreCase("$")) {
-            	message = checkScore(accountOut, accountIn, playArgs);
+        int counter = Integer.parseInt(startArgs[1]) * Integer.parseInt(startArgs[2]);
+        String display = word.replaceAll("[A-z]", "-");
+        display = display + " C" + counter;
+        String newDisplay = display;
+        ArrayList<String> guessed = new ArrayList<>();
+        boolean gameOver = false;
+        socketOutput.println(
+            newDisplay + " " + "Guess a letter of the phrase or guess the phrase:");
+        System.out.println(word);
+        while (!gameOver) {
+          String message = "";
+          //socketOutput.println(newDisplay + " " + "Guess a letter of the phrase or guess the phrase:");
 
-                // End game
-              } else if (playRes.charAt(0) == '#') {
-                gameOver = true;
-                message = "#";
-                //do a guess
-                
-              }else {
-            	if(playRes.length() == 1) {
-              	newDisplay = "";
-              	for(int i = 0; i < word.length(); i++) {
-          			if (word.charAt(i) == playRes.charAt(0)) {
-          				newDisplay += playRes.charAt(0);
-          			} else if (display.charAt(i) != '-') {
-          				newDisplay += word.charAt(i);
-          			} else {
-          				newDisplay += "-";
-          			}
-              		
-              	}
-              	counter--;
-              	newDisplay = newDisplay + " C" + counter;
-              	display = newDisplay;
-              	message = display + "Guess a letter of the phrase or guess the phrase:";
-            	}else {
-                  	counter--;
-            		if(playRes.equalsIgnoreCase(word)) {
-            			gameOver = true;
-            			message = "!";
-            		}else {
-                      	if (counter == 0) {
-                      		gameOver = true;
-                      		message = ('#' + word);
-                      	}else {
-                      		message = "Incorrect, try again! C" + counter;
-                      	}
-            		}
-            		
-            	}
-              	if (counter == 0) {
-              		message = ('#' + word);
-              		gameOver = true;
-              	}
-              	
-              	
+          String playRes = socketInput.readLine();
+          String[] playArgs = playRes.split(" ");
+
+          // Check if word exists
+          if (playArgs[0].equalsIgnoreCase("?")) {
+            message = checkWord(buf, inputBuf, playRes, wordRepository);
+
+            // Get score
+          } else if (playArgs[0].equalsIgnoreCase("$")) {
+            message = checkScore(accountOut, accountIn, playArgs);
+
+            // End game
+          } else if (playRes.charAt(0) == '#') {
+            gameOver = true;
+            message = "#";
+            //do a guess
+
+          } else {
+            if (playRes.length() == 1) {
+              if (guessed.contains(playRes)) {
+                message = "You have already guessed this letter, try again!";
+                socketOutput.println(message);
+                continue;
               }
-        	socketOutput.println(message);
-        	
+              newDisplay = "";
+              for (int i = 0; i < word.length(); i++) {
+                if (word.charAt(i) == playRes.charAt(0)) {
+                  newDisplay += playRes.charAt(0);
+                } else if (display.charAt(i) != '-') {
+                  newDisplay += word.charAt(i);
+                } else {
+                  newDisplay += "-";
+                }
+
+              }
+              if (!word.contains(playRes)) {
+                counter--;
+              }
+              guessed.add(playRes);
+              newDisplay = newDisplay + " C" + counter;
+              display = newDisplay;
+              message = display + " Guess a letter of the phrase or guess the phrase:";
+            } else {
+              counter--;
+              if (playRes.equalsIgnoreCase(word)) {
+                gameOver = true;
+                message = "!";
+              } else {
+                if (counter == 0) {
+                  gameOver = true;
+                  message = ('#' + word);
+                } else {
+                  message = "Incorrect, try again! C" + counter;
+                }
+              }
+
+            }
+            if (counter == 0) {
+              message = ('#' + word);
+              gameOver = true;
+            }
+
+
+          }
+          socketOutput.println(message);
+
         }
 
       }
@@ -168,7 +182,8 @@ public class ClientHandler implements Runnable {
       String clientResponse;
 
       Socket accountSocket = new Socket(InetAddress.getLocalHost(), 7777);
-      BufferedReader accountIn = new BufferedReader(new InputStreamReader(accountSocket.getInputStream()));
+      BufferedReader accountIn = new BufferedReader(
+          new InputStreamReader(accountSocket.getInputStream()));
       PrintWriter accountOut = new PrintWriter(accountSocket.getOutputStream(), true);
 
       // While loop to keep reading until "EXIT" is input
@@ -204,9 +219,9 @@ public class ClientHandler implements Runnable {
         }
       }
       // Close connection
-     // socketInput.close();
-     // socketOutput.close();
-     // clientSocket.close();
+      // socketInput.close();
+      // socketOutput.close();
+      // clientSocket.close();
     } catch (IOException e) {
       throw new RuntimeException(e);
     }

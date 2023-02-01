@@ -47,7 +47,7 @@ public class WordService {
       phrase.add(s);
     }
 
-    return phrase.toString();
+    return phrase.toString().toLowerCase();
   }
 
   private void addWord(String word) {
