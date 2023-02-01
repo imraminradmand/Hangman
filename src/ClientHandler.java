@@ -115,7 +115,11 @@ public class ClientHandler implements Runnable {
 
           } else {
             if (playRes.length() == 1) {
-              guessed.add(playRes);
+              if (guessed.contains(playRes)) {
+                message = "You have already guessed this letter, try again!";
+                socketOutput.println(message);
+                continue;
+              }
               newDisplay = "";
               for (int i = 0; i < word.length(); i++) {
                 if (word.charAt(i) == playRes.charAt(0)) {
@@ -127,10 +131,10 @@ public class ClientHandler implements Runnable {
                 }
 
               }
-              if (!word.contains(playRes) || Collections.frequency(guessed, playRes) > 1) {
+              if (!word.contains(playRes)) {
                 counter--;
               }
-
+              guessed.add(playRes);
               newDisplay = newDisplay + " C" + counter;
               display = newDisplay;
               message = display + " Guess a letter of the phrase or guess the phrase:";
