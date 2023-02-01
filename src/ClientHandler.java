@@ -201,12 +201,10 @@ public class ClientHandler implements Runnable {
             socketOutput.println(accountResponse);
 
             // PLAY GAME
-            // TODO: add else so that if account doesn't exist they have to register for account
             if (!accountResponse.equals("!noaccount!")) {
               play(socketInput, socketOutput, accountIn, accountOut, args);
             }
 
-            // TODO: Check for successful registration then start game
           } else if (args[0].equalsIgnoreCase("register")) {
             accountOut.println("post " + args[1] + " " + args[2] + " 0");
             String accountResponse = accountIn.readLine();

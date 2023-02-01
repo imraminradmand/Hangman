@@ -54,7 +54,7 @@ public class Client {
               play(socketIn, stdin, socketOut, username, password);
             }
 
-            // TODO: Check for successful registration then start game
+            // TODO: Error handling for failed registration
           } else if (clientArgs[0].equalsIgnoreCase("register")) {
             socketOut.println(userInput);
             username = clientArgs[1];
@@ -89,7 +89,6 @@ public class Client {
     }
   }
 
-  // TODO: add actual guessing logic
   private void play(BufferedReader socketIn,
       BufferedReader stdin,
       PrintWriter socketOut,
@@ -100,7 +99,6 @@ public class Client {
       String res = stdin.readLine();
       String[] resArgs = res.split(" ");
 
-      // TODO: Actual logic goes under the start condition
       if (resArgs[0].equals("start")) {
           socketOut.println(res);
           System.out.println(socketIn.readLine());
