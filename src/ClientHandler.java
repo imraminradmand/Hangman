@@ -164,6 +164,17 @@ public class ClientHandler implements Runnable {
 
         }
 
+      } else if (startArgs[0].equalsIgnoreCase("$")) {
+        String message = checkScore(accountOut, accountIn, startArgs);
+        socketOutput.println(message);
+      } else if (startArgs[0].equalsIgnoreCase("?")) {
+        String message = checkWord(buf, inputBuf, startRes, wordRepository);
+        socketOutput.println(message);
+      } else if (startRes.equalsIgnoreCase("#")) {
+        socketOutput.println("Exiting...");
+        break;
+      } else {
+        socketOutput.println("Invalid command");
       }
     }
   }
