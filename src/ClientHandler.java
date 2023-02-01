@@ -8,6 +8,7 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -86,7 +87,7 @@ public class ClientHandler implements Runnable {
         String display = word.replaceAll("[A-z]", "-");
         display = display + " C" + counter;
         String newDisplay = display;
-        Set<String> guessed = new HashSet<>();
+        ArrayList<String> guessed = new ArrayList<>();
         boolean gameOver = false;
         socketOutput.println(
             newDisplay + " " + "Guess a letter of the phrase or guess the phrase:");
@@ -113,8 +114,8 @@ public class ClientHandler implements Runnable {
             //do a guess
 
           } else {
-            guessed.add(playRes);
             if (playRes.length() == 1) {
+              guessed.add(playRes);
               newDisplay = "";
               for (int i = 0; i < word.length(); i++) {
                 if (word.charAt(i) == playRes.charAt(0)) {
@@ -126,7 +127,7 @@ public class ClientHandler implements Runnable {
                 }
 
               }
-              if (!word.contains(playRes)) {
+              if (!word.contains(playRes) || Collections.frequency(guessed, playRes) > 1) {
                 counter--;
               }
 
