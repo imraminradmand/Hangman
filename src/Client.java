@@ -50,19 +50,13 @@ public class Client {
 
             // PLAY GAME
             if (socketIn.readLine() != null) {
-              System.out.println("Welcome back, " + username + "!");
               play(socketIn, stdin, socketOut, username, password);
             }
 
-            // TODO: Error handling for failed registration
+            // TODO: Check for successful registration then start game
           } else if (clientArgs[0].equalsIgnoreCase("register")) {
             socketOut.println(userInput);
-            username = clientArgs[1];
-            password = clientArgs[2];
-
-            if (socketIn.readLine().equalsIgnoreCase("!success!")) {
-              play(socketIn, stdin, socketOut, username, password);
-            }
+            System.out.println(socketIn.readLine());
           }
           // If the user does not input "PLAY" or "EXIT"
           else {
@@ -85,28 +79,44 @@ public class Client {
         System.out.println(e);
       }
     } catch (IOException e) {
-      throw new RuntimeException(e);
+        System.out.println(e);
+        System.exit(0);
+
     }
   }
 
+  // TODO: add actual guessing logic
   private void play(BufferedReader socketIn,
       BufferedReader stdin,
       PrintWriter socketOut,
       String username, String password) throws IOException {
-
+	  
+      
     while (true) {
-      System.out.println(socketIn.readLine());
-      String res = stdin.readLine();
-      String[] resArgs = res.split(" ");
 
-      if (resArgs[0].equals("start")) {
-          socketOut.println(res);
+        System.out.println(socketIn.readLine());
+        String res = stdin.readLine();
+        String[] resArgs = res.split(" ");
+        
+        socketOut.println(res);
+        
+      // TODO: Actual logic goes under the start condition
+      if (resArgs[0].equals("start") && resArgs.length == 3) {
           System.out.println(socketIn.readLine());
           boolean gameOver = false;
           
           //gameplay
           while(!gameOver) {
               String play = stdin.readLine();
+              
+              //check input for special commands
+              if (res.equalsIgnoreCase("$")) {
+                  play = ("$ " + username + " " + password);
+                } else if (res.equalsIgnoreCase("#")) {
+                  socketOut.println(res);
+                  System.out.println("Exiting...");
+                }
+              
               socketOut.println(play);
               String display = socketIn.readLine();
 
