@@ -94,22 +94,21 @@ public class ClientHandler implements Runnable {
           String message = "";
           //socketOutput.println(newDisplay + " " + "Guess a letter of the phrase or guess the phrase:");
 
-          if(!display.contains("-")){
+          if (!display.contains("-")) {
             gameOver = true;
             break;
           }
 
-
           String playRes = socketInput.readLine();
           String[] playArgs = playRes.split(" ");
 
-
           // Check if word exists
           if (playRes.charAt(0) == '?') {
-        	if(playArgs.length == 2)
-        		message = checkWord(buf, inputBuf, playRes, wordRepository);
-        	else
-        		message = "error";
+            if (playArgs.length == 2) {
+              message = playArgs[1] + ": " + checkWord(buf, inputBuf, playRes, wordRepository);
+            } else {
+              message = "error";
+            }
 
             // Get score
           } else if (playRes.charAt(0) == '$') {
@@ -118,12 +117,12 @@ public class ClientHandler implements Runnable {
             // End game
           } else if (playRes.charAt(0) == '#') {
             gameOver = true;
-            message = "#"+word;
-            
+            message = "#" + word;
+
             //do a guess
           } else {
-        	  
-        	//if only a letter, guess letter
+
+            //if only a letter, guess letter
             if (playRes.length() == 1) {
               if (guessed.contains(playRes)) {
                 message = "You have already guessed this letter, try again!";
@@ -148,17 +147,18 @@ public class ClientHandler implements Runnable {
               newDisplay = newDisplay + " C" + counter;
               display = newDisplay;
               message = display + " Guess a letter of the phrase or guess the phrase:";
-              
-              if (!newDisplay.contains("-"))
+
+              if (!newDisplay.contains("-")) {
                 break;
+              }
             } else {
-              
+
               //if phrase is right, win game
               if (playRes.equalsIgnoreCase(word)) {
                 gameOver = true;
                 message = "!";
-                
-              //if phrase is wrong, try again
+
+                //if phrase is wrong, try again
               } else {
                 counter--;
                 if (counter != 0) {
@@ -167,7 +167,7 @@ public class ClientHandler implements Runnable {
               }
 
             }
-            
+
             //end game if counter is 0, tell client to end
             if (counter == 0) {
               message = ('#' + word);

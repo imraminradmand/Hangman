@@ -7,8 +7,10 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 
 public class Client {
+
   private static InetAddress host;
   private static final int PORT = 5555;
+  private static final String WORD_CHECK_USAGE = "? <word to check for>";
 
   public Client() throws UnknownHostException {
     String username = "";
@@ -50,13 +52,19 @@ public class Client {
 
             // PLAY GAME
             if (socketIn.readLine() != null) {
+              System.out.println("Welcome back, " + username + "!");
               play(socketIn, stdin, socketOut, username, password);
             }
 
-            // TODO: Check for successful registration then start game
+            // TODO: Error handling for failed registration
           } else if (clientArgs[0].equalsIgnoreCase("register")) {
             socketOut.println(userInput);
-            System.out.println(socketIn.readLine());
+            username = clientArgs[1];
+            password = clientArgs[2];
+
+            if (socketIn.readLine().equalsIgnoreCase("!success!")) {
+              play(socketIn, stdin, socketOut, username, password);
+            }
           }
           // If the user does not input "PLAY" or "EXIT"
           else {
@@ -79,60 +87,61 @@ public class Client {
         System.out.println(e);
       }
     } catch (IOException e) {
-        System.out.println(e);
-        System.exit(0);
-
+      throw new RuntimeException(e);
     }
   }
 
-  // TODO: add actual guessing logic
   private void play(BufferedReader socketIn,
       BufferedReader stdin,
       PrintWriter socketOut,
       String username, String password) throws IOException {
-	  
-      
+
     while (true) {
+      System.out.println(socketIn.readLine());
+      String res = stdin.readLine();
+      String[] resArgs = res.split(" ");
 
-        System.out.println(socketIn.readLine());
-        String res = stdin.readLine();
-        String[] resArgs = res.split(" ");
-        
+      if (resArgs[0].equals("start")) {
         socketOut.println(res);
-        
-      // TODO: Actual logic goes under the start condition
-      if (resArgs[0].equals("start") && resArgs.length == 3) {
-          System.out.println(socketIn.readLine());
-          boolean gameOver = false;
-          
-          //gameplay
-          while(!gameOver) {
-              String play = stdin.readLine();
-              
-              //check input for special commands
-              if (res.equalsIgnoreCase("$")) {
-                  play = ("$ " + username + " " + password);
-                } else if (res.equalsIgnoreCase("#")) {
-                  socketOut.println(res);
-                  System.out.println("Exiting...");
-                }
-              
-              socketOut.println(play);
-              String display = socketIn.readLine();
+        System.out.println(socketIn.readLine());
+        boolean gameOver = false;
 
-              
-              if(display.charAt(0) == ('#')) {
-            	  System.out.println("You lose, phrase was: " + display.replace("#", ""));
-            	  gameOver = true;
-            	  
-              }else if(display.charAt(0) == ('!')) {
-            	  System.out.println("You win!");
-            	  gameOver = true;
-              }else {
-            	  System.out.println(display.replace("#", ""));
-              }
+        //gameplay
+        while (!gameOver) {
+          String play = stdin.readLine();
+          String[] playArgs = play.split(" ");
+
+          //check input for special commands
+          if (play.equalsIgnoreCase("$")) {
+            play = ("$ " + username + " " + password);
+          } else if (play.equalsIgnoreCase("#")) {
+            // TODO: FIX THIS, NOT QUITING AS EXPECTED
+            socketOut.println(res);
+            System.out.println("Exiting...");
+          } else if (play.equalsIgnoreCase("?")) {
+            if (playArgs.length == 2) {
+              play = ("? " + playArgs[1]);
+            } else {
+              System.out.println(WORD_CHECK_USAGE);
+              play = stdin.readLine();
+            }
           }
-          
+
+          socketOut.println(play);
+          String display = socketIn.readLine();
+
+          if (display.charAt(0) == ('#')) {
+            System.out.println("You lose, phrase was: " + display.replace("#", ""));
+            gameOver = true;
+
+          } else if (display.charAt(0) == ('!')) {
+            System.out.println("You win!");
+            gameOver = true;
+          } else {
+            System.out.println(display.replace("#", ""));
+          }
+        }
+
       } else if (resArgs[0].equals("?")) {
         socketOut.println(res);
         System.out.println(resArgs[1] + ": " + socketIn.readLine());
@@ -140,14 +149,15 @@ public class Client {
         socketOut.println("$ " + username + " " + password);
         System.out.println(socketIn.readLine());
 
-        // TODO: FIX THIS, NOT QUITING AS EXPECTED
+        // TODO: FIX THIS, NOT QUITING AS EXPECTED, says exiting but then says incorrect try again. and jumps out to the login again
       } else if (res.equalsIgnoreCase("#")) {
         socketOut.println(res);
         break;
       }
     }
   }
-  public static void main (String[] args) throws UnknownHostException {
+
+  public static void main(String[] args) throws UnknownHostException {
     Client client = new Client();
   }
 }
