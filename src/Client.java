@@ -133,8 +133,17 @@ public class Client {
               }
           }
           
-      }else {
-    	  System.out.println("wrong command, try again");
+      } else if (resArgs[0].equals("?")) {
+        socketOut.println(res);
+        System.out.println(resArgs[1] + ": " + socketIn.readLine());
+      } else if (res.equalsIgnoreCase("$")) {
+        socketOut.println("$ " + username + " " + password);
+        System.out.println(socketIn.readLine());
+
+        // TODO: FIX THIS, NOT QUITING AS EXPECTED
+      } else if (res.equalsIgnoreCase("#")) {
+        socketOut.println(res);
+        break;
       }
     }
   }
