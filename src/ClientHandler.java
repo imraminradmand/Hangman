@@ -7,6 +7,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.security.KeyStore;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -96,8 +97,15 @@ public class ClientHandler implements Runnable {
           String message = "";
           //socketOutput.println(newDisplay + " " + "Guess a letter of the phrase or guess the phrase:");
 
+          if(!display.contains("-")){
+            gameOver = true;
+            break;
+          }
+
+
           String playRes = socketInput.readLine();
           String[] playArgs = playRes.split(" ");
+
 
           // Check if word exists
           if (playArgs[0].equalsIgnoreCase("?")) {
@@ -138,6 +146,8 @@ public class ClientHandler implements Runnable {
               newDisplay = newDisplay + " C" + counter;
               display = newDisplay;
               message = display + " Guess a letter of the phrase or guess the phrase:";
+              if (!newDisplay.contains("-"))
+                break;
             } else {
               counter--;
               if (playRes.equalsIgnoreCase(word)) {
