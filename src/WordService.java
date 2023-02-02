@@ -9,6 +9,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringJoiner;
 
+/**
+ * WordService is a UDP server that provides a word repository for the game.
+ * It can return a random word of a given length, a random phrase of a given
+ * length, add a word to the repository, remove a word from the repository,
+ * and check if a word exists in the repository.
+ * <p>
+ *   The WordService is started by running the main method of this class.
+ *   The port number is passed as a command line argument.
+ *   The port number must be between 1024 and 65535.
+ *   The word repository is initialized with the words in the file
+ *   src/resources/words.txt.
+ * </p>
+ * @author Ramin Radmand, Tate Greeves, Emily Allerdings
+ */
 public class WordService {
   private static final ArrayList<String> words = new ArrayList<>();
   private final DatagramSocket socket;
