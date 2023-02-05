@@ -98,6 +98,7 @@ public class Client {
 
     while (true) {
       System.out.println(socketIn.readLine());
+
       String res = stdin.readLine();
       String[] resArgs = res.split(" ");
 
