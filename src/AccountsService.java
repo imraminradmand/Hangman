@@ -21,16 +21,11 @@ public class AccountsService {
     Because this implementation is a single threaded TCP server, there is no need for synchronization.
      */
     public static void main(String[] args) throws IOException {
-        if (args.length != 1) {
-            System.exit(1);
-        }
-
-        int port = 0;
         ServerSocket serverSocket;
 
         try {
-            port = Integer.parseInt(args[0]);
-            serverSocket = new ServerSocket(port);
+
+            serverSocket = new ServerSocket(7777);
 
             System.out.println("Server is running...");
 
@@ -50,9 +45,10 @@ public class AccountsService {
                         if (clientResponse != null) {
                             String[] clientArgs = clientResponse.split(" ");
 
-                            File myObj = new File("users.txt");
-                            Scanner myReader = new Scanner(myObj);
+
                             if (clientArgs[0].equalsIgnoreCase("get")) {
+                                File myObj = new File("users.txt");
+                                Scanner myReader = new Scanner(myObj);
                                 String result = "!noaccount!";
                                 while (myReader.hasNextLine()) {
                                     String data = myReader.nextLine();
@@ -66,13 +62,15 @@ public class AccountsService {
                                 socketOutput.println(result);
                                 myReader.close();
                             } else if (clientArgs[0].equalsIgnoreCase("post")) {
+                                File file = new File("users.txt");
+                                Scanner myReader = new Scanner(file);
                                 ArrayList<String> lines = new ArrayList<>();
                                 while (myReader.hasNextLine()) {
                                     String data = myReader.nextLine();
                                     lines.add(data);
+
                                 }
                                 myReader.close();
-
                                 for (String line : lines) {
                                     String[] arg = line.split(" ");
                                     if (arg[0].equals(clientArgs[1])) {
@@ -81,34 +79,31 @@ public class AccountsService {
                                     }
                                 }
 
-                                File file = new File("users.txt");
-
                                 if (file.delete()) {
                                     file.createNewFile();
-                                }
 
-                                FileWriter writer = new FileWriter("users.txt");
-                                lines.add(clientArgs[1]  + " " + clientArgs[2]  + " " + clientArgs[3]);
 
-                                for (String s : lines) {
-                                    writer.write(s + '\n');
+                                    FileWriter writer = new FileWriter("users.txt");
+                                    lines.add(clientArgs[1] + " " + clientArgs[2] + " " + clientArgs[3]);
+
+                                    for (String s : lines) {
+                                        writer.write(s + '\n');
+                                    }
+                                    writer.close();
+                                    socketOutput.println("!success!");
+                                }else{
+                                    socketOutput.println("!fail!");
                                 }
-                                writer.close();
-                                socketOutput.println("!success!");
                             }
                         }
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
                 }
-
-                //socketInput.close();
-                //socketOutput.close();
-                //socket.close();
             }
         } catch (IOException e) {
             System.out.println(
-                    "Exception caught when trying to listen on port " + port + " or listening for a connection");
+                    "Exception caught when trying to listen on port " + 7777 + " or listening for a connection");
             System.out.println(e.getMessage());
         }
     }

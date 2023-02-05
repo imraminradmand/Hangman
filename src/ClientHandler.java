@@ -149,6 +149,19 @@ public class ClientHandler implements Runnable {
               message = display + " Guess a letter of the phrase or guess the phrase:";
 
               if (!newDisplay.contains("-")) {
+                // Get score
+                accountOut.println("get " + args[1] + " " + args[2]);
+
+                String accountResponse = accountIn.readLine();
+                String[] ar = accountResponse.split(" ");
+                int val = Integer.parseInt(ar[2]);
+                val += 100;
+                accountOut.println("post " + args[1] + " " + args[2] + " " + val);
+                accountIn.readLine();
+
+                break;
+              }else if (counter == 0){
+
                 break;
               }
             } else {
@@ -168,11 +181,11 @@ public class ClientHandler implements Runnable {
 
             }
 
-            //end game if counter is 0, tell client to end
-            if (counter == 0) {
-              message = ('#' + word);
-              gameOver = true;
-            }
+            ////end game if counter is 0, tell client to end
+            //if (counter == 0) {
+            //  message = ('#' + word);
+            //  gameOver = true;
+           // }
 
 
           }
