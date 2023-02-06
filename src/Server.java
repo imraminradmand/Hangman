@@ -13,9 +13,6 @@ public class Server {
     int port = 0;
     ServerSocket serverSocket;
 
-    File file = new File("users.txt");
-    file.createNewFile();
-
     try {
       port = Integer.parseInt(args[0]);
       serverSocket = new ServerSocket(5555);
