@@ -118,7 +118,7 @@ public class ClientHandler implements Runnable {
           } else if (playRes.charAt(0) == '#') {
             gameOver = true;
             message = "#" + word;
-
+            socketOutput.println(message);
             //do a guess
           } else {
 
