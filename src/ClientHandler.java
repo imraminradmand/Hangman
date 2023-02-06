@@ -61,6 +61,7 @@ public class ClientHandler implements Runnable {
     return new String(wordRepoReply.getData(), 0, wordRepoReply.getLength());
   }
 
+
   private void play(BufferedReader socketInput,
       PrintWriter socketOutput,
       BufferedReader accountIn,
@@ -95,7 +96,6 @@ public class ClientHandler implements Runnable {
           //socketOutput.println(newDisplay + " " + "Guess a letter of the phrase or guess the phrase:");
 
           if (!display.contains("-")) {
-            gameOver = true;
             break;
           }
 
@@ -149,18 +149,10 @@ public class ClientHandler implements Runnable {
               message = display + " Guess a letter of the phrase or guess the phrase:";
 
               if (!newDisplay.contains("-")) {
-                // Get score
-                accountOut.println("get " + args[1] + " " + args[2]);
-
-                String accountResponse = accountIn.readLine();
-                String[] ar = accountResponse.split(" ");
-                int val = Integer.parseInt(ar[2]);
-                val += 100;
-                accountOut.println("post " + args[1] + " " + args[2] + " " + val);
-                accountIn.readLine();
+                updateScore(accountIn, accountOut, args);
 
                 break;
-              }else if (counter == 0){
+              } else if (counter == 0) {
 
                 break;
               }
@@ -170,6 +162,7 @@ public class ClientHandler implements Runnable {
               if (playRes.equalsIgnoreCase(word)) {
                 gameOver = true;
                 message = "!";
+                updateScore(accountIn, accountOut, args);
 
                 //if phrase is wrong, try again
               } else {
@@ -185,8 +178,7 @@ public class ClientHandler implements Runnable {
             //if (counter == 0) {
             //  message = ('#' + word);
             //  gameOver = true;
-           // }
-
+            // }
 
           }
           socketOutput.println(message);
@@ -206,6 +198,18 @@ public class ClientHandler implements Runnable {
         socketOutput.println("Invalid command");
       }
     }
+  }
+
+  private static void updateScore(BufferedReader accountIn, PrintWriter accountOut, String[] args)
+      throws IOException {
+    accountOut.println("get " + args[1] + " " + args[2]);
+
+    String accountResponse = accountIn.readLine();
+    String[] ar = accountResponse.split(" ");
+    int val = Integer.parseInt(ar[2]);
+    val += 100;
+    accountOut.println("post " + args[1] + " " + args[2] + " " + val);
+    accountIn.readLine();
   }
 
   @Override
@@ -249,7 +253,12 @@ public class ClientHandler implements Runnable {
             // TODO: Check for successful registration then start game
           } else if (args[0].equalsIgnoreCase("register")) {
             accountOut.println("post " + args[1] + " " + args[2] + " 0");
-            socketOutput.println(accountIn.readLine());
+            String accountResponse = accountIn.readLine();
+            socketOutput.println(accountResponse);
+
+            if (accountResponse.equals("!success!")) {
+              play(socketInput, socketOutput, accountIn, accountOut, args);
+            }
           } else {
             socketOutput.println("Unknown Command, try again");
           }
