@@ -146,8 +146,6 @@ public class Client {
       } else if (res.equalsIgnoreCase("$")) {
         socketOut.println("$ " + username + " " + password);
         System.out.println(socketIn.readLine());
-
-        // TODO: FIX THIS, NOT QUITING AS EXPECTED, says exiting but then says incorrect try again. and jumps out to the login again
       } else if (res.equalsIgnoreCase("#")) {
         socketOut.println(res);
         break;
