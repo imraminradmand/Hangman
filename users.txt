@@ -6,4 +6,4 @@ tate 123 700
 tester007 1234 0
 qwerty 12345 0
 ramin009 1234 100
-ramin 1234 1000
+ramin 1234 1200

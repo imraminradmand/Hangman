@@ -118,7 +118,7 @@ public class ClientHandler implements Runnable {
           } else if (playRes.charAt(0) == '#') {
             gameOver = true;
             message = "#" + word;
-
+            socketOutput.println(message);
             //do a guess
           } else {
 
@@ -149,8 +149,8 @@ public class ClientHandler implements Runnable {
               message = display + " Guess a letter of the phrase or guess the phrase:";
 
               if (!newDisplay.contains("-")) {
+                socketOutput.println("!");
                 updateScore(accountIn, accountOut, args);
-
                 break;
               } else if (counter == 0) {
 
@@ -173,18 +173,9 @@ public class ClientHandler implements Runnable {
               }
 
             }
-
-            ////end game if counter is 0, tell client to end
-            //if (counter == 0) {
-            //  message = ('#' + word);
-            //  gameOver = true;
-            // }
-
           }
           socketOutput.println(message);
-
         }
-
       } else if (startArgs[0].equalsIgnoreCase("$")) {
         String message = checkScore(accountOut, accountIn, startArgs);
         socketOutput.println(message);
@@ -193,7 +184,7 @@ public class ClientHandler implements Runnable {
         socketOutput.println(message);
       } else if (startRes.equalsIgnoreCase("#")) {
         socketOutput.println("Exiting...");
-        break;
+        System.out.println("Client disconnected: " + clientSocket);
       } else {
         socketOutput.println("Invalid command");
       }

@@ -56,7 +56,6 @@ public class Client {
               play(socketIn, stdin, socketOut, username, password);
             }
 
-            // TODO: Error handling for failed registration
           } else if (clientArgs[0].equalsIgnoreCase("register")) {
             socketOut.println(userInput);
             username = clientArgs[1];
@@ -66,7 +65,7 @@ public class Client {
               play(socketIn, stdin, socketOut, username, password);
             }
           }
-          // If the user does not input "PLAY" or "EXIT"
+          // Invalid input
           else {
             socketOut.println(userInput);
             System.out.println(socketIn.readLine());
@@ -116,9 +115,7 @@ public class Client {
           if (play.equalsIgnoreCase("$")) {
             play = ("$ " + username + " " + password);
           } else if (play.equalsIgnoreCase("#")) {
-            // TODO: FIX THIS, NOT QUITING AS EXPECTED
-            socketOut.println(res);
-            System.out.println("Exiting...");
+            socketOut.println(play);
           } else if (play.equalsIgnoreCase("?")) {
             if (playArgs.length == 2) {
               play = ("? " + playArgs[1]);
@@ -149,8 +146,6 @@ public class Client {
       } else if (res.equalsIgnoreCase("$")) {
         socketOut.println("$ " + username + " " + password);
         System.out.println(socketIn.readLine());
-
-        // TODO: FIX THIS, NOT QUITING AS EXPECTED, says exiting but then says incorrect try again. and jumps out to the login again
       } else if (res.equalsIgnoreCase("#")) {
         socketOut.println(res);
         break;
