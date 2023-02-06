@@ -3,6 +3,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class AccountsService {
 
@@ -23,83 +25,18 @@ public class AccountsService {
     public static void main(String[] args) throws IOException {
         ServerSocket serverSocket;
 
+        File file = new File("users.txt");
+        file.createNewFile();
+
         try {
 
             serverSocket = new ServerSocket(7777);
 
             System.out.println("Server is running...");
+            ExecutorService fixedThreadPool = Executors.newFixedThreadPool(10);
 
             while (true) {
-                Socket socket = serverSocket.accept();
-
-                InputStreamReader socketInputReader = new InputStreamReader(socket.getInputStream());
-                OutputStream socketOutStream = socket.getOutputStream();
-
-                BufferedReader socketInput = new BufferedReader(socketInputReader);
-                PrintWriter socketOutput = new PrintWriter(socketOutStream, true);
-
-                while (true) {
-                    try {
-                        String clientResponse = socketInput.readLine();
-                        System.out.println(clientResponse);
-                        if (clientResponse != null) {
-                            String[] clientArgs = clientResponse.split(" ");
-
-
-                            if (clientArgs[0].equalsIgnoreCase("get")) {
-                                File myObj = new File("users.txt");
-                                Scanner myReader = new Scanner(myObj);
-                                String result = "!noaccount!";
-                                while (myReader.hasNextLine()) {
-                                    String data = myReader.nextLine();
-                                    String[] arg = data.split(" ");
-
-                                    if (arg[0].equals(clientArgs[1]) && arg[1].equals(clientArgs[2])) {
-                                        result = data;
-                                        break;
-                                    }
-                                }
-                                socketOutput.println(result);
-                                myReader.close();
-                            } else if (clientArgs[0].equalsIgnoreCase("post")) {
-                                File file = new File("users.txt");
-                                Scanner myReader = new Scanner(file);
-                                ArrayList<String> lines = new ArrayList<>();
-                                while (myReader.hasNextLine()) {
-                                    String data = myReader.nextLine();
-                                    lines.add(data);
-
-                                }
-                                myReader.close();
-                                for (String line : lines) {
-                                    String[] arg = line.split(" ");
-                                    if (arg[0].equals(clientArgs[1])) {
-                                        lines.remove(line);
-                                        break;
-                                    }
-                                }
-
-                                if (file.delete()) {
-                                    file.createNewFile();
-
-
-                                    FileWriter writer = new FileWriter("users.txt");
-                                    lines.add(clientArgs[1] + " " + clientArgs[2] + " " + clientArgs[3]);
-
-                                    for (String s : lines) {
-                                        writer.write(s + '\n');
-                                    }
-                                    writer.close();
-                                    socketOutput.println("!success!");
-                                }else{
-                                    socketOutput.println("!fail!");
-                                }
-                            }
-                        }
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
+               fixedThreadPool.execute(new AccountHandler(serverSocket.accept()));
             }
         } catch (IOException e) {
             System.out.println(
