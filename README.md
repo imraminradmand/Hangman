@@ -31,10 +31,13 @@ a given word.
 
 ## Protocol Design Document
 ### Service Descriptions:
-#### AccountService: TCP server that handles user login and registration. It also keeps track of user scores.
-#### WordService: UDP server that acts as a word repository for the game, allowing the server to add, remove, and check if a word exists in the repository.
-#### Server: TCP server that handles the game logic and communicates with the AccountService and WordService.
-#### Client: TCP client that handles user input and communicates with the Server.
+**AccountService**: TCP server that handles user login and registration. It also keeps track of user scores.
+
+**WordService**: UDP server that acts as a word repository for the game, allowing the server to add, remove, and check if a word exists in the repository.
+
+**Server**: TCP server that handles the game logic and communicates with the AccountService and WordService.
+
+**Client**: TCP client that handles user input and communicates with the Server.
 
 ### Sequence Diagram
 ![Sequence Diagram](https://user-images.githubusercontent.com/69999501/217164396-c457d588-c080-490b-b1f2-13f591bf9cf9.png)
