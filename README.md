@@ -31,11 +31,11 @@ a given word.
 
 ## Protocol Design Document
 ### Service Descriptions:
-**AccountService**: TCP server that handles user login and registration. It also keeps track of user scores.
+**AccountService**: Multithreaded TCP server, allowing up to 10 connections via ThreadPool, that handles user login and registration. It also keeps track of user scores.
 
 **WordService**: UDP server that acts as a word repository for the game, allowing the server to add, remove, and check if a word exists in the repository.
 
-**Server**: TCP server that handles the game logic and communicates with the AccountService and WordService.
+**Server**: Multithreaded TCP server, allowing up to 10 connections via ThreadPool, that handles the game logic and communicates with the AccountService and WordService.
 
 **Client**: TCP client that handles user input and communicates with the Server.
 
