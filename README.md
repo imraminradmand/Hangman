@@ -40,7 +40,8 @@ a given word.
 **Client**: TCP client that handles user input and communicates with the Server.
 
 ### Sequence Diagram
-![Sequence Diagram](https://user-images.githubusercontent.com/69999501/217164396-c457d588-c080-490b-b1f2-13f591bf9cf9.png)
+![Sequence Diagram](https://user-images.githubusercontent.com/69999501/217333895-4300829f-7d03-43ae-a306-891d0c7ea776.png)
+
 
 
 ### Communication Protocol Details
