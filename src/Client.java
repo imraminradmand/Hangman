@@ -2,28 +2,31 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.net.InetAddress;
 import java.net.Socket;
-import java.net.UnknownHostException;
 
 public class Client {
 
-  private static InetAddress host;
-  private static final int PORT = 5555;
   private static final String WORD_CHECK_USAGE = "? <word to check for>";
-
-  public Client() throws UnknownHostException {
+  private static final String CLIENT_USAGE = "java Client [host] [port]";
+  private Socket clientSocket;
+  public Client(String host, int port) {
+    try {
+      clientSocket = new Socket(host, port);
+    } catch (Exception e) {
+      e.printStackTrace();
+      System.exit(1);
+    }
+  }
+  private void run() {
     String username = "";
     String password = "";
 
-    host = InetAddress.getLocalHost();
     try {
-      Socket socket = new Socket(host, PORT);
       System.out.println("Connected");
 
       // Socket Side
-      BufferedReader socketIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-      PrintWriter socketOut = new PrintWriter(socket.getOutputStream(), true);
+      BufferedReader socketIn = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+      PrintWriter socketOut = new PrintWriter(clientSocket.getOutputStream(), true);
 
       // User input
       InputStreamReader inputStreamReader = new InputStreamReader(System.in);
@@ -81,7 +84,7 @@ public class Client {
         stdin.close();
         socketIn.close();
         socketOut.close();
-        socket.close();
+        clientSocket.close();
       } catch (IOException e) {
         System.out.println(e);
       }
@@ -153,7 +156,27 @@ public class Client {
     }
   }
 
-  public static void main(String[] args) throws UnknownHostException {
-    Client client = new Client();
+  public static void main(String[] args) throws IOException {
+    Client client;
+
+    if (args.length != 2) {
+      System.out.println(CLIENT_USAGE);
+      System.exit(1);
+    }
+
+    try {
+      client = new Client(
+          args[0],
+          Integer.parseInt(args[1])
+      );
+      client.run();
+    } catch (NumberFormatException e) {
+      System.err.println("Invalid port number: " + args[1] + ".");
+      System.exit(1);
+    } catch (Exception e) {
+      System.err.println(e.getMessage());
+      System.exit(1);
+    }
   }
+
 }
