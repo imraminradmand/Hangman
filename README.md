@@ -31,7 +31,8 @@ a given word.
 
 ## Protocol Design Document
 ### Sequence Diagram
-![Sequence Diagram]()
+![Sequence Diagram](https://user-images.githubusercontent.com/69999501/217164396-c457d588-c080-490b-b1f2-13f591bf9cf9.png)
+
 
 ### Communication Protocol Details
 
