@@ -81,6 +81,8 @@ public class ClientHandler implements Runnable {
 
         // TODO: Implement actual game logic here
         if (startArgs[0].equalsIgnoreCase("exit")) {
+          accountOut.println("exit");
+
           break;
         } else if (startArgs[0].equalsIgnoreCase("start") && startArgs.length == 3) {
           String word = responseFromWordRepository(buf, inputBuf, startRes, wordRepository);
@@ -242,9 +244,11 @@ public class ClientHandler implements Runnable {
               socketInput.close();
               clientSocket.close();
 
+              accountOut.println("exit");
               accountIn.close();
               accountOut.close();
               accountSocket.close();
+
               break;
             } else if (args[0].equalsIgnoreCase("login")) {
               accountOut.println("get " + args[1] + " " + args[2]);
@@ -256,7 +260,7 @@ public class ClientHandler implements Runnable {
               // TODO: add else so that if account doesn't exist they have to register for account
               if (!accountResponse.equals("!noaccount!")) {
                 play(socketInput, socketOutput, accountIn, accountOut, args);
-                break;
+                return;
               }
 
               // TODO: Check for successful registration then start game
@@ -272,7 +276,7 @@ public class ClientHandler implements Runnable {
                 if (accountResponse.equals("!success!")) {
                   socketOutput.println(accountResponse);
                   play(socketInput, socketOutput, accountIn, accountOut, args);
-                  break;
+                  return;
                 } else {
                   socketOutput.println("!fail!");
                 }
@@ -291,8 +295,10 @@ public class ClientHandler implements Runnable {
       // socketInput.close();
       // socketOutput.close();
       // clientSocket.close();
+
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
+    System.out.println("complete");
   }
 }

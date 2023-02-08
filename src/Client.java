@@ -46,6 +46,7 @@ public class Client {
 
           // Break from loop if "EXIT" is input
           if (userInput.equalsIgnoreCase("EXIT")) {
+            socketOut.println("exit");
             System.out.println("Closing connection...");
             break;
           } else if (clientArgs[0].equalsIgnoreCase("login")) {
@@ -107,9 +108,8 @@ public class Client {
       String[] resArgs = res.split(" ");
 
       if(resArgs[0].equalsIgnoreCase("exit")){
-        socketOut.close();
-        socketIn.close();
-        clientSocket.close();
+        socketOut.println("exit");
+
         break;
       } else if (resArgs[0].equals("start")) {
         socketOut.println(res);
