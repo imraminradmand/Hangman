@@ -33,7 +33,7 @@ a given word.
 ### Service Descriptions:
 **AccountService**: Multithreaded TCP server, allowing up to 10 connections via ThreadPool, that handles user login and registration. It also keeps track of user scores.
 
-**WordService**: UDP server that acts as a word repository for the game, allowing the server to add, remove, and check if a word exists in the repository.
+**WordService**: Multithreaded UDP server that acts as a word repository for the game, allowing the server to add, remove, and check if a word exists in the repository.
 
 **Server**: Multithreaded TCP server, allowing up to 10 connections via ThreadPool, that handles the game logic and communicates with the AccountService and WordService.
 
