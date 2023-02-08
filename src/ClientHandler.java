@@ -69,124 +69,130 @@ public class ClientHandler implements Runnable {
       String[] args) throws IOException {
     while (true) {
       socketOutput.println(
-          "Start new game with the following command - start <number of words> <attempts>");
+              "Start new game with the following command - start <number of words> <attempts>");
       String startRes = socketInput.readLine();
-      String[] startArgs = startRes.split(" ");
+      if(startRes != null) {
+        String[] startArgs = startRes.split(" ");
 
-      // make UDP connection to word repository
-      DatagramSocket wordRepository = new DatagramSocket();
-      byte[] buf = new byte[256];
-      byte[] inputBuf = new byte[256];
+        // make UDP connection to word repository
+        DatagramSocket wordRepository = new DatagramSocket();
+        byte[] buf = new byte[256];
+        byte[] inputBuf = new byte[256];
 
-      // TODO: Implement actual game logic here
-      if (startArgs[0].equalsIgnoreCase("start") && startArgs.length == 3) {
-        String word = responseFromWordRepository(buf, inputBuf, startRes, wordRepository);
+        // TODO: Implement actual game logic here
+        if (startArgs[0].equalsIgnoreCase("exit")) {
+          break;
+        } else if (startArgs[0].equalsIgnoreCase("start") && startArgs.length == 3) {
+          String word = responseFromWordRepository(buf, inputBuf, startRes, wordRepository);
 
-        int counter = Integer.parseInt(startArgs[1]) * Integer.parseInt(startArgs[2]);
-        String display = word.replaceAll("[A-z]", "-");
-        display = display + " C" + counter;
-        String newDisplay = display;
-        ArrayList<String> guessed = new ArrayList<>();
-        boolean gameOver = false;
-        socketOutput.println(
-            newDisplay + " " + "Guess a letter of the phrase or guess the phrase:");
-        System.out.println(word);
-        while (!gameOver) {
-          String message = "";
-          //socketOutput.println(newDisplay + " " + "Guess a letter of the phrase or guess the phrase:");
+          int counter = Integer.parseInt(startArgs[1]) * Integer.parseInt(startArgs[2]);
+          String display = word.replaceAll("[A-z]", "-");
+          display = display + " C" + counter;
+          String newDisplay = display;
+          ArrayList<String> guessed = new ArrayList<>();
+          boolean gameOver = false;
+          socketOutput.println(
+                  newDisplay + " " + "Guess a letter of the phrase or guess the phrase:");
+          System.out.println(word);
+          while (!gameOver) {
+            String message = "";
+            //socketOutput.println(newDisplay + " " + "Guess a letter of the phrase or guess the phrase:");
 
-          if (!display.contains("-")) {
-            break;
-          }
-
-          String playRes = socketInput.readLine();
-          String[] playArgs = playRes.split(" ");
-
-          // Check if word exists
-          if (playRes.charAt(0) == '?') {
-            if (playArgs.length == 2) {
-              message = playArgs[1] + ": " + checkWord(buf, inputBuf, playRes, wordRepository);
-            } else {
-              message = "error";
+            if (!display.contains("-")) {
+              break;
             }
 
-            // Get score
-          } else if (playRes.charAt(0) == '$') {
-            message = checkScore(accountOut, accountIn, playArgs);
+            String playRes = socketInput.readLine();
+            String[] playArgs = playRes.split(" ");
 
-            // End game
-          } else if (playRes.charAt(0) == '#') {
-            gameOver = true;
-            message = "#" + word;
-            socketOutput.println(message);
-            //do a guess
-          } else {
-
-            //if only a letter, guess letter
-            if (playRes.length() == 1) {
-              if (guessed.contains(playRes)) {
-                message = "You have already guessed this letter, try again!";
-                socketOutput.println(message);
-                continue;
-              }
-              newDisplay = "";
-              for (int i = 0; i < word.length(); i++) {
-                if (word.charAt(i) == playRes.charAt(0)) {
-                  newDisplay += playRes.charAt(0);
-                } else if (display.charAt(i) != '-') {
-                  newDisplay += word.charAt(i);
-                } else {
-                  newDisplay += "-";
-                }
-
-              }
-              if (!word.contains(playRes)) {
-                counter--;
-              }
-              guessed.add(playRes);
-              newDisplay = newDisplay + " C" + counter;
-              display = newDisplay;
-              message = display + " Guess a letter of the phrase or guess the phrase:";
-
-              if (!newDisplay.contains("-")) {
-                socketOutput.println("!");
-                updateScore(accountIn, accountOut, args);
-                break;
-              } else if (counter == 0) {
-
-                break;
-              }
-            } else {
-
-              //if phrase is right, win game
-              if (playRes.equalsIgnoreCase(word)) {
-                gameOver = true;
-                message = "!";
-                updateScore(accountIn, accountOut, args);
-
-                //if phrase is wrong, try again
+            // Check if word exists
+            if (playRes.charAt(0) == '?') {
+              if (playArgs.length == 2) {
+                message = playArgs[1] + ": " + checkWord(buf, inputBuf, playRes, wordRepository);
               } else {
-                counter--;
-                if (counter != 0) {
-                  message = "Incorrect, try again! C" + counter;
-                }
+                message = "error";
               }
 
+              // Get score
+            } else if (playRes.charAt(0) == '$') {
+              message = checkScore(accountOut, accountIn, playArgs);
+
+              // End game
+            } else if (playRes.charAt(0) == '#') {
+              gameOver = true;
+              message = "#" + word;
+              socketOutput.println(message);
+              //do a guess
+            } else {
+
+              //if only a letter, guess letter
+              if (playRes.length() == 1) {
+                if (guessed.contains(playRes)) {
+                  message = "You have already guessed this letter, try again!";
+                  socketOutput.println(message);
+                  continue;
+                }
+                newDisplay = "";
+                for (int i = 0; i < word.length(); i++) {
+                  if (word.charAt(i) == playRes.charAt(0)) {
+                    newDisplay += playRes.charAt(0);
+                  } else if (display.charAt(i) != '-') {
+                    newDisplay += word.charAt(i);
+                  } else {
+                    newDisplay += "-";
+                  }
+
+                }
+                if (!word.contains(playRes)) {
+                  counter--;
+                }
+                guessed.add(playRes);
+                newDisplay = newDisplay + " C" + counter;
+                display = newDisplay;
+                message = display + " Guess a letter of the phrase or guess the phrase:";
+
+                if (!newDisplay.contains("-")) {
+                  socketOutput.println("!");
+                  updateScore(accountIn, accountOut, args);
+                  break;
+                } else if (counter == 0) {
+
+                  break;
+                }
+              } else {
+
+                //if phrase is right, win game
+                if (playRes.equalsIgnoreCase(word)) {
+                  gameOver = true;
+                  message = "!";
+                  updateScore(accountIn, accountOut, args);
+
+                  //if phrase is wrong, try again
+                } else {
+                  counter--;
+                  if (counter != 0) {
+                    message = "Incorrect, try again! C" + counter;
+                  }
+                }
+
+              }
             }
+
+            socketOutput.println(message);
           }
+
+        } else if (startArgs[0].equalsIgnoreCase("$")) {
+          String message = checkScore(accountOut, accountIn, startArgs);
           socketOutput.println(message);
+        } else if (startArgs[0].equalsIgnoreCase("?")) {
+          String message = checkWord(buf, inputBuf, startRes, wordRepository);
+          socketOutput.println(message);
+        } else if (startRes.equalsIgnoreCase("#")) {
+          socketOutput.println("Exiting...");
+          System.out.println("Client disconnected: " + clientSocket);
+        } else {
+          socketOutput.println("Invalid command");
         }
-      } else if (startArgs[0].equalsIgnoreCase("$")) {
-        String message = checkScore(accountOut, accountIn, startArgs);
-        socketOutput.println(message);
-      } else if (startArgs[0].equalsIgnoreCase("?")) {
-        String message = checkWord(buf, inputBuf, startRes, wordRepository);
-        socketOutput.println(message);
-      } else if (startRes.equalsIgnoreCase("#")) {
-        socketOutput.println("Exiting...");
-        System.out.println("Client disconnected: " + clientSocket);
-      } else {
-        socketOutput.println("Invalid command");
       }
     }
   }
@@ -227,33 +233,56 @@ public class ClientHandler implements Runnable {
           socketOutput.println("Instruction: <login/register> <username> <password> OR EXIT");
           // Initial prompt and read response
           clientResponse = socketInput.readLine();
-          String[] args = clientResponse.split(" ");
 
-          if (args[0].equalsIgnoreCase("login")) {
-            accountOut.println("get " + args[1] + " " + args[2]);
+          if(clientResponse != null) {
+            String[] args = clientResponse.split(" ");
 
-            String accountResponse = accountIn.readLine();
-            socketOutput.println(accountResponse);
+            if (args[0].equalsIgnoreCase("exit")) {
+              socketOutput.close();
+              socketInput.close();
+              clientSocket.close();
 
-            // PLAY GAME
-            // TODO: add else so that if account doesn't exist they have to register for account
-            if (!accountResponse.equals("!noaccount!")) {
-              play(socketInput, socketOutput, accountIn, accountOut, args);
+              accountIn.close();
+              accountOut.close();
+              accountSocket.close();
+              break;
+            } else if (args[0].equalsIgnoreCase("login")) {
+              accountOut.println("get " + args[1] + " " + args[2]);
+
+              String accountResponse = accountIn.readLine();
+              socketOutput.println(accountResponse);
+
+              // PLAY GAME
+              // TODO: add else so that if account doesn't exist they have to register for account
+              if (!accountResponse.equals("!noaccount!")) {
+                play(socketInput, socketOutput, accountIn, accountOut, args);
+                break;
+              }
+
+              // TODO: Check for successful registration then start game
+            } else if (args[0].equalsIgnoreCase("register")) {
+              accountOut.println("get " + args[1] + " " + args[2]);
+
+              if (accountIn.readLine().equals("!noaccount!")) {
+
+                accountOut.println("post " + args[1] + " " + args[2] + " 0");
+                String accountResponse = accountIn.readLine();
+
+
+                if (accountResponse.equals("!success!")) {
+                  socketOutput.println(accountResponse);
+                  play(socketInput, socketOutput, accountIn, accountOut, args);
+                  break;
+                } else {
+                  socketOutput.println("!fail!");
+                }
+              } else {
+                socketOutput.println("!fail!");
+              }
+            } else {
+              socketOutput.println("Unknown Command, try again");
             }
-
-            // TODO: Check for successful registration then start game
-          } else if (args[0].equalsIgnoreCase("register")) {
-            accountOut.println("post " + args[1] + " " + args[2] + " 0");
-            String accountResponse = accountIn.readLine();
-            socketOutput.println(accountResponse);
-
-            if (accountResponse.equals("!success!")) {
-              play(socketInput, socketOutput, accountIn, accountOut, args);
-            }
-          } else {
-            socketOutput.println("Unknown Command, try again");
           }
-
         } catch (IOException e) {
           throw new RuntimeException(e);
         }

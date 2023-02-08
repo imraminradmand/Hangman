@@ -54,9 +54,10 @@ public class Client {
             password = clientArgs[2];
 
             // PLAY GAME
-            if (socketIn.readLine() != null) {
+            if (!socketIn.readLine().equals("!noaccount!")) {
               System.out.println("Welcome back, " + username + "!");
               play(socketIn, stdin, socketOut, username, password);
+              break;
             }
 
           } else if (clientArgs[0].equalsIgnoreCase("register")) {
@@ -64,8 +65,9 @@ public class Client {
             username = clientArgs[1];
             password = clientArgs[2];
 
-            if (socketIn.readLine().equalsIgnoreCase("!success!")) {
+            if (!socketIn.readLine().equalsIgnoreCase("!fail!")) {
               play(socketIn, stdin, socketOut, username, password);
+              break;
             }
           }
           // Invalid input
@@ -104,7 +106,12 @@ public class Client {
       String res = stdin.readLine();
       String[] resArgs = res.split(" ");
 
-      if (resArgs[0].equals("start")) {
+      if(resArgs[0].equalsIgnoreCase("exit")){
+        socketOut.close();
+        socketIn.close();
+        clientSocket.close();
+        break;
+      } else if (resArgs[0].equals("start")) {
         socketOut.println(res);
         System.out.println(socketIn.readLine());
         boolean gameOver = false;
