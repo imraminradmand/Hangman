@@ -54,7 +54,7 @@ public class Client {
             password = clientArgs[2];
 
             // PLAY GAME
-            if (socketIn.readLine() != null) {
+            if (!socketIn.readLine().equals("!noaccount!")) {
               System.out.println("Welcome back, " + username + "!");
               play(socketIn, stdin, socketOut, username, password);
             }
@@ -64,7 +64,7 @@ public class Client {
             username = clientArgs[1];
             password = clientArgs[2];
 
-            if (socketIn.readLine().equalsIgnoreCase("!success!")) {
+            if (!socketIn.readLine().equalsIgnoreCase("!fail!")) {
               play(socketIn, stdin, socketOut, username, password);
             }
           }
