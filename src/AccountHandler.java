@@ -11,7 +11,7 @@ public class AccountHandler implements Runnable{
 
 
     @Override
-    public void run() {
+    public synchronized void run() {
         try {
             InputStreamReader socketInputReader = new InputStreamReader(socket.getInputStream());
             OutputStream socketOutStream = socket.getOutputStream();
@@ -25,6 +25,12 @@ public class AccountHandler implements Runnable{
                 if (clientResponse != null) {
                     String[] clientArgs = clientResponse.split(" ");
 
+                    if (clientArgs[0].equals("exit")){
+                        socketOutput.close();
+                        socketInput.close();
+                        socket.close();
+                        return;
+                    }
 
                     if (clientArgs[0].equalsIgnoreCase("get")) {
                         File myObj = new File("users.txt");
