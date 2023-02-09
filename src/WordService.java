@@ -27,6 +27,7 @@ import java.util.StringJoiner;
 public class WordService {
   private static final ArrayList<String> words = new ArrayList<>();
   private final DatagramSocket socket;
+  private static final int PORT = 5599;
 
   public WordService(int port) throws SocketException {
     socket = new DatagramSocket(port);
@@ -39,24 +40,8 @@ public class WordService {
       }
       writer.flush();
     } catch (IOException e) {
-      e.printStackTrace();
+      System.err.println("Error writing words.txt file: " + e.getMessage());
     }
-  }
-  private String getRandomWord(int requestedLength) {
-    String res = "";
-    List<String> wordsOfRequestSize = new ArrayList<>();
-
-    for (String word : words) {
-      if (word.length() == requestedLength) {
-        wordsOfRequestSize.add(word);
-      }
-    }
-
-    for (int i = 0; i < wordsOfRequestSize.size(); i++) {
-      int rand = (int)((Math.random() * (wordsOfRequestSize.size() - 1)) + 1);
-      res = wordsOfRequestSize.get(rand).toLowerCase();
-    }
-    return res;
   }
 
   private String getPhrase(int length) {
@@ -108,7 +93,7 @@ public class WordService {
         words.add(line);
       }
     } catch (IOException e) {
-      e.printStackTrace();
+      System.err.println("Error reading words.txt file: " + e.getMessage());
     }
   }
 
@@ -143,28 +128,25 @@ public class WordService {
 
         DatagramPacket reply = new DatagramPacket(outputBuffer, outputBuffer.length, requestAddress, requestPort);
         socket.send(reply);
-        System.out.println(words.size());
 
       } catch (IOException e) {
-        throw new RuntimeException(e);
+        System.err.println("An error occurred while receiving or sending a packet: " + e.getMessage());
+      } catch (NumberFormatException e) {
+        System.err.println("Invalid input for the length of the phrase: " + e.getMessage());
+      } catch (ArrayIndexOutOfBoundsException e) {
+        System.err.println("Not enough arguments were provided in the request: " + e.getMessage());
       }
     }
   }
   public static void main(String[] args) {
-//    if (args.length != 1) {
-//      System.exit(1);
-//    }
-
     initializeArrayList();
-
-//    int port = 0;
     WordService wordService;
 
     try {
-//      port = Integer.parseInt(args[0]);
-      wordService = new WordService(5599);
+      wordService = new WordService(PORT);
     } catch (SocketException e) {
-      throw new RuntimeException(e);
+      System.err.println("Failed to start WordService on port " + PORT + " due to: " + e.getMessage());
+      throw new RuntimeException("Failed to start WordService", e);
     }
 
     wordService.serve();
