@@ -10,6 +10,17 @@ public class AccountHandler implements Runnable{
     }
 
 
+    /*
+    * Main function
+    *
+    * In this function we use the synchronized keyword. The solution may seem that it contradicts the point of parallelization, but sockets aren't thread safe when
+    * they are shared with different threads. In this function we do file IO which requires thread synchronization, thus by synchronizing the function we are allowing
+    * a single thread to read/write to the file at once.
+    *
+    * The reasoning we use the thread pool is that it allows the server to stay open with the account server in a one-to-one relationship as long as the client is connected.
+    * Once the client disconnects the server is automatically shutdown and the thread is released back to the thread pool to handle another client.
+    *
+    * */
     @Override
     public synchronized void run() {
         try {

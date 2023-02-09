@@ -20,7 +20,9 @@ public class AccountsService {
                                 it will return !noaccount!
     POST <username> <password> <score> - This will return !success! if it is successful, if it fails there is no output.
 
-    Because this implementation is a single threaded TCP server, there is no need for synchronization.
+    Since sharing sockets among different threads aren't safe, the solution was to create a thread pool that delegates the work by creating separate client/server sockets.
+
+
      */
     public static void main(String[] args) throws IOException {
         ServerSocket serverSocket;
