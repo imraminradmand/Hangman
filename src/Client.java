@@ -146,8 +146,8 @@ public class Client {
 
           if (display.charAt(0) == ('#')) {
             System.out.println("You lose, phrase was: " + display.replace("#", ""));
-            gameOver = true;
-
+            System.out.println("Exiting...");
+            return;
           } else if (display.charAt(0) == ('!')) {
             System.out.println("You win!");
             gameOver = true;
