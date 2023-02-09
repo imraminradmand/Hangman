@@ -11,7 +11,9 @@ public class AccountsService {
     /*
     Main function:
 
+    This method handles the creation of the user file if it doesn't exist but also creates the thread pool that will be used to handle each server instance.
 
+    When a client is accepted the socket is passed into a separate thread so that file IO can be properly handled.
 
      */
     public static void main(String[] args) throws IOException {
