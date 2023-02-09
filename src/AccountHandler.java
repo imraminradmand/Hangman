@@ -26,10 +26,7 @@ public class AccountHandler implements Runnable{
                     String[] clientArgs = clientResponse.split(" ");
 
                     if (clientArgs[0].equals("exit")){
-                        socketOutput.close();
-                        socketInput.close();
-                        socket.close();
-                        return;
+                        break;
                     }
 
                     if (clientArgs[0].equalsIgnoreCase("get")) {
@@ -83,6 +80,9 @@ public class AccountHandler implements Runnable{
                     }
                 }
             }
+            socketOutput.close();
+            socketInput.close();
+            socket.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

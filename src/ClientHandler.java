@@ -242,14 +242,7 @@ public class ClientHandler implements Runnable {
             String[] args = clientResponse.split(" ");
 
             if (args[0].equalsIgnoreCase("exit")) {
-              socketOutput.close();
-              socketInput.close();
-              clientSocket.close();
-
               accountOut.println("exit");
-              accountIn.close();
-              accountOut.close();
-              accountSocket.close();
 
               break;
             } else if (args[0].equalsIgnoreCase("login")) {
@@ -294,10 +287,13 @@ public class ClientHandler implements Runnable {
         }
       }
       // Close connection
-      // socketInput.close();
-      // socketOutput.close();
-      // clientSocket.close();
+       socketInput.close();
+       socketOutput.close();
+       clientSocket.close();
 
+       accountIn.close();
+       accountOut.close();
+       accountSocket.close();
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
