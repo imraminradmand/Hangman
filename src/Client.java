@@ -139,6 +139,10 @@ public class Client {
               System.out.println(WORD_CHECK_USAGE);
               play = stdin.readLine();
             }
+          } else if (play.equalsIgnoreCase("!")) {
+            socketOut.println(play);
+            System.out.println(socketIn.readLine());
+            break;
           }
 
           socketOut.println(play);
