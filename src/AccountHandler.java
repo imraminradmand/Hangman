@@ -53,7 +53,7 @@ public class AccountHandler implements Runnable{
     /*
     * METHOD: fileIO
     *
-    * Purpose: The main function that controls thread syncrhonization for file IO (makes sure that only one thread can write or read at once).
+    * Purpose: The main function that controls thread synchronization for file IO (makes sure that only one thread can write or read at once).
     *
     * */
     private synchronized String fileIO(String[] clientArgs) throws IOException {
