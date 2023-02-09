@@ -44,6 +44,12 @@ public class Client {
           userInput = stdin.readLine();
           String[] clientArgs = userInput.split(" ");
 
+          while (clientArgs.length < 3 && !userInput.equalsIgnoreCase("exit")){
+            System.out.println(prompt);
+            userInput = stdin.readLine();
+            clientArgs = userInput.split(" ");
+          }
+
           // Break from loop if "EXIT" is input
           if (userInput.equalsIgnoreCase("EXIT")) {
             socketOut.println("exit");
