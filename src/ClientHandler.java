@@ -127,6 +127,8 @@ public class ClientHandler implements Runnable {
             } else if (playRes.charAt(0) == '!') {
               socketOutput.println("Starting new game...");
               break;
+            } else if (playArgs[0].equalsIgnoreCase("+") || playArgs[0].equalsIgnoreCase("-")) {
+              message = responseFromWordRepository(buf, inputBuf, playRes, wordRepository);
             } else {
 
               //if only a letter, guess letter
