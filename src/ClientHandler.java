@@ -120,9 +120,9 @@ public class ClientHandler implements Runnable {
 
               // End game
             } else if (playRes.charAt(0) == '#') {
-              gameOver = true;
               message = "#" + word;
               socketOutput.println(message);
+              return;
               //do a guess
             } else {
 
