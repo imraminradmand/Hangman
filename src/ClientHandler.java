@@ -61,7 +61,6 @@ public class ClientHandler implements Runnable {
     return new String(wordRepoReply.getData(), 0, wordRepoReply.getLength());
   }
 
-
   private void play(BufferedReader socketInput,
       PrintWriter socketOutput,
       BufferedReader accountIn,
@@ -190,6 +189,9 @@ public class ClientHandler implements Runnable {
         } else if (startRes.equalsIgnoreCase("#")) {
           socketOutput.println("Exiting...");
           System.out.println("Client disconnected: " + clientSocket);
+        } else if (startArgs[0].equalsIgnoreCase("+") || startArgs[0].equalsIgnoreCase("-")) {
+          String message = responseFromWordRepository(buf, inputBuf, startRes, wordRepository);
+          socketOutput.println(message);
         } else {
           socketOutput.println("Invalid command");
         }

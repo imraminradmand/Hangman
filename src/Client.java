@@ -159,6 +159,9 @@ public class Client {
       } else if (res.equalsIgnoreCase("#")) {
         socketOut.println(res);
         break;
+      } else if (resArgs[0].equalsIgnoreCase("+") || resArgs[0].equalsIgnoreCase("-")) {
+        socketOut.println(res);
+        System.out.println(socketIn.readLine());
       }
     }
   }

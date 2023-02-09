@@ -1,5 +1,6 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -29,6 +30,17 @@ public class WordService {
 
   public WordService(int port) throws SocketException {
     socket = new DatagramSocket(port);
+  }
+
+  private void writeOut() {
+    try (FileWriter writer = new FileWriter("src/resources/words.txt")) {
+      for (String str : words) {
+        writer.write(str + System.lineSeparator());
+      }
+      writer.flush();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
   }
   private String getRandomWord(int requestedLength) {
     String res = "";
@@ -64,12 +76,23 @@ public class WordService {
     return phrase.toString().toLowerCase();
   }
 
-  private void addWord(String word) {
+  private synchronized String addWord(String word) {
+    if (wordExists(word).equals("true")) {
+      return "word exists";
+    }
+
     words.add(word);
+    writeOut();
+    return "word added";
   }
 
-  private void removeWord(String word) {
-    words.remove(word);
+  private synchronized String removeWord(String word) {
+    if (wordExists(word).equals("true")) {
+      words.remove(word);
+      writeOut();
+      return "word removed";
+    }
+    return "word does not exist";
   }
 
   private String wordExists(String word) {
@@ -112,10 +135,15 @@ public class WordService {
         } else if (requestArgs[0].equals("?")) {
           System.out.println("word exists: " + wordExists(requestArgs[1]));
           outputBuffer = wordExists(requestArgs[1]).getBytes();
+        } else if (requestArgs[0].equalsIgnoreCase("+")) {
+          outputBuffer = addWord(requestArgs[1]).getBytes();
+        } else if (requestArgs[0].equalsIgnoreCase("-")) {
+          outputBuffer = removeWord(requestArgs[1]).getBytes();
         }
 
         DatagramPacket reply = new DatagramPacket(outputBuffer, outputBuffer.length, requestAddress, requestPort);
         socket.send(reply);
+        System.out.println(words.size());
 
       } catch (IOException e) {
         throw new RuntimeException(e);
