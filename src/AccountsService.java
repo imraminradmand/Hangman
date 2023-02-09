@@ -11,16 +11,10 @@ public class AccountsService {
     /*
     Main function:
 
-    The goal of this function is to run the server that fetched from the users.txt file on the machine.
+    This method handles the creation of the user file if it doesn't exist but also creates the thread pool that will be used to handle each server instance.
 
-    This implementation is RESTful, in other words using GET and POST methods.
+    When a client is accepted the socket is passed into a separate thread so that file IO can be properly handled.
 
-    The protocol that is implemented follows as:
-    GET <username> <password> - The return statement pass through the socket will either be the user's score or if the account does not exist
-                                it will return !noaccount!
-    POST <username> <password> <score> - This will return !success! if it is successful, if it fails there is no output.
-
-    Because this implementation is a single threaded TCP server, there is no need for synchronization.
      */
     public static void main(String[] args) throws IOException {
         ServerSocket serverSocket;
