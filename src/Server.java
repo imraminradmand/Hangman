@@ -1,11 +1,10 @@
-import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class Server {
-  public static void main(String[] args) throws IOException {
+  public static void main(String[] args) {
     if (args.length != 1) {
       System.exit(1);
     }
@@ -15,7 +14,7 @@ public class Server {
 
     try {
       port = Integer.parseInt(args[0]);
-      serverSocket = new ServerSocket(5555);
+      serverSocket = new ServerSocket(port);
       System.out.println("Server is running...");
       ExecutorService fixedThreadPool = Executors.newFixedThreadPool(10);
 
