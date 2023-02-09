@@ -11,7 +11,7 @@ public class AccountHandler implements Runnable{
 
 
     @Override
-    public void run() {
+    public synchronized void run() {
         try {
             InputStreamReader socketInputReader = new InputStreamReader(socket.getInputStream());
             OutputStream socketOutStream = socket.getOutputStream();

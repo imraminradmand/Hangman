@@ -6,5 +6,5 @@ tester007 1234 0
 qwerty 12345 0
 ramin009 1234 100
 ramin 1234 1200
-tate 123 0
 gate 123 100
+tate 123 200
