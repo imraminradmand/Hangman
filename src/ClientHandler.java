@@ -68,9 +68,9 @@ public class ClientHandler implements Runnable {
       String[] args) throws IOException {
     while (true) {
       socketOutput.println(
-              "Start new game with the following command - start <number of words> <attempts>");
+          "Start new game with the following command - start <number of words> <attempts>");
       String startRes = socketInput.readLine();
-      if(startRes != null) {
+      if (startRes != null) {
         String[] startArgs = startRes.split(" ");
 
         // make UDP connection to word repository
@@ -93,7 +93,7 @@ public class ClientHandler implements Runnable {
           ArrayList<String> guessed = new ArrayList<>();
           boolean gameOver = false;
           socketOutput.println(
-                  newDisplay + " " + "Guess a letter of the phrase or guess the phrase:");
+              newDisplay + " " + "Guess a letter of the phrase or guess the phrase:");
           System.out.println(word);
           while (!gameOver) {
             String message = "";
@@ -243,7 +243,7 @@ public class ClientHandler implements Runnable {
           // Initial prompt and read response
           clientResponse = socketInput.readLine();
 
-          if(clientResponse != null) {
+          if (clientResponse != null) {
             String[] args = clientResponse.split(" ");
 
             if (args[0].equalsIgnoreCase("exit")) {
@@ -272,7 +272,6 @@ public class ClientHandler implements Runnable {
                 accountOut.println("post " + args[1] + " " + args[2] + " 0");
                 String accountResponse = accountIn.readLine();
 
-
                 if (accountResponse.equals("!success!")) {
                   socketOutput.println(accountResponse);
                   play(socketInput, socketOutput, accountIn, accountOut, args);
@@ -288,20 +287,28 @@ public class ClientHandler implements Runnable {
             }
           }
         } catch (IOException e) {
-          throw new RuntimeException(e);
+          System.out.println("Error reading from input: " + e.getMessage());
+        } catch (ArrayIndexOutOfBoundsException e) {
+          System.out.println("Error processing input: Incorrect number of arguments");
+        } catch (Exception e) {
+          System.out.println("Unexpected error occurred: " + e.getMessage());
         }
       }
       // Close connection
-       socketInput.close();
-       socketOutput.close();
-       clientSocket.close();
+      socketInput.close();
+      socketOutput.close();
+      clientSocket.close();
 
-       accountIn.close();
-       accountOut.close();
-       accountSocket.close();
-    } catch (IOException e) {
-      throw new RuntimeException(e);
+      accountIn.close();
+      accountOut.close();
+      accountSocket.close();
+    } catch (Exception e) {
+      System.out.println("Unexpected error occurred: " + e.getMessage());
+      System.out.println("Error type: " + e.getClass().getName());
+      System.out.println("Stack trace:");
+      for (StackTraceElement element : e.getStackTrace()) {
+        System.out.println("\t" + element.toString());
+      }
     }
-    System.out.println("complete");
   }
 }

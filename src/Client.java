@@ -9,6 +9,7 @@ public class Client {
   private static final String WORD_CHECK_USAGE = "? <word to check for>";
   private static final String CLIENT_USAGE = "java Client [host] [port]";
   private Socket clientSocket;
+
   public Client(String host, int port) {
     try {
       clientSocket = new Socket(host, port);
@@ -17,6 +18,7 @@ public class Client {
       System.exit(1);
     }
   }
+
   private void run() {
     String username = "";
     String password = "";
@@ -25,7 +27,8 @@ public class Client {
       System.out.println("Connected");
 
       // Socket Side
-      BufferedReader socketIn = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+      BufferedReader socketIn = new BufferedReader(
+          new InputStreamReader(clientSocket.getInputStream()));
       PrintWriter socketOut = new PrintWriter(clientSocket.getOutputStream(), true);
 
       // User input
@@ -44,7 +47,7 @@ public class Client {
           userInput = stdin.readLine();
           String[] clientArgs = userInput.split(" ");
 
-          while (clientArgs.length < 3 && !userInput.equalsIgnoreCase("exit")){
+          while (clientArgs.length < 3 && !userInput.equalsIgnoreCase("exit")) {
             System.out.println(prompt);
             userInput = stdin.readLine();
             clientArgs = userInput.split(" ");
@@ -98,7 +101,11 @@ public class Client {
         System.out.println(e);
       }
     } catch (IOException e) {
-      throw new RuntimeException(e);
+      System.out.println("Error reading from input: " + e.getMessage());
+    } catch (ArrayIndexOutOfBoundsException e) {
+      System.out.println("Error processing input: Incorrect number of arguments");
+    } catch (Exception e) {
+      System.out.println("Unexpected error occurred: " + e.getMessage());
     }
   }
 
@@ -113,7 +120,7 @@ public class Client {
       String res = stdin.readLine();
       String[] resArgs = res.split(" ");
 
-      if(resArgs[0].equalsIgnoreCase("exit")){
+      if (resArgs[0].equalsIgnoreCase("exit")) {
         socketOut.println("exit");
 
         break;
@@ -177,7 +184,7 @@ public class Client {
     }
   }
 
-  public static void main(String[] args) throws IOException {
+  public static void main(String[] args) {
     Client client;
 
     if (args.length != 2) {
