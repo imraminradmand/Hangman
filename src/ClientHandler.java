@@ -150,7 +150,7 @@ public class ClientHandler implements Runnable {
                 guessed.add(playRes);
                 newDisplay = newDisplay + " C" + counter;
                 display = newDisplay;
-                message = display + " Guess a letter of the phrase or guess the phrase:";
+                message = display;
 
                 if (!newDisplay.contains("-")) {
                   socketOutput.println("!");

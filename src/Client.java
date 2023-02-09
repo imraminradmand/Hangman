@@ -148,6 +148,7 @@ public class Client {
           } else {
             System.out.println(display.replace("#", ""));
           }
+          System.out.println("Enter guess or a command: ");
         }
 
       } else if (resArgs[0].equals("?")) {
