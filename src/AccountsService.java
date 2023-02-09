@@ -33,7 +33,7 @@ public class AccountsService {
             serverSocket = new ServerSocket(7777);
 
             System.out.println("Server is running...");
-            ExecutorService fixedThreadPool = Executors.newFixedThreadPool(2);
+            ExecutorService fixedThreadPool = Executors.newFixedThreadPool(10);
 
             while (true) {
                fixedThreadPool.execute(new AccountHandler(serverSocket.accept()));

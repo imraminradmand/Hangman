@@ -17,7 +17,7 @@ public class Server {
       port = Integer.parseInt(args[0]);
       serverSocket = new ServerSocket(5555);
       System.out.println("Server is running...");
-      ExecutorService fixedThreadPool = Executors.newFixedThreadPool(2);
+      ExecutorService fixedThreadPool = Executors.newFixedThreadPool(10);
 
       while (true) {
         fixedThreadPool.execute(new ClientHandler(serverSocket.accept()));
