@@ -11,16 +11,6 @@ public class AccountsService {
     /*
     Main function:
 
-    The goal of this function is to run the server that fetched from the users.txt file on the machine.
-
-    This implementation is RESTful, in other words using GET and POST methods.
-
-    The protocol that is implemented follows as:
-    GET <username> <password> - The return statement pass through the socket will either be the user's score or if the account does not exist
-                                it will return !noaccount!
-    POST <username> <password> <score> - This will return !success! if it is successful, if it fails there is no output.
-
-    Since sharing sockets among different threads aren't safe, the solution was to create a thread pool that delegates the work by creating separate client/server sockets.
 
 
      */
