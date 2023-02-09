@@ -20,6 +20,8 @@ public class AccountHandler implements Runnable{
     * The reasoning we use the thread pool is that it allows the server to stay open with the account server in a one-to-one relationship as long as the client is connected.
     * Once the client disconnects the server is automatically shutdown and the thread is released back to the thread pool to handle another client.
     *
+    *
+    * The communication protocol is relatively straightforward and is outlined in the AccountsService file.
     * */
     @Override
     public synchronized void run() {
