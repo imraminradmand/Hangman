@@ -11,20 +11,19 @@ import java.util.List;
 import java.util.StringJoiner;
 
 /**
- * WordService is a UDP server that provides a word repository for the game.
- * It can return a random word of a given length, a random phrase of a given
- * length, add a word to the repository, remove a word from the repository,
- * and check if a word exists in the repository.
+ * WordService is a UDP server that provides a word repository for the game. It can return a random
+ * word of a given length, a random phrase of a given length, add a word to the repository, remove a
+ * word from the repository, and check if a word exists in the repository.
  * <p>
- *   The WordService is started by running the main method of this class.
- *   The port number is passed as a command line argument.
- *   The port number must be between 1024 and 65535.
- *   The word repository is initialized with the words in the file
- *   src/resources/words.txt.
+ * The WordService is started by running the main method of this class. The port number is passed as
+ * a command line argument. The port number must be between 1024 and 65535. The word repository is
+ * initialized with the words in the file src/resources/words.txt.
  * </p>
+ *
  * @author Ramin Radmand, Tate Greeves, Emily Allerdings
  */
 public class WordService {
+
   private static final ArrayList<String> words = new ArrayList<>();
   private final DatagramSocket socket;
   private static final int PORT = 5599;
@@ -82,10 +81,13 @@ public class WordService {
 
   private String wordExists(String word) {
     String res = "false";
-    if (words.contains(word)) res = "true";
+    if (words.contains(word)) {
+      res = "true";
+    }
 
     return res;
   }
+
   private static void initializeArrayList() {
     try (BufferedReader br = new BufferedReader(new FileReader("src/resources/words.txt"))) {
       String line;
@@ -126,11 +128,13 @@ public class WordService {
           outputBuffer = removeWord(requestArgs[1]).getBytes();
         }
 
-        DatagramPacket reply = new DatagramPacket(outputBuffer, outputBuffer.length, requestAddress, requestPort);
+        DatagramPacket reply = new DatagramPacket(outputBuffer, outputBuffer.length, requestAddress,
+            requestPort);
         socket.send(reply);
 
       } catch (IOException e) {
-        System.err.println("An error occurred while receiving or sending a packet: " + e.getMessage());
+        System.err.println(
+            "An error occurred while receiving or sending a packet: " + e.getMessage());
       } catch (NumberFormatException e) {
         System.err.println("Invalid input for the length of the phrase: " + e.getMessage());
       } catch (ArrayIndexOutOfBoundsException e) {
@@ -138,6 +142,7 @@ public class WordService {
       }
     }
   }
+
   public static void main(String[] args) {
     initializeArrayList();
     WordService wordService;
@@ -145,7 +150,8 @@ public class WordService {
     try {
       wordService = new WordService(PORT);
     } catch (SocketException e) {
-      System.err.println("Failed to start WordService on port " + PORT + " due to: " + e.getMessage());
+      System.err.println(
+          "Failed to start WordService on port " + PORT + " due to: " + e.getMessage());
       throw new RuntimeException("Failed to start WordService", e);
     }
 

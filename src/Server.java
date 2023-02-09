@@ -4,6 +4,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class Server {
+
   public static void main(String[] args) {
     if (args.length != 1) {
       System.exit(1);
@@ -23,7 +24,8 @@ public class Server {
       }
     } catch (IOException e) {
       System.out.println(
-              "Exception caught when trying to listen on port " + port + " or listening for a connection");
+          "Exception caught when trying to listen on port " + port
+              + " or listening for a connection");
       System.out.println(e.getMessage());
     }
   }
