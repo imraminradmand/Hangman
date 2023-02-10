@@ -62,7 +62,7 @@ public class ClientHandler implements Runnable {
 
             if (args[0].equalsIgnoreCase("exit")) {
               accountOut.println("exit");
-
+              System.out.println("Client at " + clientSocket + " has disconnected");
               break;
             } else if (args[0].equalsIgnoreCase("login")) {
               accountOut.println("get " + args[1] + " " + args[2]);

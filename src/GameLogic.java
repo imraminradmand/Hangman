@@ -160,7 +160,7 @@ public class GameLogic {
       int wordServicePort, Socket clientSocket) throws IOException {
     while (true) {
       socketOutput.println(
-          "Start new game with the following command - start <number of words> <attempts>");
+          "Start new game with the following command - start <number of words> <attempts> OR use exit to exit the game");
       String startRes = socketInput.readLine();
       if (startRes != null) {
         String[] startArgs = startRes.split(" ");
@@ -171,7 +171,7 @@ public class GameLogic {
 
         if (startArgs[0].equalsIgnoreCase("exit")) {
           accountOut.println("exit");
-
+          System.out.println("Client at " + clientSocket + " has disconnected");
           break;
         } else if (startArgs[0].equalsIgnoreCase("start") && startArgs.length == 3) {
           String word = responseFromWordRepository(inputBuf, startRes, wordRepository,
@@ -213,6 +213,7 @@ public class GameLogic {
             } else if (playRes.charAt(0) == '#') {
               message = "#" + word;
               socketOutput.println(message);
+              System.out.println("Client at " + clientSocket + " has disconnected");
               return;
             } else if (playRes.charAt(0) == '!') {
               socketOutput.println("Starting new game...");
