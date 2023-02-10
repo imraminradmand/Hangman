@@ -24,6 +24,9 @@ or remove a words from the repository, or check if the repository already contai
 a given word.
 
 ## How to run
+1. `javac ClientHandler.java`
+1. `javac AccountHandler.java`
+1. `javac GameLogic.java`
 1. `javac AccountService.java && java AccountService [port]`
 2. `javac WordService.java && java WordService [port]`
 3. `javac Server.java && java Server [port] [WordService port] [AccountService port]`

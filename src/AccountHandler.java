@@ -99,7 +99,7 @@ public class AccountHandler implements Runnable {
    * @throws FileNotFoundException if the file is not found
    */
   private String readFromFile(String[] clientArgs) throws FileNotFoundException {
-    File myObj = new File("users.txt");
+    File myObj = new File("../users.txt");
     Scanner myReader = new Scanner(myObj);
     String result = "!noaccount!";
     while (myReader.hasNextLine()) {
@@ -125,7 +125,7 @@ public class AccountHandler implements Runnable {
    * @throws IOException if error occurs during file write
    */
   private String writeToFile(String[] clientArgs) throws IOException {
-    File file = new File("users.txt");
+    File file = new File("../users.txt");
     Scanner myReader = new Scanner(file);
     ArrayList<String> lines = new ArrayList<>();
     while (myReader.hasNextLine()) {
@@ -145,7 +145,7 @@ public class AccountHandler implements Runnable {
     if (file.delete()) {
       file.createNewFile();
 
-      FileWriter writer = new FileWriter("users.txt");
+      FileWriter writer = new FileWriter("../users.txt");
       lines.add(clientArgs[1] + " " + clientArgs[2] + " " + clientArgs[3]);
 
       for (String s : lines) {

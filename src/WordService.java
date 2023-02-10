@@ -1,5 +1,4 @@
-import java.io.BufferedReader;
-import java.io.FileReader;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -8,6 +7,7 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 import java.util.StringJoiner;
 
 /**
@@ -39,13 +39,13 @@ public class WordService {
   }
 
   /**
-   * Writes the list of words to a text file, "src/resources/words.txt". If an IOException is
+   * Writes the list of words to a text file, "words.txt". If an IOException is
    * thrown, a message is printed to the error stream.
    *
    * @throws IOException if an error occurs while writing the file
    */
   private void writeOut() {
-    try (FileWriter writer = new FileWriter("src/resources/words.txt")) {
+    try (FileWriter writer = new FileWriter("../words.txt")) {
       for (String str : words) {
         writer.write(str + System.lineSeparator());
       }
@@ -120,14 +120,15 @@ public class WordService {
   }
 
   /**
-   * Reads the words.txt file from "src/resources/words.txt", and initializes the words ArrayList
-   * that is used for the WordService functionality.
+   * Reads the words.txt file, and initializes the words ArrayList that is used for the WordService
+   * functionality.
    */
   private static void initializeArrayList() {
-    try (BufferedReader br = new BufferedReader(new FileReader("src/resources/words.txt"))) {
-      String line;
-      while ((line = br.readLine()) != null) {
-        words.add(line);
+    try {
+      File myObj = new File("../words.txt");
+      Scanner myReader = new Scanner(myObj);
+      while (myReader.hasNextLine()) {
+        words.add(myReader.nextLine());
       }
     } catch (IOException e) {
       System.err.println("Error reading words.txt file: " + e.getMessage());
