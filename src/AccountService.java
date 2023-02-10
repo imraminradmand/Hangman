@@ -12,7 +12,7 @@ import java.util.concurrent.Executors;
  * @author Tate Greeves, Ramin Radmand, Emily Allerdings
  */
 
-public class AccountsService {
+public class AccountService {
 
   private static final String USAGE = "java AccountService [port]";
 
