@@ -1,11 +1,5 @@
 # Hangman V1.0
 
-## How to run
- 1. `javac AccountService.java && java AccountService`
- 2. `javac WordService.java && java WordService`
- 3. `javac Server.java && java Server [port]`
- 4. `javac Client.java && java Client [port]`
- 
 ## Description
 For this assignment, you must develop a client-server distributed application in
 Java for a phrase guessing game. The client connects to the server and specifies
@@ -29,11 +23,17 @@ Unix words file. The server must allow the client to add words to the repository
 or remove a words from the repository, or check if the repository already contains
 a given word.
 
+## How to run
+1. `javac AccountService.java && java AccountService [port]`
+2. `javac WordService.java && java WordService [port]`
+3. `javac Server.java && java Server [port] [WordService port] [AccountService port]`
+4. `javac Client.java && java Client [port]`
+
 ## Protocol Design Document
 ### Service Descriptions:
 **AccountService**: Multithreaded TCP server, allowing up to 10 connections via ThreadPool, that handles user login and registration. It also keeps track of user scores.
 
-**WordService**: Multithreaded UDP server that acts as a word repository for the game, allowing the server to add, remove, and check if a word exists in the repository.
+**WordService**: UDP server that acts as a word repository for the game, allowing the server to add, remove, and check if a word exists in the repository.
 
 **Server**: Multithreaded TCP server, allowing up to 10 connections via ThreadPool, that handles the game logic and communicates with the AccountService and WordService.
 
@@ -59,6 +59,8 @@ At any point the client can send a message to the server with the following form
 
 `? <word>` - Where word is the word the user wants to check if it exists in the collection.
 `$` - Check their score.
+`+ <word>` - Where word is the word the user wants to add to the collection.
+`- <word>` - Where word is the word the user wants to remove from the collection.
 `#` - Exit the game.
 
 Once the client starts a game, they will also have access to the following command:
@@ -97,6 +99,10 @@ The server will establish a connection with the WordService over UDP. The server
 `start <i>` - Where i is the number of phrases a user wants. The server will then receive a list of phrases from the WordService.
 
 `? <word>` - Where word is the word the user wants to check if it exists in the collection. The server will then receive a `true` or `false` from the WordService.
+
+`+ <word>` - Where word is the word the user wants to add to the collection. The server will then receive a `word added` or `word exists` from the WordService.
+
+`- <word>` - Where word is the word the user wants to remove from the collection. The server will then receive a `word removed` or `word doesn't exist` from the WordService.
 
 
 
