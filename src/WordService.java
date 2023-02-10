@@ -28,10 +28,22 @@ public class WordService {
   private final DatagramSocket socket;
   private static final String USAGE = "java WordService [port]";
 
+  /**
+   * Constructs a new WordService object that listens on the specified port.
+   *
+   * @param port the port number to listen on
+   * @throws SocketException if there is an error in the underlying protocol
+   */
   public WordService(int port) throws SocketException {
     socket = new DatagramSocket(port);
   }
 
+  /**
+   * Writes the list of words to a text file, "src/resources/words.txt". If an IOException is
+   * thrown, a message is printed to the error stream.
+   *
+   * @throws IOException if an error occurs while writing the file
+   */
   private void writeOut() {
     try (FileWriter writer = new FileWriter("src/resources/words.txt")) {
       for (String str : words) {
@@ -43,11 +55,17 @@ public class WordService {
     }
   }
 
-  private String getPhrase(int length) {
+  /**
+   * Gets (a) phrase(s) from the words ArrayList given a number.
+   *
+   * @param numPhrase number of phrases
+   * @return String of phrases separated by a space
+   */
+  private String getPhrase(int numPhrase) {
     List<String> phraseList = new ArrayList<>();
     StringJoiner phrase = new StringJoiner(" ");
     for (int i = 0; i < words.size(); i++) {
-      if (phraseList.size() != length) {
+      if (phraseList.size() != numPhrase) {
         int rand = (int) ((Math.random() * (words.size() - 1)) + 1);
         phraseList.add(words.get(rand));
       }
@@ -70,6 +88,13 @@ public class WordService {
     return "word added";
   }
 
+  /**
+   * Given a word it will attempt to remove it from the words ArrayList, and re-write to the words
+   * file.
+   *
+   * @param word word to remove
+   * @return message
+   */
   private synchronized String removeWord(String word) {
     if (wordExists(word).equals("true")) {
       words.remove(word);
@@ -79,6 +104,12 @@ public class WordService {
     return "word does not exist";
   }
 
+  /**
+   * Given a word it will attempt to add it to the words ArrayList, and re-write to the words file.
+   *
+   * @param word word to add
+   * @return message
+   */
   private String wordExists(String word) {
     String res = "false";
     if (words.contains(word)) {
@@ -88,6 +119,10 @@ public class WordService {
     return res;
   }
 
+  /**
+   * Reads the words.txt file from "src/resources/words.txt", and initializes the words ArrayList
+   * that is used for the WordService functionality.
+   */
   private static void initializeArrayList() {
     try (BufferedReader br = new BufferedReader(new FileReader("src/resources/words.txt"))) {
       String line;
@@ -99,6 +134,23 @@ public class WordService {
     }
   }
 
+  /**
+   * The serve method serves the WordService by listening for incoming requests on the socket and
+   * responding to the requests. It uses a DatagramSocket to receive incoming requests as
+   * DatagramPackets and sends responses back to the client as DatagramPackets.
+   * <p>Incoming requests are first parsed into request strings and the arguments are extracted.
+   * The first argument of the request string determines the type of request:
+   * <ul>
+   * <li>"start": prompts to start the game
+   * <li>"?": checks if the word specified in the second argument of the request string exists.
+   * <li>"+": adds the word specified in the second argument of the request string to the word list.
+   * <li>"-": removes the word specified in the second argument of the request string from the word list.
+   * </ul>
+   *
+   * @throws IOException                    if an I/O error occurs when using the socket for
+   *                                        communication.
+   * @throws ArrayIndexOutOfBoundsException if not enough arguments are provided in the request.
+   */
   private void serve() {
     System.out.println("WordService is running...");
     while (true) {
@@ -135,8 +187,6 @@ public class WordService {
       } catch (IOException e) {
         System.err.println(
             "An error occurred while receiving or sending a packet: " + e.getMessage());
-      } catch (NumberFormatException e) {
-        System.err.println("Invalid input for the length of the phrase: " + e.getMessage());
       } catch (ArrayIndexOutOfBoundsException e) {
         System.err.println("Not enough arguments were provided in the request: " + e.getMessage());
       }

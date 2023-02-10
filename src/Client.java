@@ -14,10 +14,16 @@ import java.net.Socket;
  */
 public class Client {
 
-  private static final String WORD_CHECK_USAGE = "? <word to check for>";
   private static final String CLIENT_USAGE = "java Client [host] [port]";
   private Socket clientSocket;
 
+  /**
+   * Constructs a Client object and initializes the client socket to connect to the given host on
+   * the given port.
+   *
+   * @param host the hostname or IP address of the server
+   * @param port the port number on which the server is listening
+   */
   public Client(String host, int port) {
     try {
       clientSocket = new Socket(host, port);
@@ -27,10 +33,12 @@ public class Client {
     }
   }
 
-  // Run the game
+  /**
+   * Handles all client side functionality. Login, registration, and server communication
+   */
   private void run() {
-    String username = "";
-    String password = "";
+    String username;
+    String password;
 
     try {
       System.out.println("Connected");
@@ -75,7 +83,7 @@ public class Client {
             // PLAY GAME
             if (!socketIn.readLine().equals("!noaccount!")) {
               System.out.println("Welcome back, " + username + "!");
-              play(socketIn, stdin, socketOut, username, password);
+              GameLogic.clientPlay(socketIn, stdin, socketOut, username, password);
               break;
             }
 
@@ -85,7 +93,7 @@ public class Client {
             password = clientArgs[2];
 
             if (!socketIn.readLine().equalsIgnoreCase("!fail!")) {
-              play(socketIn, stdin, socketOut, username, password);
+              GameLogic.clientPlay(socketIn, stdin, socketOut, username, password);
               break;
             }
           }
@@ -115,83 +123,6 @@ public class Client {
       System.out.println("Error processing input: Incorrect number of arguments");
     } catch (Exception e) {
       System.out.println("Unexpected error occurred: " + e.getMessage());
-    }
-  }
-
-  // Game Logic
-  private void play(BufferedReader socketIn,
-      BufferedReader stdin,
-      PrintWriter socketOut,
-      String username, String password) throws IOException {
-
-    while (true) {
-      System.out.println(socketIn.readLine());
-
-      String res = stdin.readLine();
-      String[] resArgs = res.split(" ");
-
-      if (resArgs[0].equalsIgnoreCase("exit")) {
-        socketOut.println("exit");
-
-        break;
-      } else if (resArgs[0].equals("start")) {
-        socketOut.println(res);
-        System.out.println(socketIn.readLine());
-        boolean gameOver = false;
-
-        //gameplay
-        while (!gameOver) {
-          String play = stdin.readLine();
-          String[] playArgs = play.split(" ");
-
-          //check input for special commands
-          if (play.equalsIgnoreCase("$")) {
-            play = ("$ " + username + " " + password);
-          } else if (play.equalsIgnoreCase("#")) {
-            socketOut.println(play);
-          } else if (play.equalsIgnoreCase("?")) {
-            if (playArgs.length == 2) {
-              play = ("? " + playArgs[1]);
-            } else {
-              System.out.println(WORD_CHECK_USAGE);
-              play = stdin.readLine();
-            }
-          } else if (play.equalsIgnoreCase("!")) {
-            socketOut.println(play);
-            System.out.println(socketIn.readLine());
-            break;
-          }
-
-          socketOut.println(play);
-          String display = socketIn.readLine();
-
-          if (display.charAt(0) == ('#')) {
-            System.out.println("You lose, phrase was: " + display.replace("#", ""));
-            System.out.println("Exiting...");
-            return;
-          } else if (display.charAt(0) == ('!')) {
-            System.out.println("You win!");
-            gameOver = true;
-          } else {
-            System.out.println(display.replace("#", ""));
-          }
-          System.out.println("Enter guess or a command: ");
-        }
-
-      } // Special commands without having to start a game
-      else if (resArgs[0].equals("?")) {
-        socketOut.println(res);
-        System.out.println(resArgs[1] + ": " + socketIn.readLine());
-      } else if (res.equalsIgnoreCase("$")) {
-        socketOut.println("$ " + username + " " + password);
-        System.out.println(socketIn.readLine());
-      } else if (res.equalsIgnoreCase("#")) {
-        socketOut.println(res);
-        break;
-      } else if (resArgs[0].equalsIgnoreCase("+") || resArgs[0].equalsIgnoreCase("-")) {
-        socketOut.println(res);
-        System.out.println(socketIn.readLine());
-      }
     }
   }
 
