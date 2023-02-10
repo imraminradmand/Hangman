@@ -4,16 +4,15 @@ import java.net.ServerSocket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/**
+ * This class handles the creation of the user file if it doesn't exist but also creates the thread
+ * pool that will be used to handle each server instance. When a client is accepted the socket is
+ * passed into a separate thread so that file IO can be properly handled.
+ *
+ * @author Tate Greeves, Ramin Radmand, Emily Allerdings
+ */
+
 public class AccountsService {
-
-    /*
-    Main function:
-
-    This method handles the creation of the user file if it doesn't exist but also creates the thread pool that will be used to handle each server instance.
-
-    When a client is accepted the socket is passed into a separate thread so that file IO can be properly handled.
-
-     */
 
   private static final String USAGE = "java AccountService [port]";
 

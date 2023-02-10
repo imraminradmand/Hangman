@@ -9,6 +9,43 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.util.ArrayList;
 
+/**
+ * This class handles the client connection. It is instantiated by the server and runs in a separate
+ * thread. It is responsible for reading the client's requests and sending the appropriate
+ * responses. It also handles the communication with the word repository and the account service.
+ * <p>
+ * The client can send the following commands:
+ * <ul>
+ *   <li>start <number of words> <attempts> - starts a new game</li>
+ *   <li>? <word> - checks if the word exists in the word repository</li>
+ *   <li>$ - returns the high score for the given username</li>
+ *   <li>! - abandon current game and start new game</li>
+ *   <li># - abandon current game and exit</li>
+ *   <li>+ <word> - add word to word repository</li>
+ *   <li>- <word> - remove word from word repository</li>
+ *   <li>exit - exit the game</li>
+ * </ul>
+ * </p>
+ * The client can also send a letter or a word to guess the phrase.
+ * <p>
+ *   The server can send the following responses:
+ *   <ul>
+ *     <li>True - if the word exists in the word repository</li>
+ *     <li>False - if the word does not exist in the word repository</li>
+ *     <li>High-score for <username> is <score> - if the user has a high score</li>
+ *     <li>No highscore - if the user does not have a high score</li>
+ *     <li>error - if the command is not valid</li>
+ *     <li>Word added - if the word was successfully added to the word repository</li>
+ *     <li>Word removed - if the word was successfully removed from the word repository</li>
+ *     <li>Word not found - if the word was not found in the word repository</li>
+ *     <li>You have already guessed this letter, try again! - if user has already guessed a letter</li>
+ *     <li># <word> - if user has either lost or decided to quit game</li>
+ *     <li>! - if right phrase has been guessed</li>
+ *   </ul>
+ * </p>
+ *
+ * @author Tate Greeves, Ramin Radmand, Emily Allerdings
+ */
 public class ClientHandler implements Runnable {
 
   private final Socket clientSocket;
@@ -81,7 +118,6 @@ public class ClientHandler implements Runnable {
         byte[] buf = new byte[256];
         byte[] inputBuf = new byte[256];
 
-        // TODO: Implement actual game logic here
         if (startArgs[0].equalsIgnoreCase("exit")) {
           accountOut.println("exit");
 
@@ -100,7 +136,6 @@ public class ClientHandler implements Runnable {
           System.out.println(word);
           while (!gameOver) {
             String message = "";
-            //socketOutput.println(newDisplay + " " + "Guess a letter of the phrase or guess the phrase:");
 
             if (!display.contains("-")) {
               break;
@@ -126,14 +161,13 @@ public class ClientHandler implements Runnable {
               message = "#" + word;
               socketOutput.println(message);
               return;
-              //do a guess
             } else if (playRes.charAt(0) == '!') {
               socketOutput.println("Starting new game...");
               break;
             } else if (playArgs[0].equalsIgnoreCase("+") || playArgs[0].equalsIgnoreCase("-")) {
               message = responseFromWordRepository(buf, inputBuf, playRes, wordRepository);
             } else {
-
+              // do a guess
               //if only a letter, guess letter
               if (playRes.length() == 1) {
                 if (guessed.contains(playRes)) {
@@ -259,14 +293,13 @@ public class ClientHandler implements Runnable {
               String accountResponse = accountIn.readLine();
               socketOutput.println(accountResponse);
 
-              // PLAY GAME
-              // TODO: add else so that if account doesn't exist they have to register for account
+              // if valid account start game
               if (!accountResponse.equals("!noaccount!")) {
                 play(socketInput, socketOutput, accountIn, accountOut, args);
                 return;
               }
 
-              // TODO: Check for successful registration then start game
+              // register user, if successful start game
             } else if (args[0].equalsIgnoreCase("register")) {
               accountOut.println("get " + args[1] + " " + args[2]);
 

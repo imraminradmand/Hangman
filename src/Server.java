@@ -3,9 +3,17 @@ import java.net.ServerSocket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/**
+ * The Server class is responsible for creating a server socket and handling incoming connections
+ * from clients. The server accepts incoming connections and assigns each connection to a new thread
+ * for processing. The server also takes in three command line arguments representing the port to
+ * listen on, the port for the word service, and the port for the account service.
+ *
+ * @author Tate Greeves, Ramin Radmand, Emily Allerdings
+ */
 public class Server {
 
-  private static final String USAGE = "java Server [port] [wordService port] [AccountService port]";
+  private static final String USAGE = "java Server [port] [WordService port] [AccountService port]";
 
   public static void main(String[] args) {
     if (args.length != 3) {

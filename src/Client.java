@@ -4,6 +4,14 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
+/**
+ * This class is the client side of the Hangman game. It will connect to the server and allow the
+ * user to play the game. The user will be able to do the following: 1. Register a new account 2.
+ * Login to an existing account 3. Play the game 4. Check the status of their account 6. Exit the
+ * game
+ *
+ * @author Tate Greeves, Ramin Radmand, Emily Allerdings
+ */
 public class Client {
 
   private static final String WORD_CHECK_USAGE = "? <word to check for>";
@@ -19,6 +27,7 @@ public class Client {
     }
   }
 
+  // Run the game
   private void run() {
     String username = "";
     String password = "";
@@ -109,6 +118,7 @@ public class Client {
     }
   }
 
+  // Game Logic
   private void play(BufferedReader socketIn,
       BufferedReader stdin,
       PrintWriter socketOut,
@@ -168,7 +178,8 @@ public class Client {
           System.out.println("Enter guess or a command: ");
         }
 
-      } else if (resArgs[0].equals("?")) {
+      } // Special commands without having to start a game
+      else if (resArgs[0].equals("?")) {
         socketOut.println(res);
         System.out.println(resArgs[1] + ": " + socketIn.readLine());
       } else if (res.equalsIgnoreCase("$")) {
