@@ -15,17 +15,24 @@ public class AccountsService {
 
      */
 
-  private static final int PORT = 7777;
+  private static final String USAGE = "java AccountService [port]";
 
   public static void main(String[] args) throws IOException {
+    if (args.length != 1) {
+      System.err.println(USAGE);
+      System.exit(1);
+    }
+
+    int port = 0;
+
     ServerSocket serverSocket;
 
     File file = new File("users.txt");
     file.createNewFile();
 
     try {
-
-      serverSocket = new ServerSocket(PORT);
+      port = Integer.parseInt(args[0]);
+      serverSocket = new ServerSocket(port);
 
       System.out.println("Server is running...");
       ExecutorService fixedThreadPool = Executors.newFixedThreadPool(10);
@@ -35,7 +42,7 @@ public class AccountsService {
       }
     } catch (IOException e) {
       System.out.println(
-          "Exception caught when trying to listen on port " + PORT
+          "Exception caught when trying to listen on port " + port
               + " or listening for a connection");
       System.out.println(e.getMessage());
     }

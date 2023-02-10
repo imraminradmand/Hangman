@@ -26,7 +26,7 @@ public class WordService {
 
   private static final ArrayList<String> words = new ArrayList<>();
   private final DatagramSocket socket;
-  private static final int PORT = 5599;
+  private static final String USAGE = "java WordService [port]";
 
   public WordService(int port) throws SocketException {
     socket = new DatagramSocket(port);
@@ -144,14 +144,22 @@ public class WordService {
   }
 
   public static void main(String[] args) {
+    if (args.length != 1) {
+      System.err.println(USAGE);
+      System.exit(1);
+    }
+
+    int port = 0;
+
     initializeArrayList();
     WordService wordService;
 
     try {
-      wordService = new WordService(PORT);
+      port = Integer.parseInt(args[0]);
+      wordService = new WordService(port);
     } catch (SocketException e) {
       System.err.println(
-          "Failed to start WordService on port " + PORT + " due to: " + e.getMessage());
+          "Failed to start WordService on port " + port + " due to: " + e.getMessage());
       throw new RuntimeException("Failed to start WordService", e);
     }
 

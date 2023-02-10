@@ -12,10 +12,13 @@ import java.util.ArrayList;
 public class ClientHandler implements Runnable {
 
   private final Socket clientSocket;
+  private final int WORD_SERVICE_PORT;
+  private final int ACCOUNT_SERVICE_PORT;
 
-  ClientHandler(Socket socket) {
+  ClientHandler(Socket socket, int wordServicePort, int accountServicePort) {
     this.clientSocket = socket;
-
+    this.WORD_SERVICE_PORT = wordServicePort;
+    this.ACCOUNT_SERVICE_PORT = accountServicePort;
   }
 
   private String checkWord(byte[] buf,
@@ -51,10 +54,11 @@ public class ClientHandler implements Runnable {
     buf = input.getBytes();
 
     InetAddress address = InetAddress.getByName("localhost");
-    DatagramPacket packet = new DatagramPacket(buf, buf.length, address, 5599);
+    DatagramPacket packet = new DatagramPacket(buf, buf.length, address, WORD_SERVICE_PORT);
     wordRepository.send(packet);
 
-    DatagramPacket wordRepoReply = new DatagramPacket(inputBuf, inputBuf.length, address, 5599);
+    DatagramPacket wordRepoReply = new DatagramPacket(inputBuf, inputBuf.length, address,
+        WORD_SERVICE_PORT);
     wordRepository.receive(wordRepoReply);
 
     return new String(wordRepoReply.getData(), 0, wordRepoReply.getLength());
@@ -230,7 +234,7 @@ public class ClientHandler implements Runnable {
       // String to read message from client
       String clientResponse;
 
-      Socket accountSocket = new Socket(InetAddress.getLocalHost(), 7777);
+      Socket accountSocket = new Socket(InetAddress.getLocalHost(), ACCOUNT_SERVICE_PORT);
       BufferedReader accountIn = new BufferedReader(
           new InputStreamReader(accountSocket.getInputStream()));
       PrintWriter accountOut = new PrintWriter(accountSocket.getOutputStream(), true);
