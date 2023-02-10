@@ -30,12 +30,11 @@ public class AccountHandler implements Runnable {
   }
 
   /**
-   * The goal of this function is to handle the server requests by utilizing file IO.
-   * The protocol that is implemented follows as:
-   * GET <username> <password> - The return statement pass through the socket
-   * will either be the user's score or if the account does not exist it will return !noaccount!
-   * POST <username> <password> <score> - This will return !success! if it
-   * is successful, if it fails there is no output.
+   * The goal of this function is to handle the server requests by utilizing file IO. The protocol
+   * that is implemented follows as: GET <username> <password> - The return statement pass through
+   * the socket will either be the user's score or if the account does not exist it will return
+   * !noaccount! POST <username> <password> <score> - This will return !success! if it is
+   * successful, if it fails there is no output.
    */
   @Override
   public void run() {
@@ -74,10 +73,15 @@ public class AccountHandler implements Runnable {
     }
   }
 
+
   /**
-   * Purpose: The main function that controls thread synchronization
-   * for file IO (makes sure that only one thread can write or read at once).
-   * */
+   * The main function that controls thread synchronization for file IO (makes sure that only one
+   * thread can write or read at once).
+   *
+   * @param clientArgs client inputs
+   * @return writeToFile
+   * @throws IOException if error occurs
+   */
   private synchronized String fileIO(String[] clientArgs) throws IOException {
     if (clientArgs[0].equalsIgnoreCase("get")) {
       return readFromFile(clientArgs);
@@ -87,9 +91,13 @@ public class AccountHandler implements Runnable {
   }
 
   /**
-   * Purpose: The goal of the method is to provide capability to read from the file.
-   * This will return the data for a specified user account, or it will return an invalid account.
-   * */
+   * The goal of the method is to provide capability to read from the file. This will return the
+   * data for a specified user account, or it will return an invalid account.
+   *
+   * @param clientArgs client inputs
+   * @return data for specific user
+   * @throws FileNotFoundException if the file is not found
+   */
   private String readFromFile(String[] clientArgs) throws FileNotFoundException {
     File myObj = new File("users.txt");
     Scanner myReader = new Scanner(myObj);
@@ -107,10 +115,15 @@ public class AccountHandler implements Runnable {
     return result;
   }
 
+
   /**
-   * GOAL: The purpose of this file is to write an account and score to the file. The file
-   * is copied, deleted and recreated with the contents plus the specified client arguments.
-   * */
+   * The purpose of this file is to write an account and score to the file. The file is copied,
+   * deleted and recreated with the contents plus the specified client arguments.
+   *
+   * @param clientArgs client inputs
+   * @return result of attempt to write to file
+   * @throws IOException if error occurs during file write
+   */
   private String writeToFile(String[] clientArgs) throws IOException {
     File file = new File("users.txt");
     Scanner myReader = new Scanner(file);
