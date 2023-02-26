@@ -8,8 +8,6 @@ public class AccountServer {
         {
             AccountInterface service = new AccountService();
             LocateRegistry.createRegistry(4777);
-            Naming.bind("rmi://localhost:4777", service);
-
         }
         catch (Exception e)
         {
