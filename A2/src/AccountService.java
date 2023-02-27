@@ -1,50 +1,73 @@
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.net.ServerSocket;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
+import java.util.Scanner;
 
-/**
- * This class handles the creation of the user file if it doesn't exist but also creates the thread
- * pool that will be used to handle each server instance. When a client is accepted the socket is
- * passed into a separate thread so that file IO can be properly handled.
- *
- * @author Tate Greeves, Ramin Radmand, Emily Allerdings
- */
-
-public class AccountService {
-
-  private static final String USAGE = "java AccountService [port]";
-
-  public static void main(String[] args) throws IOException {
-    if (args.length != 1) {
-      System.err.println(USAGE);
-      System.exit(1);
+public class AccountService extends UnicastRemoteObject implements AccountInterface {
+    protected AccountService() throws RemoteException {
+        super();
     }
 
-    int port = 0;
+    @Override
+    public synchronized boolean writeToFile(String[] clientArgs) throws IOException {
+        File file = new File("../users.txt");
+        Scanner myReader = new Scanner(file);
+        ArrayList<String> lines = new ArrayList<>();
+        while (myReader.hasNextLine()) {
+            String data = myReader.nextLine();
+            lines.add(data);
 
-    ServerSocket serverSocket;
+        }
+        myReader.close();
+        for (String line : lines) {
+            String[] arg = line.split(" ");
+            if (arg[0].equals(clientArgs[1])) {
+                lines.remove(line);
+                break;
+            }
+        }
 
-    File file = new File("users.txt");
-    file.createNewFile();
+        if (file.delete()) {
+            file.createNewFile();
 
-    try {
-      port = Integer.parseInt(args[0]);
-      serverSocket = new ServerSocket(port);
+            FileWriter writer = new FileWriter("../users.txt");
+            lines.add(clientArgs[1] + " " + clientArgs[2] + " " + clientArgs[3]);
 
-      System.out.println("Server is running...");
-      ExecutorService fixedThreadPool = Executors.newFixedThreadPool(10);
+            for (String s : lines) {
+                writer.write(s + '\n');
+            }
+            writer.close();
 
-      while (true) {
-        fixedThreadPool.execute(new AccountHandler(serverSocket.accept()));
-      }
-    } catch (IOException e) {
-      System.out.println(
-          "Exception caught when trying to listen on port " + port
-              + " or listening for a connection");
-      System.out.println(e.getMessage());
+            return true;
+        } else {
+            return false;
+        }
     }
-  }
 
+    @Override
+    public synchronized String readFromFile(String[] clientArgs) {
+        File myObj = new File("../users.txt");
+        Scanner myReader = null;
+        try {
+            myReader = new Scanner(myObj);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        String result = "!noaccount!";
+        while (myReader.hasNextLine()) {
+            String data = myReader.nextLine();
+            String[] arg = data.split(" ");
+
+            if (arg[0].equals(clientArgs[1]) && arg[1].equals(clientArgs[2])) {
+                result = data;
+                break;
+            }
+        }
+        myReader.close();
+        return result;
+    }
 }
