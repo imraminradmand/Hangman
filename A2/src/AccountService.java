@@ -62,7 +62,7 @@ public class AccountService extends UnicastRemoteObject implements AccountInterf
             String data = myReader.nextLine();
             String[] arg = data.split(" ");
 
-            if (arg[0].equals(clientArgs[1]) && arg[1].equals(clientArgs[2])) {
+            if (arg[0].equals(clientArgs[0]) && arg[1].equals(clientArgs[1])) {
                 result = data;
                 break;
             }
