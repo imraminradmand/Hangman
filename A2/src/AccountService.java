@@ -7,14 +7,14 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class AccountService extends UnicastRemoteObject implements AccountInterface {
+public class AccountService extends UnicastRemoteObject implements AccountInterface{
     protected AccountService() throws RemoteException {
         super();
     }
 
     @Override
-    public synchronized boolean writeToFile(String[] clientArgs) throws IOException {
-        File file = new File("../users.txt");
+    public synchronized boolean writeToFile(String[] clientArgs) throws IOException, RemoteException {
+        File file = new File("users.txt");
         Scanner myReader = new Scanner(file);
         ArrayList<String> lines = new ArrayList<>();
         while (myReader.hasNextLine()) {
@@ -25,7 +25,7 @@ public class AccountService extends UnicastRemoteObject implements AccountInterf
         myReader.close();
         for (String line : lines) {
             String[] arg = line.split(" ");
-            if (arg[0].equals(clientArgs[1])) {
+            if (arg[0].equals(clientArgs[0])) {
                 lines.remove(line);
                 break;
             }
@@ -34,8 +34,8 @@ public class AccountService extends UnicastRemoteObject implements AccountInterf
         if (file.delete()) {
             file.createNewFile();
 
-            FileWriter writer = new FileWriter("../users.txt");
-            lines.add(clientArgs[1] + " " + clientArgs[2] + " " + clientArgs[3]);
+            FileWriter writer = new FileWriter("users.txt");
+            lines.add(clientArgs[0] + " " + clientArgs[1] + " " + clientArgs[2]);
 
             for (String s : lines) {
                 writer.write(s + '\n');
@@ -49,8 +49,8 @@ public class AccountService extends UnicastRemoteObject implements AccountInterf
     }
 
     @Override
-    public synchronized String readFromFile(String[] clientArgs) {
-        File myObj = new File("../users.txt");
+    public synchronized String readFromFile(String[] clientArgs)  throws RemoteException{
+        File myObj = new File("users.txt");
         Scanner myReader = null;
         try {
             myReader = new Scanner(myObj);
