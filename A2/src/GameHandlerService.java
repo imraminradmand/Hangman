@@ -1,3 +1,4 @@
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
@@ -7,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 public class GameHandlerService extends UnicastRemoteObject implements GameHandlerInterface {
-    private ArrayList<GameObject> gameStates;
+    private final ArrayList<GameObject> gameStates = new ArrayList<>();
     private AccountInterface accountService;
 
     protected GameHandlerService() throws RemoteException {
@@ -52,12 +53,22 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
 
     @Override
     public String endGame(String player) throws RemoteException {
-        return null;
+        GameObject gameState = getPlayerState(player);
+        removeGameState(player);
+
+        assert gameState != null;
+        return "Game ended, the word was: " + gameState.getWord();
     }
 
     @Override
     public String restartGame(String player) throws RemoteException {
-        return null;
+        String response = "";
+        GameObject gameState = getPlayerState(player);
+        assert gameState != null;
+        response += "Restarting game, the correct word was: " + gameState.getWord();
+        removeGameState(player);
+
+        return response;
     }
 
     @Override
@@ -77,12 +88,25 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
 
     @Override
     public boolean login(String username, String password) throws RemoteException{
-        return false;
+        return !accountService.readFromFile(username, password).equals("!noaccount!");
     }
 
     @Override
     public boolean register(String username, String password) throws RemoteException{
-        return false;
+        if (!accountService.readFromFile(username, password).equals("!noaccount!")){
+            return false;
+        }
+        try {
+            accountService.writeToFile(username, password, "0");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return true;
+    }
+
+    @Override
+    public String getScore(String username, String password) throws RemoteException {
+        return accountService.readFromFile(username, password);
     }
 
     private GameObject getPlayerState(String username){

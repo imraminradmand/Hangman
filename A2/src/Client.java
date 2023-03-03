@@ -52,17 +52,55 @@ public class Client {
     private static void playGame(GameHandlerService service) throws IOException {
         InputStreamReader inputStreamReader = new InputStreamReader(System.in);
         BufferedReader stdin = new BufferedReader(inputStreamReader);
-        String output = "Start a game with start <number of words> <attempts>";
+        System.out.println("Start a game with start <number of words> <attempts>");
 
         while(true){
-            System.out.println(output);
             String[] args = stdin.readLine().split(" ");
 
             if(args[0].equalsIgnoreCase("exit")){
                 break;
             }
 
-
+            if(args.length == 1){
+                /*
+                * Check game commands that are only one character
+                * */
+                
+                if(args[0].equals("!")){
+                    System.out.println(service.restartGame(username));
+                }else if(args[0].equals("#")){
+                    System.out.println(service.endGame(username));
+                }else if(args[0].equals("!help")){
+                    writeHelpScreen();
+                }else if (args[0].equals("$")){
+                    System.out.println(service.getScore(username, password));
+                }else{
+                    if(args[0].length() > 1){
+                        System.out.println(service.guessPhrase(username, args[0]));
+                    }else{
+                        System.out.println(service.guessLetter(username, args[0].charAt(0)));
+                    }
+                }
+            }else if (args.length == 2){
+                /*
+                * Write commands here that require two arguments such as ?word <word>
+                * */
+            }else if (args.length == 3){
+                if(args[0].equalsIgnoreCase("start")){
+                    System.out.println(service.startGame(username, Integer.parseInt(args[1]), Integer.parseInt(args[2])));
+                }
+            }else{
+                System.out.println("Unknown commands, use !help for a list of options.");
+            }
         }
+    }
+
+    private static void writeHelpScreen(){
+        System.out.println("-----Commands-----");
+        System.out.println("start <number of letters> <number of words>");
+        System.out.println("# - Ends the game");
+        System.out.println("?word <word>- Checks if a word exists in the repository");
+        System.out.println("$ - Retrieves a users score");
+
     }
 }

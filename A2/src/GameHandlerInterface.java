@@ -17,4 +17,7 @@ public interface GameHandlerInterface extends Remote {
 
     public boolean login(String username, String password) throws RemoteException;
     public boolean register(String username, String password) throws RemoteException;
+
+    public String getScore(String username, String password) throws RemoteException;
+
 }
