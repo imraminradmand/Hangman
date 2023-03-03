@@ -52,9 +52,15 @@ public class Client {
     private static void playGame(GameHandlerService service) throws IOException {
         InputStreamReader inputStreamReader = new InputStreamReader(System.in);
         BufferedReader stdin = new BufferedReader(inputStreamReader);
+        String output = "Start a game with start <number of words> <attempts>";
 
         while(true){
+            System.out.println(output);
             String[] args = stdin.readLine().split(" ");
+
+            if(args[0].equalsIgnoreCase("exit")){
+                break;
+            }
 
 
         }

@@ -7,7 +7,6 @@ public class GameServer {
     public static void main (String[] args) throws IOException {
 
         GameHandlerService service = new GameHandlerService();
-        LocateRegistry.createRegistry(4777);
         Naming.rebind("rmi://localhost:4777" + "/GameServer", service);
 
     }
