@@ -8,20 +8,21 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 public class GameHandlerService extends UnicastRemoteObject implements GameHandlerInterface {
-    private final ArrayList<GameObject> gameStates = new ArrayList<>();
-    private AccountInterface accountService;
+    private static final ArrayList<GameObject> gameStates = new ArrayList<>();
+    private static AccountInterface accountService;
 
     protected GameHandlerService() throws RemoteException {
         super();
-    }
-
-    @Override
-    public String startGame(String player, int number_of_words, int failed_attempt_factor) throws RemoteException {
         try {
             accountService = (AccountInterface) Naming.lookup("rmi://localhost:4777" + "/AccountService");
         } catch (NotBoundException | MalformedURLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public String startGame(String player, int number_of_words, int failed_attempt_factor) throws RemoteException {
+
 
         gameStates.add( new GameObject(player, number_of_words, failed_attempt_factor, "replace with random word"));
 
@@ -88,6 +89,10 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
 
     @Override
     public boolean login(String username, String password) throws RemoteException{
+        if(getPlayerState(username) != null){
+            return false;
+        }
+
         return !accountService.readFromFile(username, password).equals("!noaccount!");
     }
 
@@ -106,7 +111,7 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
 
     @Override
     public String getScore(String username, String password) throws RemoteException {
-        return accountService.readFromFile(username, password);
+        return "Your high score is " + accountService.readFromFile(username, password);
     }
 
     private GameObject getPlayerState(String username){

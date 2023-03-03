@@ -11,13 +11,14 @@ public class Client {
     private static String password;
 
     public static void main(String[] args) throws IOException, NotBoundException {
-        GameHandlerService service = (GameHandlerService) Naming.lookup("rmi://localhost:4777" + "/GameServer");
+        GameHandlerInterface service = (GameHandlerInterface) Naming.lookup("rmi://localhost:4777" + "/GameServer");
 
         InputStreamReader inputStreamReader = new InputStreamReader(System.in);
         BufferedReader stdin = new BufferedReader(inputStreamReader);
 
 
         while(true){
+            System.out.println("USAGE: login <username> <password> OR register <username> <password> OR exit");
             String input = stdin.readLine();
             String[] clientArgs = input.split(" ");
 
@@ -49,7 +50,7 @@ public class Client {
         stdin.close();
     }
 
-    private static void playGame(GameHandlerService service) throws IOException {
+    private static void playGame(GameHandlerInterface service) throws IOException {
         InputStreamReader inputStreamReader = new InputStreamReader(System.in);
         BufferedReader stdin = new BufferedReader(inputStreamReader);
         System.out.println("Start a game with start <number of words> <attempts>");

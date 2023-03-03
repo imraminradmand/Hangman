@@ -5,7 +5,7 @@ public class GameObject {
     private final int numberOfWords;
     private int attempts;
     private String word;
-    private ArrayList<Character> lettersGuess;
+    private ArrayList<Character> lettersGuess = new ArrayList<>();
 
     public GameObject (String username, int numberOfWords, int attempts, String word){
         this.username = username;
@@ -62,10 +62,12 @@ public class GameObject {
         newWord.append("-".repeat(Math.max(0, this.getNumberOfWords())));
         newWord.append("C").append(this.getAttempts());
 
-        for (int x = 0; x < this.getNumberOfWords(); x++){
-            for (char c : this.getLettersGuess()){
-                if (c == this.getWord().charAt(x)){
-                    newWord.setCharAt(x, this.getWord().charAt(x));
+        if(this.getLettersGuess().size() > 0) {
+            for (int x = 0; x < this.getNumberOfWords(); x++) {
+                for (char c : this.getLettersGuess()) {
+                    if (c == this.getWord().charAt(x)) {
+                        newWord.setCharAt(x, this.getWord().charAt(x));
+                    }
                 }
             }
         }
