@@ -3,9 +3,11 @@ import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
+import java.util.Objects;
 
 public class GameHandlerService extends UnicastRemoteObject implements GameHandlerInterface {
-    private GameObject gameState;
+    private ArrayList<GameObject> gameStates;
     private AccountInterface accountService;
 
     protected GameHandlerService() throws RemoteException {
@@ -20,14 +22,17 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
             throw new RuntimeException(e);
         }
 
-        gameState = new GameObject(player, number_of_words, failed_attempt_factor, "replace with random word");
+        gameStates.add( new GameObject(player, number_of_words, failed_attempt_factor, "replace with random word"));
 
-        return gameState.getStringifyedWord();
+        return Objects.requireNonNull(getPlayerState(player)).getStringifyedWord();
     }
 
     @Override
     public String guessLetter(String player, char letter) throws RemoteException {
-        if(gameState.guessLetter(letter)){
+        GameObject gameState = getPlayerState(player);
+
+        assert gameState != null;
+        if(gameState.guessLetter(Character.toLowerCase(letter))){
             return gameState.getStringifyedWord();
         }
         return "Incorrect guess!\n" + gameState.getStringifyedWord();
@@ -35,6 +40,13 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
 
     @Override
     public String guessPhrase(String player, String phrase) throws RemoteException {
+        GameObject gameState = getPlayerState(player);
+        assert gameState != null;
+        if (phrase.toLowerCase().equals(gameState.getWord())){
+            removeGameState(player);
+            return "You guessed the correct phrase.\nUsage: start <number of letters> <attempts>";
+        }
+
         return null;
     }
 
@@ -71,5 +83,18 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
     @Override
     public boolean register(String username, String password) throws RemoteException{
         return false;
+    }
+
+    private GameObject getPlayerState(String username){
+        for (GameObject obj : gameStates){
+            if(obj.getUsername().equals(username)){
+                return obj;
+            }
+        }
+        return null;
+    }
+
+    private void removeGameState(String username){
+        gameStates.removeIf(obj -> obj.getUsername().equals(username));
     }
 }

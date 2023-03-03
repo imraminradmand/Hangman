@@ -11,7 +11,7 @@ public class GameObject {
         this.username = username;
         this.numberOfWords = numberOfWords;
         this.attempts = attempts;
-        this.word = word;
+        this.word = word.toLowerCase();
     }
 
     public ArrayList<Character> getLettersGuess() {
