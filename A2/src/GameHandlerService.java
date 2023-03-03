@@ -27,7 +27,10 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
 
     @Override
     public String guessLetter(String player, char letter) throws RemoteException {
-        return null;
+        if(gameState.guessLetter(letter)){
+            return gameState.getStringifyedWord();
+        }
+        return "Incorrect guess!\n" + gameState.getStringifyedWord();
     }
 
     @Override

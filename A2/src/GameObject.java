@@ -46,12 +46,20 @@ public class GameObject {
         this.word = word;
     }
 
+    /*
+    * This function Stringifies the randomly chosen word so that it contains player guessed letters along with
+    * attempts counter
+    *
+    * Example:
+    *  word => zebra
+    *
+    *  original response => -----C7
+    *  Stringified response -> --br-C4
+    * */
     public String getStringifyedWord(){
         StringBuilder newWord = new StringBuilder();
 
-        for(int x = 0; x < this.getNumberOfWords(); x++){
-            newWord.append("-");
-        }
+        newWord.append("-".repeat(Math.max(0, this.getNumberOfWords())));
         newWord.append("C").append(this.getAttempts());
 
         for (int x = 0; x < this.getNumberOfWords(); x++){
@@ -63,5 +71,30 @@ public class GameObject {
         }
 
         return newWord.toString();
+    }
+
+    public boolean guessLetter(char letter){
+        if(this.getLettersGuess().contains(letter)){
+            return false;
+        }
+
+        ArrayList<Character> newList = this.getLettersGuess();
+        newList.add(letter);
+        this.setLettersGuess(newList);
+
+        if(!this.isLetterInWord(letter)){
+            this.setAttempts(this.getAttempts()-1);
+        }
+
+        return true;
+    }
+
+    private boolean isLetterInWord(char letter){
+        for(char c : this.getWord().toCharArray()){
+            if(c == letter){
+                return true;
+            }
+        }
+        return false;
     }
 }
