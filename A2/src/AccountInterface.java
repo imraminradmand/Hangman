@@ -3,6 +3,6 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 
 public interface AccountInterface extends Remote {
-     boolean writeToFile(String[] args) throws IOException, RemoteException;
-     String readFromFile(String[] args) throws RemoteException;
+     boolean writeToFile(String username, String password, String score) throws IOException, RemoteException;
+     String readFromFile(String username, String password) throws RemoteException;
 }

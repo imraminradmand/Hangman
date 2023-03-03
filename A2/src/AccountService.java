@@ -13,7 +13,7 @@ public class AccountService extends UnicastRemoteObject implements AccountInterf
     }
 
     @Override
-    public synchronized boolean writeToFile(String[] clientArgs) throws IOException, RemoteException {
+    public synchronized boolean writeToFile(String username, String password, String score) throws IOException, RemoteException {
         File file = new File("users.txt");
         Scanner myReader = new Scanner(file);
         ArrayList<String> lines = new ArrayList<>();
@@ -25,7 +25,7 @@ public class AccountService extends UnicastRemoteObject implements AccountInterf
         myReader.close();
         for (String line : lines) {
             String[] arg = line.split(" ");
-            if (arg[0].equals(clientArgs[0])) {
+            if (arg[0].equals(username)) {
                 lines.remove(line);
                 break;
             }
@@ -35,7 +35,7 @@ public class AccountService extends UnicastRemoteObject implements AccountInterf
             file.createNewFile();
 
             FileWriter writer = new FileWriter("users.txt");
-            lines.add(clientArgs[0] + " " + clientArgs[1] + " " + clientArgs[2]);
+            lines.add(username + " " + password + " " + score);
 
             for (String s : lines) {
                 writer.write(s + '\n');
@@ -49,7 +49,7 @@ public class AccountService extends UnicastRemoteObject implements AccountInterf
     }
 
     @Override
-    public synchronized String readFromFile(String[] clientArgs)  throws RemoteException{
+    public synchronized String readFromFile(String username, String password)  throws RemoteException{
         File myObj = new File("users.txt");
         Scanner myReader = null;
         try {
@@ -62,8 +62,8 @@ public class AccountService extends UnicastRemoteObject implements AccountInterf
             String data = myReader.nextLine();
             String[] arg = data.split(" ");
 
-            if (arg[0].equals(clientArgs[0]) && arg[1].equals(clientArgs[1])) {
-                result = data;
+            if (arg[0].equals(username) && arg[1].equals(password)) {
+                result = data.split(" ")[2];
                 break;
             }
         }
