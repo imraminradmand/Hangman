@@ -59,6 +59,7 @@ public class Client {
             String[] args = stdin.readLine().split(" ");
 
             if(args[0].equalsIgnoreCase("exit")){
+                service.logOut(username);
                 break;
             }
 

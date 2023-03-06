@@ -70,8 +70,10 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
 
     @Override
     public String restartGame(String player) throws RemoteException {
+        System.out.println(player);
         String response = "";
         GameObject gameState = getPlayerState(player);
+        System.out.println(gameState);
         assert gameState != null;
         response += "Restarting game, the correct word was: " + gameState.getWord();
         removeGameState(player);
@@ -119,6 +121,11 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
     }
 
     @Override
+    public void logOut(String username) throws RemoteException {
+       loggedInUsers.remove(username);
+    }
+
+    @Override
     public String getScore(String username, String password) throws RemoteException {
         return "Your high score is " + accountService.readFromFile(username, password);
     }
@@ -136,4 +143,5 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
         gameStates.removeIf(obj -> obj.getUsername().equals(username));
         loggedInUsers.remove(username);
     }
+
 }

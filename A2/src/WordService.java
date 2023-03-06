@@ -10,7 +10,7 @@ import java.util.StringJoiner;
 
 public class WordService extends UnicastRemoteObject implements WordServiceInterface {
 
-  ArrayList<String> words = new ArrayList<>();
+  static ArrayList<String> words = new ArrayList<>();
   protected WordService() throws RemoteException {
     super();
     populateWords();
