@@ -5,10 +5,13 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 public class GameHandlerService extends UnicastRemoteObject implements GameHandlerInterface {
     private static final ArrayList<GameObject> gameStates = new ArrayList<>();
+    private static final Set<String> loggedInUsers = new HashSet<>();
     private static AccountInterface accountService;
     private static WordServiceInterface wordService;
 
@@ -93,12 +96,11 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
 
     @Override
     public boolean login(String username, String password) throws RemoteException{
-        System.out.println(gameStates.size());
-        boolean alreadyLoggedIn = gameStates.stream().anyMatch(state -> state.getUsername().equals(username));
-        if(getPlayerState(username) != null || alreadyLoggedIn){
+
+        if(getPlayerState(username) != null || loggedInUsers.contains(username)){
             return false;
         }
-
+        loggedInUsers.add(username);
         return !accountService.readFromFile(username, password).equals("!noaccount!");
     }
 
@@ -109,6 +111,7 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
         }
         try {
             accountService.writeToFile(username, password, "0");
+            loggedInUsers.add(username);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -131,5 +134,6 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
 
     private void removeGameState(String username){
         gameStates.removeIf(obj -> obj.getUsername().equals(username));
+        loggedInUsers.remove(username);
     }
 }
