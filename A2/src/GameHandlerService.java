@@ -10,11 +10,13 @@ import java.util.Objects;
 public class GameHandlerService extends UnicastRemoteObject implements GameHandlerInterface {
     private static final ArrayList<GameObject> gameStates = new ArrayList<>();
     private static AccountInterface accountService;
+    private static WordServiceInterface wordService;
 
     protected GameHandlerService() throws RemoteException {
         super();
         try {
             accountService = (AccountInterface) Naming.lookup("rmi://localhost:4777" + "/AccountService");
+            wordService = (WordServiceInterface) Naming.lookup("rmi://localhost:4777" + "/WordService");
         } catch (NotBoundException | MalformedURLException e) {
             throw new RuntimeException(e);
         }
@@ -23,8 +25,8 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
     @Override
     public String startGame(String player, int number_of_words, int failed_attempt_factor) throws RemoteException {
 
-
-        gameStates.add( new GameObject(player, number_of_words, failed_attempt_factor, "replace with random word"));
+        String randomWord = wordService.getPhrase(number_of_words);
+        gameStates.add( new GameObject(player, number_of_words, failed_attempt_factor, randomWord));
 
         return Objects.requireNonNull(getPlayerState(player)).getStringifyedWord();
     }
@@ -73,18 +75,18 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
     }
 
     @Override
-    public String addWord() throws RemoteException {
-        return null;
+    public boolean addWord(String word) throws RemoteException {
+        return wordService.addWord(word);
     }
 
     @Override
-    public String removeWord() throws RemoteException {
-        return null;
+    public boolean removeWord(String word) throws RemoteException {
+        return wordService.removeWord(word);
     }
 
     @Override
-    public String checkWord() throws RemoteException {
-        return null;
+    public boolean checkWord(String word) throws RemoteException {
+        return wordService.checkWord(word);
     }
 
     @Override

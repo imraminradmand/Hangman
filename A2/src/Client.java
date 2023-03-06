@@ -86,6 +86,18 @@ public class Client {
                 /*
                 * Write commands here that require two arguments such as ?word <word>
                 * */
+                if (args[0].equals("?")) {
+                    String word = args[1];
+                    System.out.println(word + ": " + service.checkWord(word));
+                } else if (args[0].equals("+")) {
+                    String word = args[1];
+                    boolean response = service.addWord(word);
+                    System.out.println(word + ": " + (response ? "added" : "exists"));
+                } else if (args[0].equals("-")) {
+                    String word = args[1];
+                    boolean response = service.removeWord(word);
+                    System.out.println(word + ": " + (response ? "removed" : "does not exist"));
+                }
             }else if (args.length == 3){
                 if(args[0].equalsIgnoreCase("start")){
                     System.out.println(service.startGame(username, Integer.parseInt(args[1]), Integer.parseInt(args[2])));

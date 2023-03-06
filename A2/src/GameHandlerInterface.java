@@ -11,9 +11,9 @@ public interface GameHandlerInterface extends Remote {
     public String guessPhrase(String player, String phrase) throws RemoteException;
     public String endGame(String player) throws RemoteException;
     public String restartGame(String player) throws RemoteException;
-    public String addWord() throws RemoteException;
-    public String removeWord() throws RemoteException;
-    public String checkWord() throws RemoteException;
+    public boolean addWord(String word) throws RemoteException;
+    public boolean removeWord(String word) throws RemoteException;
+    public boolean checkWord(String word) throws RemoteException;
 
     public boolean login(String username, String password) throws RemoteException;
     public boolean register(String username, String password) throws RemoteException;
