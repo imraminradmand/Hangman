@@ -113,7 +113,9 @@ public class Client {
         System.out.println("-----Commands-----");
         System.out.println("start <number of letters> <number of words>");
         System.out.println("# - Ends the game");
-        System.out.println("?word <word>- Checks if a word exists in the repository");
+        System.out.println("? <word>- Checks if a word exists in the repository");
+        System.out.println("+ <word>- Adds word to the repository");
+        System.out.println("- <word>- Removes word from the repository");
         System.out.println("$ - Retrieves a users score");
 
     }
