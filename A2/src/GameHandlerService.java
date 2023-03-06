@@ -55,7 +55,7 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
     if (phrase.toLowerCase().equals(gameState.getWord())) {
       accountService.updateScore(gameState.getUsername(), 100);
       removeGameState(player);
-      return "You guessed the correct phrase.\nUsage: start <number of letters> <attempts>";
+      return "You guessed the correct phrase.\nUsage: start <number of letters> <attempts> or exit";
     }
 
     return null;
@@ -67,17 +67,15 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
     removeGameState(player);
 
     assert gameState != null;
-    return "Game ended, the word was: " + gameState.getWord();
+    return "Game ended, the word was: " + gameState.getWord() + "\n Usage: start <number of letters> <attempts> or exit";
   }
 
   @Override
   public String restartGame(String player) throws RemoteException {
-    System.out.println(player);
     String response = "";
     GameObject gameState = getPlayerState(player);
-    System.out.println(gameState);
     assert gameState != null;
-    response += "Restarting game, the correct word was: " + gameState.getWord();
+    response += "Restarting game, the correct word was: " + gameState.getWord() + "\nUsage: start <number of letters> <attempts> or exit";;
     removeGameState(player);
 
     return response;
@@ -143,7 +141,6 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
 
   private void removeGameState(String username) {
     gameStates.removeIf(obj -> obj.getUsername().equals(username));
-    loggedInUsers.remove(username);
   }
 
 }
