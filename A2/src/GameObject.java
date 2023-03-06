@@ -59,18 +59,23 @@ public class GameObject {
     public String getStringifyedWord(){
         StringBuilder newWord = new StringBuilder();
 
-        newWord.append("-".repeat(Math.max(0, this.getNumberOfWords())));
+        newWord.append("-".repeat(this.getWord().length()));
         newWord.append("C").append(this.getAttempts());
 
-        if(this.getLettersGuess().size() > 0) {
-            for (int x = 0; x < this.getNumberOfWords(); x++) {
-                for (char c : this.getLettersGuess()) {
-                    if (c == this.getWord().charAt(x)) {
-                        newWord.setCharAt(x, this.getWord().charAt(x));
-                    }
+
+        for (int x = 0; x < this.getWord().length(); x++) {
+            for (char c : this.getLettersGuess()) {
+                if (c == this.getWord().charAt(x)) {
+                    newWord.setCharAt(x, this.getWord().charAt(x));
                 }
             }
+
+            if(this.getWord().charAt(x) == ' '){
+                newWord.setCharAt(x, ' ');
+            }
         }
+
+
         return newWord.toString();
     }
 
