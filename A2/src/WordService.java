@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.StringJoiner;
 
-public class WordService extends UnicastRemoteObject implements WordInterface {
+public class WordService extends UnicastRemoteObject implements WordServiceInterface {
 
   ArrayList<String> words = new ArrayList<>();
   protected WordService() throws RemoteException {
