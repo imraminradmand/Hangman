@@ -44,10 +44,11 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
     }
 
     @Override
-    public String guessPhrase(String player, String phrase) throws RemoteException {
+    public String guessPhrase(String player, String phrase) throws IOException {
         GameObject gameState = getPlayerState(player);
         assert gameState != null;
         if (phrase.toLowerCase().equals(gameState.getWord())){
+            accountService.updateScore(gameState.getUsername(), 100);
             removeGameState(player);
             return "You guessed the correct phrase.\nUsage: start <number of letters> <attempts>";
         }

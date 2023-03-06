@@ -1,3 +1,4 @@
+import java.io.IOException;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
@@ -8,7 +9,7 @@ public interface GameHandlerInterface extends Remote {
             int failed_attempt_factor
     ) throws RemoteException;
     public String guessLetter(String player,char letter) throws RemoteException;
-    public String guessPhrase(String player, String phrase) throws RemoteException;
+    public String guessPhrase(String player, String phrase) throws IOException;
     public String endGame(String player) throws RemoteException;
     public String restartGame(String player) throws RemoteException;
     public boolean addWord(String word) throws RemoteException;

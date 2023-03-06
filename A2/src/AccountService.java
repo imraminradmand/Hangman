@@ -1,5 +1,8 @@
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.rmi.RemoteException;
@@ -69,5 +72,29 @@ public class AccountService extends UnicastRemoteObject implements AccountInterf
         }
         myReader.close();
         return result;
+    }
+
+    @Override
+    public void updateScore(String username, int score) throws IOException {
+        StringBuilder sb = new StringBuilder();
+
+        try (BufferedReader reader = new BufferedReader(new FileReader("users.txt"))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] fields = line.split(" ");
+
+                if (fields[0].equals(username)) {
+                    fields[2] = Integer.toString(Integer.parseInt(fields[2]) + score);
+                    line = String.join(" ", fields);
+                }
+
+                sb.append(line);
+                sb.append(System.lineSeparator());
+            }
+        }
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("users.txt"))) {
+            writer.write(sb.toString());
+        }
     }
 }
