@@ -69,7 +69,7 @@ public class WordService extends UnicastRemoteObject implements WordServiceInter
   }
 
   @Override
-  public boolean checkWord(String word) throws RemoteException {
+  public synchronized boolean checkWord(String word) throws RemoteException {
     return words.contains(word);
   }
 
