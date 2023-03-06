@@ -103,4 +103,8 @@ public class GameObject {
         }
         return false;
     }
+
+    public boolean alreadyGuessed(char letter) {
+        return this.getLettersGuess().contains(letter);
+    }
 }

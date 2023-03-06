@@ -25,6 +25,7 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
     @Override
     public String startGame(String player, int number_of_words, int failed_attempt_factor) throws RemoteException {
         String randomWord = wordService.getPhrase(number_of_words);
+        System.out.println(randomWord);
         gameStates.add( new GameObject(player, number_of_words, failed_attempt_factor, randomWord));
         return Objects.requireNonNull(getPlayerState(player)).getStringifyedWord();
     }
@@ -36,6 +37,8 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
         assert gameState != null;
         if(gameState.guessLetter(Character.toLowerCase(letter))){
             return gameState.getStringifyedWord();
+        } else if (gameState.alreadyGuessed(Character.toLowerCase(letter))) {
+            return "Letter already guessed\n" + gameState.getStringifyedWord();
         }
         return "Incorrect guess!\n" + gameState.getStringifyedWord();
     }
@@ -89,7 +92,9 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
 
     @Override
     public boolean login(String username, String password) throws RemoteException{
-        if(getPlayerState(username) != null){
+        System.out.println(gameStates.size());
+        boolean alreadyLoggedIn = gameStates.stream().anyMatch(state -> state.getUsername().equals(username));
+        if(getPlayerState(username) != null || alreadyLoggedIn){
             return false;
         }
 
