@@ -67,17 +67,21 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
     removeGameState(player);
 
     assert gameState != null;
-    return "Game ended, the word was: " + gameState.getWord() + "\n Usage: start <number of letters> <attempts> or exit";
+    return "Game ended, the word was: " + gameState.getWord()
+        + "\n Usage: start <number of letters> <attempts> or exit";
   }
 
   @Override
   public String restartGame(String player) throws RemoteException {
     String response = "";
     GameObject gameState = getPlayerState(player);
-    assert gameState != null;
-    response += "Restarting game, the correct word was: " + gameState.getWord() + "\nUsage: start <number of letters> <attempts> or exit";;
-    removeGameState(player);
-
+    if (gameState == null) {
+      response += "Start a game before attempting to restart\nUsage: start <number of letters> <attempts> or exit";
+    } else {
+      response += "Restarting game, the correct word was: " + gameState.getWord()
+          + "\nUsage: start <number of letters> <attempts> or exit";
+      removeGameState(player);
+    }
     return response;
   }
 
