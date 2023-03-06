@@ -1,113 +1,114 @@
 import java.util.ArrayList;
 
 public class GameObject {
-    private final String username;
-    private final int numberOfWords;
-    private int attempts;
-    private String word;
-    private ArrayList<Character> lettersGuess = new ArrayList<>();
 
-    public GameObject (String username, int numberOfWords, int attempts, String word){
-        this.username = username;
-        this.numberOfWords = numberOfWords;
-        this.attempts = attempts;
-        this.word = word.toLowerCase();
-    }
+  private final String username;
+  private final int numberOfWords;
+  private int attempts;
+  private String word;
+  private ArrayList<Character> lettersGuess = new ArrayList<>();
 
-    public ArrayList<Character> getLettersGuess() {
-        return lettersGuess;
-    }
+  public GameObject(String username, int numberOfWords, int attempts, String word) {
+    this.username = username;
+    this.numberOfWords = numberOfWords;
+    this.attempts = attempts;
+    this.word = word.toLowerCase();
+  }
 
-    public void setLettersGuess(ArrayList<Character> lettersGuess) {
-        this.lettersGuess = lettersGuess;
-    }
+  public ArrayList<Character> getLettersGuess() {
+    return lettersGuess;
+  }
 
-    public String getUsername() {
-        return username;
-    }
+  public void setLettersGuess(ArrayList<Character> lettersGuess) {
+    this.lettersGuess = lettersGuess;
+  }
 
-    public int getNumberOfWords() {
-        return numberOfWords;
-    }
+  public String getUsername() {
+    return username;
+  }
 
-    public int getAttempts() {
-        return attempts;
-    }
+  public int getNumberOfWords() {
+    return numberOfWords;
+  }
 
-    public void setAttempts(int attempts) {
-        this.attempts = attempts;
-    }
+  public int getAttempts() {
+    return attempts;
+  }
 
-    public String getWord() {
-        return word;
-    }
+  public void setAttempts(int attempts) {
+    this.attempts = attempts;
+  }
 
-    public void setWord(String word) {
-        this.word = word;
-    }
+  public String getWord() {
+    return word;
+  }
 
-    /*
-    * This function Stringifies the randomly chosen word so that it contains player guessed letters along with
-    * attempts counter
-    *
-    * Example:
-    *  word => zebra
-    *
-    *  original response => -----C7
-    *  Stringified response -> --br-C4
-    * */
-    public String getStringifyedWord(){
-        StringBuilder newWord = new StringBuilder();
+  public void setWord(String word) {
+    this.word = word;
+  }
 
-        newWord.append("-".repeat(this.getWord().length()));
-        newWord.append(" C").append(this.getAttempts());
+  /*
+   * This function Stringifies the randomly chosen word so that it contains player guessed letters along with
+   * attempts counter
+   *
+   * Example:
+   *  word => zebra
+   *
+   *  original response => -----C7
+   *  Stringified response -> --br-C4
+   * */
+  public String getStringifyedWord() {
+    StringBuilder newWord = new StringBuilder();
 
+    newWord.append("-".repeat(this.getWord().length()));
+    newWord.append(" C").append(this.getAttempts());
 
-        for (int x = 0; x < this.getWord().length(); x++) {
-            for (char c : this.getLettersGuess()) {
-                if (c == this.getWord().charAt(x)) {
-                    newWord.setCharAt(x, this.getWord().charAt(x));
-                }
-            }
-
-            if(this.getWord().charAt(x) == ' '){
-                newWord.setCharAt(x, ' ');
-            }
+    for (int x = 0; x < this.getWord().length(); x++) {
+      for (char c : this.getLettersGuess()) {
+        if (c == this.getWord().charAt(x)) {
+          newWord.setCharAt(x, this.getWord().charAt(x));
         }
+      }
 
-        if(!newWord.toString().contains("-")){
-            return "You won, the phrase was: " + this.getWord() + "\nUsage: start <number of letters> <attempts>";
-        }
-
-        return newWord.toString();
+      if (this.getWord().charAt(x) == ' ') {
+        newWord.setCharAt(x, ' ');
+      }
     }
 
-    public boolean guessLetter(char letter){
-        if(this.getLettersGuess().contains(letter)){
-            return false;
-        }
+    if (!newWord.toString().contains("-")) {
+      return "You won, the phrase was: " + this.getWord()
+          + "\nUsage: start <number of letters> <attempts>";
+    }
 
-        ArrayList<Character> newList = this.getLettersGuess();
-        newList.add(letter);
-        this.setLettersGuess(newList);
+    return newWord.toString();
+  }
 
-        if(!this.isLetterInWord(letter)){
-            this.setAttempts(this.getAttempts()-1);
-        }
+  public boolean guessLetter(char letter) {
+    if (this.getLettersGuess().contains(letter)) {
+      return false;
+    }
 
+    ArrayList<Character> newList = this.getLettersGuess();
+    newList.add(letter);
+    this.setLettersGuess(newList);
+
+    if (!this.isLetterInWord(letter)) {
+      this.setAttempts(this.getAttempts() - 1);
+    }
+
+    return true;
+  }
+
+  private boolean isLetterInWord(char letter) {
+    for (char c : this.getWord().toCharArray()) {
+      if (c == letter) {
         return true;
+      }
     }
+    return false;
+  }
 
-    private boolean isLetterInWord(char letter){
-        for(char c : this.getWord().toCharArray()){
-            if(c == letter){
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public boolean alreadyGuessed(char letter) {
-        return this.getLettersGuess().contains(letter);
-    }
+  public boolean alreadyGuessed(char letter) {
+    return this.getLettersGuess().contains(letter);
+  }
 }

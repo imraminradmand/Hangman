@@ -11,6 +11,7 @@ import java.util.StringJoiner;
 public class WordService extends UnicastRemoteObject implements WordServiceInterface {
 
   static ArrayList<String> words = new ArrayList<>();
+
   protected WordService() throws RemoteException {
     super();
     populateWords();
