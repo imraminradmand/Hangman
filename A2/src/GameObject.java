@@ -60,7 +60,7 @@ public class GameObject {
         StringBuilder newWord = new StringBuilder();
 
         newWord.append("-".repeat(this.getWord().length()));
-        newWord.append("C").append(this.getAttempts());
+        newWord.append(" C").append(this.getAttempts());
 
 
         for (int x = 0; x < this.getWord().length(); x++) {
@@ -75,6 +75,9 @@ public class GameObject {
             }
         }
 
+        if(!newWord.toString().contains("-")){
+            return "You won, the phrase was: " + this.getWord() + "\nUsage: start <number of letters> <attempts>";
+        }
 
         return newWord.toString();
     }
