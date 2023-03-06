@@ -24,10 +24,8 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
 
     @Override
     public String startGame(String player, int number_of_words, int failed_attempt_factor) throws RemoteException {
-
         String randomWord = wordService.getPhrase(number_of_words);
         gameStates.add( new GameObject(player, number_of_words, failed_attempt_factor, randomWord));
-
         return Objects.requireNonNull(getPlayerState(player)).getStringifyedWord();
     }
 

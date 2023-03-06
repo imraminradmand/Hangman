@@ -13,10 +13,10 @@ public class WordService extends UnicastRemoteObject implements WordServiceInter
   ArrayList<String> words = new ArrayList<>();
   protected WordService() throws RemoteException {
     super();
+    populateWords();
   }
 
-  @Override
-  public void populateWords() throws RemoteException {
+  void populateWords() throws RemoteException {
     try {
       File myObj = new File("words.txt");
       Scanner myReader = new Scanner(myObj);

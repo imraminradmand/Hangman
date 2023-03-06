@@ -71,7 +71,6 @@ public class GameObject {
                 }
             }
         }
-
         return newWord.toString();
     }
 

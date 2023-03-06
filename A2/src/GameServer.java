@@ -8,6 +8,6 @@ public class GameServer {
 
         GameHandlerService service = new GameHandlerService();
         Naming.rebind("rmi://localhost:4777" + "/GameServer", service);
-
+        System.out.println("Game Server connected");
     }
 }

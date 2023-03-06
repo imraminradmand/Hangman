@@ -19,7 +19,7 @@ public class AccountServer {
             AccountService service = new AccountService();
             LocateRegistry.createRegistry(4777);
             Naming.rebind("rmi://localhost:4777" + "/AccountService", service);
-
+            System.out.println("Account Service connected");
         }
         catch (Exception e)
         {
