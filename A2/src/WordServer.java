@@ -1,3 +1,10 @@
+/**
+ * The WordServer class serves as the entry point for the application. It is responsible for
+ * starting up the WordService and binding it to a naming service.
+ *
+ * @author Tate Greeves, Ramin Radmand, Emily Allerdings
+ */
+
 import java.rmi.Naming;
 
 public class WordServer {

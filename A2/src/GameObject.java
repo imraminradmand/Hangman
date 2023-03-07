@@ -1,3 +1,12 @@
+/**
+ * The GameObject class represents the game object that contains the details of a game being played
+ * by a player. It contains the player's username, the number of words to be guessed, the number of
+ * attempts remaining, and the word to be guessed. It also contains a list of letters that have been
+ * guessed by the player.
+ *
+ * @author Tate Greeves, Ramin Radmand, Emily Allerdings
+ */
+
 import java.util.ArrayList;
 
 public class GameObject {
@@ -47,16 +56,15 @@ public class GameObject {
     this.word = word;
   }
 
-  /*
-   * This function Stringifies the randomly chosen word so that it contains player guessed letters along with
-   * attempts counter
+  /**
+   * This function Stringifies the randomly chosen word so that it contains player guessed letters
+   * along with attempts counter
+   * Example: word => zebra
+   * original response => -----C7 Stringified
+   * response -> --br-C4
    *
-   * Example:
-   *  word => zebra
-   *
-   *  original response => -----C7
-   *  Stringified response -> --br-C4
-   * */
+   * @return stringified word
+   */
   public String getStringifyedWord() {
     StringBuilder newWord = new StringBuilder();
 

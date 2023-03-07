@@ -1,3 +1,11 @@
+/**
+ * This class implements the GameHandlerInterface and provides the logic for the game server. It
+ * keeps track of the game states of players, allows them to start, end, and restart games, and
+ * manages the account and word services for player authentication and word management.
+ *
+ * @author Tate Greeves, Ramin Radmand, Emily Allerdings
+ */
+
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.rmi.Naming;
@@ -26,6 +34,16 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
     }
   }
 
+  /**
+   * This method starts a game for a player. It generates a random word of the specified length and
+   * adds it to the gameStates list.
+   *
+   * @param player                - the player starting the game
+   * @param number_of_words       - the number of the word to be generated
+   * @param failed_attempt_factor - the number of failed attempts allowed
+   * @return the stringified word to be displayed to the player
+   * @throws RemoteException - if the remote method call fails
+   */
   @Override
   public String startGame(String player, int number_of_words, int failed_attempt_factor)
       throws RemoteException {
@@ -35,6 +53,17 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
     return Objects.requireNonNull(getPlayerState(player)).getStringifyedWord();
   }
 
+  /**
+   * This method checks if the letter the player has guessed is in the word. If it is, it returns
+   * the stringified word with the letter in the correct position. Otherwise, it will either return
+   * the stringified word with the counter decremented or says the letter has been already guessed.
+   *
+   * @param player - the player guessing the letter
+   * @param letter - the letter the player has guessed
+   * @return the stringified word to be displayed to the player or a message saying the letter has
+   * already been guessed or the player has run out of attempts
+   * @throws RemoteException - if the remote method call fails
+   */
   @Override
   public String guessLetter(String player, char letter) throws RemoteException {
     GameObject gameState = getPlayerState(player);
@@ -48,12 +77,20 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
     return "Incorrect guess!\n" + gameState.getStringifyedWord();
   }
 
+  /**
+   * This method checks if the whole phrase the player has guessed is correct or not
+   *
+   * @param player - the player guessing the phrase
+   * @param phrase - the phrase the player has guessed
+   * @return message whether user guessed the correct phrase or not
+   * @throws IOException - if the updateScore method fails to write to users.txt file
+   */
   @Override
   public String guessPhrase(String player, String phrase) throws IOException {
     GameObject gameState = getPlayerState(player);
     assert gameState != null;
     if (phrase.toLowerCase().equals(gameState.getWord())) {
-      accountService.updateScore(gameState.getUsername(), 100);
+      accountService.updateScore(gameState.getUsername());
       removeGameState(player);
       return "You guessed the correct phrase.\nUsage: start <number of letters> <attempts> or exit";
     }
@@ -61,6 +98,13 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
     return null;
   }
 
+  /**
+   * This method ends the game for a player and removes the game state from the gameStates list.
+   *
+   * @param player - the player ending the game
+   * @return the word that the player was trying to guess
+   * @throws RemoteException - if the remote method call fails
+   */
   @Override
   public String endGame(String player) throws RemoteException {
     GameObject gameState = getPlayerState(player);
@@ -71,6 +115,13 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
         + "\n Usage: start <number of letters> <attempts> or exit";
   }
 
+  /**
+   * This method allows user to restart a game
+   *
+   * @param player - the player restarting the game
+   * @return message restarting the game
+   * @throws RemoteException - if the remote method call fails
+   */
   @Override
   public String restartGame(String player) throws RemoteException {
     String response = "";
@@ -85,21 +136,51 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
     return response;
   }
 
+  /**
+   * This method adds a word to the word repository
+   *
+   * @param word - the word to be added
+   * @return true if the word was added successfully, false otherwise
+   * @throws RemoteException - if the remote method call fails
+   */
   @Override
   public boolean addWord(String word) throws RemoteException {
     return wordService.addWord(word);
   }
 
+  /**
+   * This method removes a word from the word repository
+   *
+   * @param word - the word to be removed
+   * @return true if the word was removed successfully, false otherwise
+   * @throws RemoteException - if the remote method call fails
+   */
   @Override
   public boolean removeWord(String word) throws RemoteException {
     return wordService.removeWord(word);
   }
 
+  /**
+   * This method checks if a word is in the word repository
+   *
+   * @param word - the word to be checked
+   * @return true if the word is in the repository, false otherwise
+   * @throws RemoteException - if the remote method call fails
+   */
   @Override
   public boolean checkWord(String word) throws RemoteException {
     return wordService.checkWord(word);
   }
 
+  /**
+   * This method checks if a user is logged in. This will prevent users from logging in multiple
+   * times.
+   *
+   * @param username - the username of the user
+   * @param password - the password of the user
+   * @return true if the user is logged in, false otherwise
+   * @throws RemoteException - if the remote method call fails
+   */
   @Override
   public boolean login(String username, String password) throws RemoteException {
 
@@ -110,6 +191,15 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
     return !accountService.readFromFile(username, password).equals("!noaccount!");
   }
 
+  /**
+   * This method registers a new user. It checks if the user already exists and if not, it creates a
+   * new account for the user.
+   *
+   * @param username - the username of the user
+   * @param password - the password of the user
+   * @return true if the user was registered successfully, false otherwise
+   * @throws RemoteException - if the remote method call fails
+   */
   @Override
   public boolean register(String username, String password) throws RemoteException {
     if (!accountService.readFromFile(username, password).equals("!noaccount!")) {
@@ -124,11 +214,25 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
     return true;
   }
 
+  /**
+   * This method logs a user out of the system, and remove them from the loggedInUsers set.
+   *
+   * @param username - the username of the user
+   * @throws RemoteException - if the remote method call fails
+   */
   @Override
   public void logOut(String username) throws RemoteException {
     loggedInUsers.remove(username);
   }
 
+  /**
+   * This method returns the high score of a user
+   *
+   * @param username - the username of the user
+   * @param password - the password of the user
+   * @return the high score of the user
+   * @throws RemoteException - if the remote method call fails
+   */
   @Override
   public String getScore(String username, String password) throws RemoteException {
     return "Your high score is " + accountService.readFromFile(username, password);

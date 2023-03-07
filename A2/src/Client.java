@@ -1,3 +1,10 @@
+/**
+ * The Client class is responsible for creating and managing the client-side connection with the
+ * GameServer using the RMI (Remote Method Invocation) protocol.
+ *
+ * @author Tate Greeves, Ramin Radmand, Emily Allerdings
+ */
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -9,6 +16,15 @@ public class Client {
   private static String username;
   private static String password;
 
+  /**
+   * The main method is responsible for creating the client-side connection with the GameServer
+   * using the RMI (Remote Method Invocation) protocol. The client is able to log in or register
+   * with the server and then play the game.
+   *
+   * @param args the command line arguments
+   * @throws IOException       if there is an error reading from the console
+   * @throws NotBoundException if the naming service cannot find the remote object
+   */
   public static void main(String[] args) throws IOException, NotBoundException {
     GameHandlerInterface service = (GameHandlerInterface) Naming.lookup(
         "rmi://localhost:4777" + "/GameServer");

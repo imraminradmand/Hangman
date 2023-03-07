@@ -1,3 +1,12 @@
+/**
+ * This interface represents the methods that can be remotely invoked on the Game server. The
+ * methods handle all game related functionality, including starting a game, guessing a letter,
+ * guessing a phrase, ending a game, restarting a game, adding a word, removing a word, checking a
+ * word, logging in, registering, logging out, and getting a score.
+ *
+ * @author Tate Greeves, Ramin Radmand, Emily Allerdings
+ */
+
 import java.io.IOException;
 import java.rmi.Remote;
 import java.rmi.RemoteException;

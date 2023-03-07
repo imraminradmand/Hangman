@@ -1,3 +1,10 @@
+/**
+ * This class is used to create the AccountService and bind it to the RMI registry. It also creates
+ * the file that will be used to store the user information.
+ *
+ * @author Tate Greeves, Ramin Radmand, Emily Allerdings
+ */
+
 import java.io.File;
 import java.io.IOException;
 import java.rmi.Naming;
