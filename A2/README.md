@@ -2,7 +2,7 @@
 
 ## Description
 For this assignment, you must develop a client-server distributed application in
-Java for a phrase guessing game. The client connects to the server and specifies
+Java for a phrase guessing game using RMI. The client connects to the server and specifies
 the game level they want to play. The server then chooses a number of words
 from a dictionary based on the game level, and asks the client to guess the
 phrase. The client (the player) tries to guess the words chosen by the server
@@ -24,13 +24,12 @@ or remove a words from the repository, or check if the repository already contai
 a given word.
 
 ## How to run
-1. `javac ClientHandler.java`
-1. `javac AccountHandler.java`
-1. `javac GameLogic.java`
-1. `javac AccountService.java && java AccountService [port]`
-2. `javac WordService.java && java WordService [port]`
-3. `javac Server.java && java Server [port] [WordService port] [AccountService port]`
-4. `javac Client.java && java Client [port]`
+1. `cd src && javac *.java`
+2. `rmiregistry &`
+3. `java AccountServer`
+4. `java WordServer`
+5. `java GameServer`
+6. `java Client`
 
 ## Protocol Design Document
 ### Service Descriptions:

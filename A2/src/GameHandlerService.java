@@ -295,7 +295,7 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
           } catch (RemoteException e1) {
             e1.printStackTrace();
           }
-          System.out.println("Connection error with client!");
+          System.out.println("Connection error or client has disconnected");
           return;
         }
 
