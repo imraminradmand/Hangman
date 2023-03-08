@@ -10,11 +10,25 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 
-public class Client {
+public class Client extends UnicastRemoteObject implements ClientListener{
 
-  private static String username;
-  private static String password;
+
+    public Client(GameHandlerInterface service) throws RemoteException {
+        this.service = service;
+    }
+
+    private GameHandlerInterface service;
+    private String username;
+    private String password;
+
+    @Override
+    public void ping() throws RemoteException {
+        // TODO Auto-generated method stub
+        //System.out.println("pong");
+    }
 
   /**
    * The main method is responsible for creating the client-side connection with the GameServer
@@ -22,57 +36,96 @@ public class Client {
    * with the server and then play the game.
    *
    * @param args the command line arguments
+ * @param client
    * @throws IOException       if there is an error reading from the console
    * @throws NotBoundException if the naming service cannot find the remote object
    */
   public static void main(String[] args) throws IOException, NotBoundException {
-    GameHandlerInterface service = (GameHandlerInterface) Naming.lookup(
-        "rmi://localhost:4777" + "/GameServer");
 
-    InputStreamReader inputStreamReader = new InputStreamReader(System.in);
-    BufferedReader stdin = new BufferedReader(inputStreamReader);
+      GameHandlerInterface service = (GameHandlerInterface) Naming.lookup(
+              "rmi://localhost:4777" + "/GameServer");
 
-    while (true) {
-      System.out.println(
-          "USAGE: login <username> <password> OR register <username> <password> OR exit");
-      String input = stdin.readLine();
-      String[] clientArgs = input.split(" ");
+      Client client = new Client(service);
 
-      if (input.equalsIgnoreCase("exit")) {
-        break;
-      }
+      client.clientStart();
 
-      if (clientArgs[0].equalsIgnoreCase("login")) {
-        if (clientArgs.length == 3) {
-          if (service.login(clientArgs[1], clientArgs[2])) {
-            username = clientArgs[1];
-            password = clientArgs[2];
-            playGame(service);
-            break;
-          }
-        }
-      } else if (clientArgs[0].equalsIgnoreCase("register")) {
-        if (clientArgs.length == 3) {
-          if (service.register(clientArgs[1], clientArgs[2])) {
-            username = clientArgs[1];
-            password = clientArgs[2];
-            playGame(service);
-            break;
-          }
-        }
-      }
-    }
-    inputStreamReader.close();
-    stdin.close();
   }
 
-  private static void playGame(GameHandlerInterface service) throws IOException {
+  public void clientStart() throws IOException, NotBoundException {
+
+
+          InputStreamReader inputStreamReader = new InputStreamReader(System.in);
+          BufferedReader stdin = new BufferedReader(inputStreamReader);
+
+          while (true) {
+
+
+
+            System.out.println(
+                "USAGE: login <username> <password> OR register <username> <password> OR exit");
+            String input = stdin.readLine();
+            String[] clientArgs = input.split(" ");
+
+            if (input.equalsIgnoreCase("exit")) {
+              System.exit(0);
+            } else if (clientArgs[0].equalsIgnoreCase("login")) {
+              if (clientArgs.length == 3) {
+
+                int code = service.login(clientArgs[1], clientArgs[2]);
+
+
+                switch(code) {
+                    case 0:
+                        username = clientArgs[1];
+                        password = clientArgs[2];
+                        playGame(service);
+                        break;
+                    case 1:
+                        System.out.println("Account does not exist.");
+                        break;
+                    case 2:
+                        System.out.println("Account already logged in somewhere else.");
+                        break;
+                    case 3:
+                        System.out.println("Account gamestate is not null");
+                        break;
+                    default:
+                        System.out.println("Some internal error has occured.");
+                }
+              }
+
+            } else if (clientArgs[0].equalsIgnoreCase("register")) {
+              if (clientArgs.length == 3) {
+                if (service.register(clientArgs[1], clientArgs[2])) {
+                  username = clientArgs[1];
+                  password = clientArgs[2];
+                  playGame(service);
+                  break;
+                }else {
+                    System.out.println("Account already exists with that username.");
+                }
+              }
+            }else {
+
+                System.out.println("Invalid input.");
+            }
+          }
+          inputStreamReader.close();
+          stdin.close();
+  }
+
+  private void playGame(GameHandlerInterface service) throws IOException {
+
+    registerClientToServer();
+
     InputStreamReader inputStreamReader = new InputStreamReader(System.in);
     BufferedReader stdin = new BufferedReader(inputStreamReader);
     System.out.println("Start a game with start <number of words> <attempts>");
 
     while (true) {
-      String[] args = stdin.readLine().split(" ");
+      String input = stdin.readLine();
+      String[] args = input.split(" ");
+
 
       if (args[0].equalsIgnoreCase("exit")) {
         service.logOut(username);
@@ -92,12 +145,10 @@ public class Client {
           writeHelpScreen();
         } else if (args[0].equals("$")) {
           System.out.println(service.getScore(username, password));
-        } else {
-          if (args[0].length() > 1) {
-            System.out.println(service.guessPhrase(username, args[0]));
-          } else {
+        } else if(input.length() == 1){
             System.out.println(service.guessLetter(username, args[0].charAt(0)));
-          }
+        }else {
+            System.out.println(service.guessPhrase(username, input));
         }
       } else if (args.length == 2) {
         /*
@@ -114,19 +165,23 @@ public class Client {
           String word = args[1];
           boolean response = service.removeWord(word);
           System.out.println(word + ": " + (response ? "removed" : "does not exist"));
+        }else {
+            System.out.println(service.guessPhrase(username, input));
         }
       } else if (args.length == 3) {
         if (args[0].equalsIgnoreCase("start")) {
           System.out.println(
               service.startGame(username, Integer.parseInt(args[1]), Integer.parseInt(args[2])));
+        }else {
+            System.out.println(service.guessPhrase(username, input));
         }
       } else {
-        System.out.println("Unknown commands, use !help for a list of options.");
-      }
+          System.out.println(service.guessPhrase(username, input));
+        }
     }
   }
 
-  private static void writeHelpScreen() {
+  private void writeHelpScreen() {
     System.out.println("-----Commands-----");
     System.out.println("start <number of letters> <number of words>");
     System.out.println("# - Ends the game");
@@ -136,4 +191,31 @@ public class Client {
     System.out.println("$ - Retrieves a users score");
 
   }
+
+
+  private void registerClientToServer() throws RemoteException {
+      service.addClientListener(this, username);
+
+      Runnable pingServer = () -> {
+              while(true) {
+                  try {
+                    service.ping();
+                    try {
+                        Thread.sleep(2000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                } catch (RemoteException e) {
+                    // TODO Auto-generated catch block
+                    System.out.print("Connection error with server!");
+                    System.exit(0);
+                }
+
+              }
+          };
+
+      Thread pingServerT = new Thread(pingServer);
+      pingServerT.start();
+  }
+
 }
