@@ -13,22 +13,27 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
-public class Client extends UnicastRemoteObject implements ClientListener{
+public class Client extends UnicastRemoteObject implements ClientListener {
+
+  private final GameHandlerInterface service;
+  private String username;
+  private String password;
+
+  public Client(GameHandlerInterface service) throws RemoteException {
+    this.service = service;
+  }
 
 
-    public Client(GameHandlerInterface service) throws RemoteException {
-        this.service = service;
-    }
-
-    private GameHandlerInterface service;
-    private String username;
-    private String password;
-
-    @Override
-    public void ping() throws RemoteException {
-        // TODO Auto-generated method stub
-        //System.out.println("pong");
-    }
+  /**
+   * This method is used for as a heartbeat to the server to ensure that the client is still
+   * connected.
+   *
+   * @throws RemoteException - if there is an error with the connection
+   */
+  @Override
+  public void ping() throws RemoteException {
+    //System.out.println("pong");
+  }
 
   /**
    * The main method is responsible for creating the client-side connection with the GameServer
@@ -36,82 +41,77 @@ public class Client extends UnicastRemoteObject implements ClientListener{
    * with the server and then play the game.
    *
    * @param args the command line arguments
- * @param client
    * @throws IOException       if there is an error reading from the console
    * @throws NotBoundException if the naming service cannot find the remote object
    */
   public static void main(String[] args) throws IOException, NotBoundException {
 
-      GameHandlerInterface service = (GameHandlerInterface) Naming.lookup(
-              "rmi://localhost:4777" + "/GameServer");
+    GameHandlerInterface service = (GameHandlerInterface) Naming.lookup(
+        "rmi://localhost:4777" + "/GameServer");
 
-      Client client = new Client(service);
+    Client client = new Client(service);
 
-      client.clientStart();
+    client.clientStart();
 
   }
 
   public void clientStart() throws IOException, NotBoundException {
 
+    InputStreamReader inputStreamReader = new InputStreamReader(System.in);
+    BufferedReader stdin = new BufferedReader(inputStreamReader);
 
-          InputStreamReader inputStreamReader = new InputStreamReader(System.in);
-          BufferedReader stdin = new BufferedReader(inputStreamReader);
+    while (true) {
 
-          while (true) {
+      System.out.println(
+          "USAGE: login <username> <password> OR register <username> <password> OR exit");
+      String input = stdin.readLine();
+      String[] clientArgs = input.split(" ");
 
+      if (input.equalsIgnoreCase("exit")) {
+        System.exit(0);
+      } else if (clientArgs[0].equalsIgnoreCase("login")) {
+        if (clientArgs.length == 3) {
 
+          int code = service.login(clientArgs[1], clientArgs[2]);
 
-            System.out.println(
-                "USAGE: login <username> <password> OR register <username> <password> OR exit");
-            String input = stdin.readLine();
-            String[] clientArgs = input.split(" ");
-
-            if (input.equalsIgnoreCase("exit")) {
-              System.exit(0);
-            } else if (clientArgs[0].equalsIgnoreCase("login")) {
-              if (clientArgs.length == 3) {
-
-                int code = service.login(clientArgs[1], clientArgs[2]);
-
-
-                switch(code) {
-                    case 0:
-                        username = clientArgs[1];
-                        password = clientArgs[2];
-                        playGame(service);
-                        break;
-                    case 1:
-                        System.out.println("Account does not exist.");
-                        break;
-                    case 2:
-                        System.out.println("Account already logged in somewhere else.");
-                        break;
-                    case 3:
-                        System.out.println("Account gamestate is not null");
-                        break;
-                    default:
-                        System.out.println("Some internal error has occured.");
-                }
-              }
-
-            } else if (clientArgs[0].equalsIgnoreCase("register")) {
-              if (clientArgs.length == 3) {
-                if (service.register(clientArgs[1], clientArgs[2])) {
-                  username = clientArgs[1];
-                  password = clientArgs[2];
-                  playGame(service);
-                  break;
-                }else {
-                    System.out.println("Account already exists with that username.");
-                }
-              }
-            }else {
-
-                System.out.println("Invalid input.");
-            }
+          switch (code) {
+            case 0:
+              username = clientArgs[1];
+              password = clientArgs[2];
+              playGame(service);
+              break;
+            case 1:
+              System.out.println("Account does not exist.");
+              break;
+            case 2:
+              System.out.println("Account already logged in somewhere else.");
+              break;
+            case 3:
+              System.out.println("Account gamestate is not null");
+              break;
+            default:
+              System.out.println("Some internal error has occurred.");
           }
-          inputStreamReader.close();
-          stdin.close();
+        }
+
+      } else if (clientArgs[0].equalsIgnoreCase("register")) {
+        if (clientArgs.length == 3) {
+          if (service.register(clientArgs[1], clientArgs[2])) {
+            username = clientArgs[1];
+            password = clientArgs[2];
+            playGame(service);
+            break;
+          } else {
+            System.out.println("Account already exists with that username.");
+          }
+        }
+      } else {
+
+        System.out.println("Invalid input.");
+      }
+    }
+    inputStreamReader.close();
+    stdin.close();
   }
 
   private void playGame(GameHandlerInterface service) throws IOException {
@@ -125,7 +125,6 @@ public class Client extends UnicastRemoteObject implements ClientListener{
     while (true) {
       String input = stdin.readLine();
       String[] args = input.split(" ");
-
 
       if (args[0].equalsIgnoreCase("exit")) {
         service.logOut(username);
@@ -145,10 +144,10 @@ public class Client extends UnicastRemoteObject implements ClientListener{
           writeHelpScreen();
         } else if (args[0].equals("$")) {
           System.out.println(service.getScore(username, password));
-        } else if(input.length() == 1){
-            System.out.println(service.guessLetter(username, args[0].charAt(0)));
-        }else {
-            System.out.println(service.guessPhrase(username, input));
+        } else if (input.length() == 1) {
+          System.out.println(service.guessLetter(username, args[0].charAt(0)));
+        } else {
+          System.out.println(service.guessPhrase(username, input));
         }
       } else if (args.length == 2) {
         /*
@@ -165,19 +164,19 @@ public class Client extends UnicastRemoteObject implements ClientListener{
           String word = args[1];
           boolean response = service.removeWord(word);
           System.out.println(word + ": " + (response ? "removed" : "does not exist"));
-        }else {
-            System.out.println(service.guessPhrase(username, input));
+        } else {
+          System.out.println(service.guessPhrase(username, input));
         }
       } else if (args.length == 3) {
         if (args[0].equalsIgnoreCase("start")) {
           System.out.println(
               service.startGame(username, Integer.parseInt(args[1]), Integer.parseInt(args[2])));
-        }else {
-            System.out.println(service.guessPhrase(username, input));
-        }
-      } else {
+        } else {
           System.out.println(service.guessPhrase(username, input));
         }
+      } else {
+        System.out.println(service.guessPhrase(username, input));
+      }
     }
   }
 
@@ -194,28 +193,27 @@ public class Client extends UnicastRemoteObject implements ClientListener{
 
 
   private void registerClientToServer() throws RemoteException {
-      service.addClientListener(this, username);
+    service.addClientListener(this, username);
 
-      Runnable pingServer = () -> {
-              while(true) {
-                  try {
-                    service.ping();
-                    try {
-                        Thread.sleep(2000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                } catch (RemoteException e) {
-                    // TODO Auto-generated catch block
-                    System.out.print("Connection error with server!");
-                    System.exit(0);
-                }
+    Runnable pingServer = () -> {
+      while (true) {
+        try {
+          service.ping();
+          try {
+            Thread.sleep(2000);
+          } catch (InterruptedException e) {
+            e.printStackTrace();
+          }
+        } catch (RemoteException e) {
+          System.out.print("Connection error with server!");
+          System.exit(0);
+        }
 
-              }
-          };
+      }
+    };
 
-      Thread pingServerT = new Thread(pingServer);
-      pingServerT.start();
+    Thread pingServerT = new Thread(pingServer);
+    pingServerT.start();
   }
 
 }
