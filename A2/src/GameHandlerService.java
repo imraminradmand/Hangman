@@ -69,6 +69,10 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
     GameObject gameState = getPlayerState(player);
 
     if (gameState != null) {
+      int attempts = gameState.getAttempts();
+      if (attempts < 2) {
+        return endGame(player);
+      }
       if (gameState.guessLetter(Character.toLowerCase(letter))) {
         if (gameState.getStringifyedWord()
             .contains("Usage: start <number of letters> <attempts>")) {
@@ -85,7 +89,6 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
         return "Letter already guessed\n" + gameState.getStringifyedWord();
       }
       return "Incorrect guess!\n" + gameState.getStringifyedWord();
-
     }
     return "Gamestate is null, try starting a new game!";
   }
@@ -102,6 +105,10 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
   public String guessPhrase(String player, String phrase) throws IOException {
     GameObject gameState = getPlayerState(player);
     if (gameState != null) {
+      int attempts = gameState.getAttempts();
+      if (attempts < 2) {
+        return endGame(player);
+      }
       if (phrase.equalsIgnoreCase(gameState.getWord())) {
         accountService.updateScore(gameState.getUsername());
         removeGameState(gameState.getUsername());
