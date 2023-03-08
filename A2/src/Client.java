@@ -25,17 +25,6 @@ public class Client extends UnicastRemoteObject implements ClientListener {
 
 
   /**
-   * This method is used for as a heartbeat to the server to ensure that the client is still
-   * connected.
-   *
-   * @throws RemoteException - if there is an error with the connection
-   */
-  @Override
-  public void ping() throws RemoteException {
-    //System.out.println("pong");
-  }
-
-  /**
    * The main method is responsible for creating the client-side connection with the GameServer
    * using the RMI (Remote Method Invocation) protocol. The client is able to log in or register
    * with the server and then play the game.
@@ -46,8 +35,13 @@ public class Client extends UnicastRemoteObject implements ClientListener {
    */
   public static void main(String[] args) throws IOException, NotBoundException {
 
+    if (args.length < 1) {
+      System.out.println("Usage: java Client <server ip>");
+      System.exit(0);
+    }
+
     GameHandlerInterface service = (GameHandlerInterface) Naming.lookup(
-        "rmi://localhost:4777" + "/GameServer");
+        "rmi://" + args[0] + ":4777" + "/GameServer");
 
     Client client = new Client(service);
 
@@ -216,4 +210,14 @@ public class Client extends UnicastRemoteObject implements ClientListener {
     pingServerT.start();
   }
 
+  /**
+   * This method is used for as a heartbeat to the server to ensure that the client is still
+   * connected.
+   *
+   * @throws RemoteException - if there is an error with the connection
+   */
+  @Override
+  public void ping() throws RemoteException {
+    //System.out.println("pong");
+  }
 }
