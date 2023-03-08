@@ -19,10 +19,10 @@ import java.util.Set;
 
 public class GameHandlerService extends UnicastRemoteObject implements GameHandlerInterface {
 
-  private static final ArrayList<GameObject> gameStates = new ArrayList<>();
-  private static final Set<String> loggedInUsers = new HashSet<>();
-  private static AccountInterface accountService;
-  private static WordServiceInterface wordService;
+  private  final ArrayList<GameObject> gameStates = new ArrayList<>();
+  private  final Set<String> loggedInUsers = new HashSet<>();
+  private  AccountInterface accountService;
+  private  WordServiceInterface wordService;
 
   protected GameHandlerService() throws RemoteException {
     super();
@@ -65,16 +65,28 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
    * @throws RemoteException - if the remote method call fails
    */
   @Override
-  public String guessLetter(String player, char letter) throws RemoteException {
+  public String guessLetter(String player, char letter) throws RemoteException  {
     GameObject gameState = getPlayerState(player);
 
-    assert gameState != null;
-    if (gameState.guessLetter(Character.toLowerCase(letter))) {
-      return gameState.getStringifyedWord();
-    } else if (gameState.alreadyGuessed(Character.toLowerCase(letter))) {
-      return "Letter already guessed\n" + gameState.getStringifyedWord();
+    if(gameState != null) {
+        if (gameState.guessLetter(Character.toLowerCase(letter))) {
+            if (gameState.getStringifyedWord().contains("Usage: start <number of letters> <attempts>")) {
+                try {
+                    accountService.updateScore(gameState.getUsername());
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+                removeGameState(gameState.getUsername());
+            }
+          return gameState.getStringifyedWord();
+        } else if (gameState.alreadyGuessed(Character.toLowerCase(letter))) {
+          return "Letter already guessed\n" + gameState.getStringifyedWord();
+        }
+        return "Incorrect guess!\n" + gameState.getStringifyedWord();
+
     }
-    return "Incorrect guess!\n" + gameState.getStringifyedWord();
+    return "Gamestate is null, try starting a new game!";
   }
 
   /**
@@ -88,14 +100,16 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
   @Override
   public String guessPhrase(String player, String phrase) throws IOException {
     GameObject gameState = getPlayerState(player);
-    assert gameState != null;
-    if (phrase.toLowerCase().equals(gameState.getWord())) {
-      accountService.updateScore(gameState.getUsername());
-      removeGameState(player);
-      return "You guessed the correct phrase.\nUsage: start <number of letters> <attempts> or exit";
+    if(gameState != null) {
+        if (phrase.toLowerCase().equals(gameState.getWord().toLowerCase())) {
+          accountService.updateScore(gameState.getUsername());
+          removeGameState(gameState.getUsername());
+          return "You guessed the correct phrase.\nUsage: start <number of letters> <attempts> or exit";
+        }else {
+            return "You guessed the incorrect phrase.";
+        }
     }
-
-    return null;
+    return "Gamestate is null, try starting a new game!";
   }
 
   /**
@@ -178,17 +192,27 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
    *
    * @param username - the username of the user
    * @param password - the password of the user
-   * @return true if the user is logged in, false otherwise
+   * @return codes to determine if account can/can not login:
+   *    0: Can log in.
+   *    1: Account does not exist.
+   *    2: Account already logged in
+   *    3: Account player state is null.
    * @throws RemoteException - if the remote method call fails
    */
   @Override
-  public boolean login(String username, String password) throws RemoteException {
+  public int login(String username, String password) throws RemoteException {
 
-    if (getPlayerState(username) != null || loggedInUsers.contains(username)) {
-      return false;
+    if (accountService.readFromFile(username, password).equals("!noaccount!")) {
+        return 1;
+    }else if (loggedInUsers.contains(username)){
+        return 2;
+    }else if (getPlayerState(username) != null) {
+        return 3;
+    }else {
+        loggedInUsers.add(username);
+        return 0;
     }
-    loggedInUsers.add(username);
-    return !accountService.readFromFile(username, password).equals("!noaccount!");
+
   }
 
   /**
@@ -238,6 +262,7 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
     return "Your high score is " + accountService.readFromFile(username, password);
   }
 
+
   private GameObject getPlayerState(String username) {
     for (GameObject obj : gameStates) {
       if (obj.getUsername().equals(username)) {
@@ -247,8 +272,49 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
     return null;
   }
 
+
   private void removeGameState(String username) {
     gameStates.removeIf(obj -> obj.getUsername().equals(username));
   }
+
+@Override
+public void addClientListener(ClientListener client, String username) throws RemoteException {
+    Runnable pingClient = () -> {
+        while(true) {
+            try {
+              client.ping();
+
+              try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+          } catch (RemoteException e) {
+              // TODO Auto-generated catch block
+              try {
+                this.removeGameState(username);
+                this.logOut(username);
+            } catch (RemoteException e1) {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
+            }
+              System.out.println("Connection error with client!");
+              return;
+          }
+
+        }
+    };
+
+    Thread pingClientT = new Thread(pingClient);
+    pingClientT.start();
+
+}
+
+@Override
+public void ping() throws RemoteException {
+    //System.out.println("pong");
+
+}
 
 }

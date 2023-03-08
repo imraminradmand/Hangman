@@ -33,12 +33,16 @@ public interface GameHandlerInterface extends Remote {
 
   boolean checkWord(String word) throws RemoteException;
 
-  boolean login(String username, String password) throws RemoteException;
+  int login(String username, String password) throws RemoteException;
 
   boolean register(String username, String password) throws RemoteException;
 
   void logOut(String username) throws RemoteException;
 
   String getScore(String username, String password) throws RemoteException;
+
+  void addClientListener(ClientListener client, String username) throws RemoteException;
+
+  void ping() throws RemoteException;
 
 }
