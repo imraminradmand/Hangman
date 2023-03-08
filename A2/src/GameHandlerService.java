@@ -127,7 +127,7 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
 
     assert gameState != null;
     return "Game ended, the word was: " + gameState.getWord()
-        + "\n Usage: start <number of letters> <attempts> or exit";
+        + "\nUsage: start <number of letters> <attempts> or exit";
   }
 
   /**
