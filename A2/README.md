@@ -29,7 +29,7 @@ a given word.
 3. `java AccountServer`
 4. `java WordServer`
 5. `java GameServer`
-6. `java Client`
+6. `java Client <server address>`
 
 ## How to play
 * `login/register <username> <password> or exit`
