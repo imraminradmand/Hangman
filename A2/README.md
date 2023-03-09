@@ -1,4 +1,4 @@
-# Hangman V1.0
+# Hangman V2.0
 
 ## Description
 For this assignment, you must develop a client-server distributed application in
@@ -31,81 +31,135 @@ a given word.
 5. `java GameServer`
 6. `java Client`
 
-## Protocol Design Document
+## Communication Design Document
 ### Service Descriptions:
-**AccountService**: Multithreaded TCP server, allowing up to 10 connections via ThreadPool, that handles user login and registration. It also keeps track of user scores.
+**AccountServer**: Handles user login, registration, and scores.
 
-**WordService**: UDP server that acts as a word repository for the game, allowing the server to add, remove, and check if a word exists in the repository.
+**WordServer**: Word repository for the game, allowing the user to add, remove, and check if a word exists in the repository.
 
-**Server**: Multithreaded TCP server, allowing up to 10 connections via ThreadPool, that handles the game logic and communicates with the AccountService and WordService.
+**GameServer**: Handles the game logic and communicates with the AccountServer and WordServer.
 
-**Client**: TCP client that handles user input and communicates with the Server.
+**Client**: Client facing interface, allowing for communication with the GameServer.
 
-### Sequence Diagram
-![Sequence Diagram](https://user-images.githubusercontent.com/69999501/217333895-4300829f-7d03-43ae-a306-891d0c7ea776.png)
+### Component Diagram
+![protocol](https://user-images.githubusercontent.com/69999501/223893650-28d4de48-014b-4d4c-844d-eaff8852b5a9.png)
 
+### Direction of method invocations
+#### Client - Server
+The client will invoke the following methods on the GameServer:
+* `login` - login if the user has an active account
+* `register` - register a new user account
+* `startGame` - start a new game
+* `guessLetter` - guess a letter in the phrase
+* `guessPhrase` - guess the entire phrase
+* `addWord` - add word to the word repository
+* `removeWord` - remove word from the word repository
+* `checkWord` - check if word exists in word repository
+* `getScore` - get current highscore
+* `restartGame` - start a new game
+* `endGame` - end current game
 
+The GameServer will then invoke the coresponding methods on either, `AccountService`, or `WordSerivce`
 
-### Communication Protocol Details
+#### Server - Client
+The server will invoke the `ping` method from the client every 2 seconds to ensure that the client is still connected, heartbeat mechanism. If the client has disconnected, the username associated with that client is removed from the system allowing user to login again as the system only permits for one instnace of the user to be logged in at a time, no simultaneous sessions from one user are allowed.
+
+### Methods and Data exchange
 #### Client - Server:
 
-Client will establish a connection with the server over TCP. The client will send a message to the server with the following format:
+##### AccountService
+* `writeToFile(username:String, password:String, score:String): boolean`
+  * Used when user registration is required
+  * Receives - username, password, score
+  * Returns - boolean to represent success or failure of registration
+* `readFromFile(username:String, password:String): String`
+  * Used when user login is required
+  * Receives - username and password
+  * Returns - String `!noaccount!` if not username and password do not match
+* `updateScore(username:String): void`
+  * Updates user score by adding 100 to the current score
+  * Receives - username
+  
+##### WordService
+* `getPhrase(length:int): String`
+  * Receives - number of words to generate for a phrase
+  * Returns - a phrase that contains `length` words
+* `addWord(word:String): boolean`
+  * Syncronized method
+  * Receives - word to add to repository
+  * Returns - boolean based on success or faliure of adding word
+* `removeWord(word:String): boolean`
+  * Syncronized method
+  * Receives - word to remove
+  * Returns - boolean based on success or failure of removing word
+* `checkWord(word:String): boolean`
+  * Syncronized method
+  * Receives - word to check
+  * Returns - boolean based on success or failure of existance of word
+  
+##### GameHandlerService
+* `startGame(player:String, number_of_words:int, failed_attempt_factor:int): String`
+  * Receives - player username, number of words they want in phrase, and how many attempts
+  * Returns - phrase that has been converted into dashes (-) + attempt counter
+* `guessLetter(player:String, letter:char): String`
+  * Receives - player username and guessed letter
+  * Returns - letter in the correct place in the phrase + updated attempt counter
+* `guessPhrase(player:String, phrase:String): String`
+  * Receives - player username and guessed phrase
+  * Returns - correct/incorrect guess message + updated attempt counter
+* `endGame(player:String): String`
+  * Removes player from `gameState`
+  * Receives - player username
+  * Returns - game ended message + next steps
+* `restartGame(player:String): String`
+  * Removes player from `gameState`
+  * Receives - player username
+  * Returns - game restart message
+* `addWord(word:String): boolean`
+  * Invokes `addWord` method in `WordService`
+  * Receives - word to add to repository
+  * Returns - boolean based on success or faliure of adding word
+* `removeWord(word:String): boolean`
+  * Invokes `removeWord` method in `WordService`
+  * Receives - word to remove from repository
+  * Returns - boolean based on success or faliure of removing word
+* `checkWord(word:String): boolean`
+  * Invokes `checkWord` method in `WordService`
+  * Receives - word to check for in repository
+  * Returns - boolean based on success or faliure of finding word
+* `login(username:String, password:String): int`
+  * Invokes `readFromFile` method in `AccountService`
+  * Receives - username and password
+  * Returns - integer representing whether user can be logged in or not
+* `register(username:String, password:String): String`
+  * Invokes `writeToFile` method in`AccountService`
+  * Receives - username and password
+  * Returns - same message as `writeToFile`
+* `logOut(String:username): void`
+  * Removes player username from loggedIn users
+  * Receives - username
+* `getScore(username:String, password:String): String`
+  * Receives - username and password
+  * Returns - user's highscore
+* `addClientListener(client:ClientListener, username:String): void`
+  * Registers client listener for heartbeat mechanism
 
-`[login/register] [username] [password]` OR `exit`
+#### Server - Client: 
 
-Once the client has logged in, or registered, the client will send a message to the server with the following format:
+##### AccountService : None
+##### WordService: None
+##### GameHandlerService:
+* `ping(): void`
+  * ping client for hearbeat checks
+##### ClientListener:
+* `ping(): void`
+  * Recieve ping from server for hearbeat checks
 
-`start <i> <f>` - Where i is the number of phrases a user wants and f is the number of failed attempts a user wants.
-
-At any point the client can send a message to the server with the following format:
-
-`? <word>` - Where word is the word the user wants to check if it exists in the collection.
-`$` - Check their score.
-`+ <word>` - Where word is the word the user wants to add to the collection.
-`- <word>` - Where word is the word the user wants to remove from the collection.
-`#` - Exit the game.
-
-Once the client starts a game, they will also have access to the following command:
-    
-`!` - Where they can end the current game and start a new one.
-
-Upon guessing the correct phrase the client will receive a message from the server saying "You win!". The server will then send a message to AccountService with the following format:
-
-`get <username>` - More details are mentioned under Server - AccountService.
-
-Upon receiving the reply, the server will send a message to AccountService with the following format updating the user score:
-
-`post <username> <score>` - More details are mentioned under Server - AccountService.
-
-If user enters `exit`, **before logging in**, the connection will be terminated.
-
-If user enters an invalid command, the server will send a message to the client saying "Invalid command" and re-prompt user.
-
-#### Server - AccountService:
-
-The server will establish a connection with the AccountService over TCP. The server will send a message to the AccountService with the following format:
-
-`[login/register] [username] [password]`
-
-AccountService will either reply with `!success!` or `!fail` if register is not successful OR `!noaccount` if login is not successful, if login is successful it will return the username followed by the users' score.
-
-##### Updating Score:
-Upon receiving `get` message from the server, AccountService will reply with the username followed by the users' score.
-
-Upon receiving `post` message from the server, AccountService will update the users' score.
-
-#### Server - WordService:
-
-The server will establish a connection with the WordService over UDP. The server will send a message to the WordService with one of the following formats depending on the client request:
-
-`start <i>` - Where i is the number of phrases a user wants. The server will then receive a list of phrases from the WordService.
-
-`? <word>` - Where word is the word the user wants to check if it exists in the collection. The server will then receive a `true` or `false` from the WordService.
-
-`+ <word>` - Where word is the word the user wants to add to the collection. The server will then receive a `word added` or `word exists` from the WordService.
-
-`- <word>` - Where word is the word the user wants to remove from the collection. The server will then receive a `word removed` or `word doesn't exist` from the WordService.
-
-
-
-
+### Design choices
+* `login()` returning `int` instead of `boolean`:
+An integer is being returned to allow us to determine if a user should be logged in or not. This allows us to ensure one session per user, as well catching any potential errors, and showing meaningful messages to the user
+  1. No account - return 1
+  2. Already logged in - return 2
+  3. Game state is null - return 3
+  4. Other error - return 4
+* `ping()` - This method is a heartbeat that will periodically check if the client is still connected. It is important to have this because we are keeping track of usernames, and only allowing them to have one active session, meaning that if a `RemoteException` is thrown by any of the method calls and the client crashes, their username would not be removed from the `loggedInUsers` without this mechanism. This will be a problem as the user will not be able to login unless the `GameServer` is restarted. This method will prevent such event from occurring.
