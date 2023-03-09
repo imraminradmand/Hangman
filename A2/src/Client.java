@@ -211,7 +211,7 @@ public class Client extends UnicastRemoteObject implements ClientListener {
   }
 
   /**
-   * This method is used for as a heartbeat to the server to ensure that the client is still
+   * This method is used for as a heartbeat from the server to ensure that the client is still
    * connected.
    *
    * @throws RemoteException - if there is an error with the connection
