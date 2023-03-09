@@ -31,6 +31,16 @@ a given word.
 5. `java GameServer`
 6. `java Client`
 
+## How to play
+* `login/register <username> <password> or exit`
+* `start <number of letters> <number of words>`
+* `# - Ends the game`
+* `! - Restarts the game`
+* `? <word>- Checks if a word exists in the repository`
+* `+ <word>- Adds word to the repository`
+* `- <word>- Removes word from the repository`
+* `$ - Retrieves a users score`
+
 ## Communication Design Document
 ### Service Descriptions:
 **AccountServer**: Handles user login, registration, and scores.
