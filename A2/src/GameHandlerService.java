@@ -106,7 +106,7 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
     GameObject gameState = getPlayerState(player);
     if (gameState != null) {
       int attempts = gameState.getAttempts();
-      if (attempts < 2) {
+      if (attempts == 0) {
         return endGame(player);
       }
       if (phrase.equalsIgnoreCase(gameState.getWord())) {
