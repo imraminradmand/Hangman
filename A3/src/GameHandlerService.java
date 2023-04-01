@@ -12,14 +12,14 @@ import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
 public class GameHandlerService extends UnicastRemoteObject implements GameHandlerInterface {
 
-  private final ArrayList<GameObject> gameStates = new ArrayList<>();
+  private final HashMap<String, GameObject> gameStates = new HashMap<>();
   private final Set<String> loggedInUsers = new HashSet<>();
   private final AccountInterface accountService;
   private final WordServiceInterface wordService;
@@ -49,7 +49,7 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
       throws RemoteException {
     String randomWord = wordService.getPhrase(number_of_words);
     System.out.println(randomWord);
-    gameStates.add(new GameObject(player, number_of_words, failed_attempt_factor, randomWord));
+    gameStates.put(player, new GameObject(player, number_of_words, failed_attempt_factor, randomWord));
     return Objects.requireNonNull(getPlayerState(player)).getStringifyedWord();
   }
 
@@ -269,17 +269,12 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
 
 
   private GameObject getPlayerState(String username) {
-    for (GameObject obj : gameStates) {
-      if (obj.getUsername().equals(username)) {
-        return obj;
-      }
-    }
-    return null;
+    return gameStates.getOrDefault(username, null);
   }
 
 
   private void removeGameState(String username) {
-    gameStates.removeIf(obj -> obj.getUsername().equals(username));
+    gameStates.remove(username);
   }
 
   @Override
