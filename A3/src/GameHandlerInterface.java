@@ -16,32 +16,33 @@ public interface GameHandlerInterface extends Remote {
   String startGame(
       String player,
       int number_of_words,
-      int failed_attempt_factor
+      int failed_attempt_factor,
+      int seq
   ) throws RemoteException;
 
-  String guessLetter(String player, char letter) throws RemoteException;
+  String guessLetter(String player, char letter, int seq) throws RemoteException;
 
-  String guessPhrase(String player, String phrase) throws IOException;
+  String guessPhrase(String player, String phrase, int seq) throws IOException;
 
-  String endGame(String player) throws RemoteException;
+  String endGame(String player, int seq) throws RemoteException;
 
-  String restartGame(String player) throws RemoteException;
+  String restartGame(String player, int seq) throws RemoteException;
 
-  boolean addWord(String word) throws RemoteException;
+  String addWord(String word, int seq) throws RemoteException;
 
-  boolean removeWord(String word) throws RemoteException;
+  String removeWord(String word, int seq) throws RemoteException;
 
-  boolean checkWord(String word) throws RemoteException;
+  String checkWord(String word, int seq) throws RemoteException;
 
-  int login(String username, String password) throws RemoteException;
+  int login(String username, String password, int seq) throws RemoteException;
 
-  boolean register(String username, String password) throws RemoteException;
+  boolean register(String username, String password, int seq) throws RemoteException;
 
-  void logOut(String username) throws RemoteException;
+  void logOut(String username, int seq) throws RemoteException;
 
-  String getScore(String username, String password) throws RemoteException;
+  String getScore(String username, String password, int seq) throws RemoteException;
 
-  void addClientListener(ClientListener client, String username) throws RemoteException;
+  void addClientListener(ClientListener client, String username, int seq) throws RemoteException;
 
   void ping() throws RemoteException;
 
