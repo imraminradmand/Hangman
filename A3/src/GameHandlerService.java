@@ -23,6 +23,8 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
   private final Set<String> loggedInUsers = new HashSet<>();
   private final AccountInterface accountService;
   private final WordServiceInterface wordService;
+  private final HashMap<String, Integer> playerSequences = new HashMap<>();
+  private final String sequenceError = "ERROR: Sequence numbers out of order, operation failed";
 
   protected GameHandlerService() throws RemoteException {
     super();
@@ -45,8 +47,18 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
    * @throws RemoteException - if the remote method call fails
    */
   @Override
-  public String startGame(String player, int number_of_words, int failed_attempt_factor)
+  public String startGame(String player, int number_of_words, int failed_attempt_factor, int seq)
       throws RemoteException {
+
+    int lastSeq = playerSequences.get(player);
+
+    if (Math.abs(lastSeq - seq) == 1){
+        return sequenceError;
+    }
+    playerSequences.remove(player);
+    playerSequences.put(player, seq-1);
+
+
     String randomWord = wordService.getPhrase(number_of_words);
     System.out.println(randomWord);
     gameStates.put(player, new GameObject(player, number_of_words, failed_attempt_factor, randomWord));
@@ -65,14 +77,22 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
    * @throws RemoteException - if the remote method call fails
    */
   @Override
-  public String guessLetter(String player, char letter) throws RemoteException {
+  public String guessLetter(String player, char letter, int seq) throws RemoteException {
     GameObject gameState = getPlayerState(player);
+
+    int lastSeq = playerSequences.get(player);
+
+    if (Math.abs(lastSeq - seq) == 1){
+      return sequenceError;
+    }
 
     if (gameState != null) {
       int attempts = gameState.getAttempts();
       if (attempts < 2) {
-        return endGame(player);
+        return endGame(player, seq);
       }
+      playerSequences.remove(player);
+      playerSequences.put(player, seq-1);
       if (gameState.guessLetter(Character.toLowerCase(letter))) {
         if (gameState.getStringifyedWord()
             .contains("Usage: start <number of letters> <attempts>")) {
@@ -102,13 +122,23 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
    * @throws IOException - if the updateScore method fails to write to users.txt file
    */
   @Override
-  public String guessPhrase(String player, String phrase) throws IOException {
+  public String guessPhrase(String player, String phrase, int seq) throws IOException {
     GameObject gameState = getPlayerState(player);
+
+    int lastSeq = playerSequences.get(player);
+
+    if (Math.abs(lastSeq - seq) == 1){
+      return sequenceError;
+    }
+
+
     if (gameState != null) {
       int attempts = gameState.getAttempts();
       if (attempts == 0) {
-        return endGame(player);
+        return endGame(player, seq);
       }
+      playerSequences.remove(player);
+      playerSequences.put(player, seq-1);
       if (phrase.equalsIgnoreCase(gameState.getWord())) {
         accountService.updateScore(gameState.getUsername());
         removeGameState(gameState.getUsername());
@@ -128,7 +158,16 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
    * @throws RemoteException - if the remote method call fails
    */
   @Override
-  public String endGame(String player) throws RemoteException {
+  public String endGame(String player, int seq) throws RemoteException {
+
+    int lastSeq = playerSequences.get(player);
+
+    if (Math.abs(lastSeq - seq) == 1){
+      return sequenceError;
+    }
+    playerSequences.remove(player);
+    playerSequences.put(player, seq-1);
+
     GameObject gameState = getPlayerState(player);
     removeGameState(player);
 
@@ -145,7 +184,16 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
    * @throws RemoteException - if the remote method call fails
    */
   @Override
-  public String restartGame(String player) throws RemoteException {
+  public String restartGame(String player, int seq) throws RemoteException {
+
+    int lastSeq = playerSequences.get(player);
+
+    if (Math.abs(lastSeq - seq) == 1){
+      return sequenceError;
+    }
+    playerSequences.remove(player);
+    playerSequences.put(player, seq-1);
+
     String response = "";
     GameObject gameState = getPlayerState(player);
     if (gameState == null) {
@@ -166,8 +214,22 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
    * @throws RemoteException - if the remote method call fails
    */
   @Override
-  public boolean addWord(String word) throws RemoteException {
-    return wordService.addWord(word);
+  public String addWord(String player, String word, int seq) throws RemoteException {
+
+    int lastSeq = playerSequences.get(player);
+
+    if (Math.abs(lastSeq - seq) == 1){
+      return sequenceError;
+    }
+
+    boolean status = wordService.addWord(word);
+    playerSequences.remove(player);
+    playerSequences.put(player, seq-1);
+    if (status){
+      return "Word added.";
+    }else{
+      return "Word already exists.";
+    }
   }
 
   /**
@@ -178,8 +240,22 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
    * @throws RemoteException - if the remote method call fails
    */
   @Override
-  public boolean removeWord(String word) throws RemoteException {
-    return wordService.removeWord(word);
+  public String removeWord(String player, String word, int seq) throws RemoteException {
+
+    int lastSeq = playerSequences.get(player);
+
+    if (Math.abs(lastSeq - seq) == 1){
+      return sequenceError;
+    }
+
+    boolean status = wordService.removeWord(word);
+    playerSequences.remove(player);
+    playerSequences.put(player, seq-1);
+    if (status){
+      return "Word removed.";
+    }else{
+      return "Word does not exist.";
+    }
   }
 
   /**
@@ -190,8 +266,22 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
    * @throws RemoteException - if the remote method call fails
    */
   @Override
-  public boolean checkWord(String word) throws RemoteException {
-    return wordService.checkWord(word);
+  public String checkWord(String player, String word, int seq) throws RemoteException {
+
+    int lastSeq = playerSequences.get(player);
+
+    if (Math.abs(lastSeq - seq) == 1){
+      return sequenceError;
+    }
+
+    boolean status = wordService.checkWord(word);
+    playerSequences.remove(player);
+    playerSequences.put(player, seq-1);
+    if (status){
+      return "Word exists.";
+    }else{
+      return "Word does not exist.";
+    }
   }
 
   /**
@@ -205,7 +295,7 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
    * @throws RemoteException - if the remote method call fails
    */
   @Override
-  public int login(String username, String password) throws RemoteException {
+  public int login(String username, String password, int seq) throws RemoteException {
 
     if (accountService.readFromFile(username, password).equals("!noaccount!")) {
       return 1;
@@ -215,6 +305,7 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
       return 3;
     } else {
       loggedInUsers.add(username);
+      playerSequences.put(username, seq);
       return 0;
     }
 
@@ -230,13 +321,14 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
    * @throws RemoteException - if the remote method call fails
    */
   @Override
-  public boolean register(String username, String password) throws RemoteException {
+  public boolean register(String username, String password, int seq) throws RemoteException {
     if (!accountService.readFromFile(username, password).equals("!noaccount!")) {
       return false;
     }
     try {
       accountService.writeToFile(username, password, "0");
       loggedInUsers.add(username);
+      playerSequences.put(username, seq);
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
@@ -250,8 +342,9 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
    * @throws RemoteException - if the remote method call fails
    */
   @Override
-  public void logOut(String username) throws RemoteException {
+  public void logOut(String username, int seq) throws RemoteException {
     loggedInUsers.remove(username);
+    playerSequences.remove(username);
   }
 
   /**
@@ -263,7 +356,15 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
    * @throws RemoteException - if the remote method call fails
    */
   @Override
-  public String getScore(String username, String password) throws RemoteException {
+  public String getScore(String username, String password, int seq) throws RemoteException {
+    int lastSeq = playerSequences.get(username);
+
+    if (Math.abs(lastSeq - seq) == 1){
+      return sequenceError;
+    }
+
+    playerSequences.remove(username);
+    playerSequences.put(username, seq-1);
     return "Your high score is " + accountService.readFromFile(username, password);
   }
 
@@ -279,6 +380,7 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
 
   @Override
   public void addClientListener(ClientListener client, String username) throws RemoteException {
+
     Runnable pingClient = () -> {
       while (true) {
         try {
@@ -293,7 +395,7 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
         } catch (RemoteException e) {
           try {
             this.removeGameState(username);
-            this.logOut(username);
+            this.logOut(username, playerSequences.get(username));
           } catch (RemoteException e1) {
             e1.printStackTrace();
           }
