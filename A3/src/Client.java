@@ -13,6 +13,7 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.Random;
+import java.util.function.Function;
 
 public class Client extends UnicastRemoteObject implements ClientListener {
 
@@ -125,6 +126,12 @@ public class Client extends UnicastRemoteObject implements ClientListener {
 
       if (args[0].equalsIgnoreCase("exit")) {
         service.logOut(username, seq);
+        seq++;
+        int rand = new Random().nextInt(100);
+        if (rand < 50){
+          service.logOut(username, seq);
+        }
+
         break;
       }
 
@@ -135,16 +142,45 @@ public class Client extends UnicastRemoteObject implements ClientListener {
 
         if (args[0].equals("!")) {
           System.out.println(service.restartGame(username, seq));
+          seq++;
+          int rand = new Random().nextInt(100);
+          if (rand < 50){
+            System.out.println(service.restartGame(username, seq));
+          }
+
         } else if (args[0].equals("#")) {
           System.out.println(service.endGame(username, seq));
+          seq++;
+          int rand = new Random().nextInt(100);
+          if (rand < 50){
+            System.out.println(service.endGame(username, seq));
+          }
+
         } else if (args[0].equals("!help")) {
           writeHelpScreen();
         } else if (args[0].equals("$")) {
           System.out.println(service.getScore(username, password, seq));
+          seq++;
+          int rand = new Random().nextInt(100);
+          if (rand < 50){
+            System.out.println(service.getScore(username, password, seq));
+          }
+
         } else if (input.length() == 1) {
           System.out.println(service.guessLetter(username, args[0].charAt(0), seq));
+          seq++;
+          int rand = new Random().nextInt(100);
+          if (rand < 50){
+            System.out.println(service.guessLetter(username, args[0].charAt(0), seq));
+          }
+
         } else {
           System.out.println(service.guessPhrase(username, input, seq));
+          seq++;
+          int rand = new Random().nextInt(100);
+          if (rand < 50){
+            System.out.println(service.guessPhrase(username, input, seq));
+          }
         }
       } else if (args.length == 2) {
         /*
@@ -153,26 +189,67 @@ public class Client extends UnicastRemoteObject implements ClientListener {
         if (args[0].equals("?")) {
           String word = args[1];
           System.out.println(word + ": " + service.checkWord(username, word, seq));
+
+          seq++;
+          int rand = new Random().nextInt(100);
+          if (rand < 50){
+            System.out.println(service.checkWord(username, word, seq));
+          }
+
         } else if (args[0].equals("+")) {
           String word = args[1];
           String response = service.addWord(username,word,seq);
           System.out.println(word + ": " + (response ));
+
+          seq++;
+          int rand = new Random().nextInt(100);
+          if (rand < 50){
+            System.out.println(service.addWord(username, word, seq));
+          }
+
         } else if (args[0].equals("-")) {
           String word = args[1];
           String response = service.removeWord(username, word, seq);
           System.out.println(word + ": " + (response ));
+
+          seq++;
+          int rand = new Random().nextInt(100);
+          if (rand < 50){
+            System.out.println(service.removeWord(username, word, seq));
+          }
         } else {
           System.out.println(service.guessPhrase(username, input, seq));
+
+          seq++;
+          int rand = new Random().nextInt(100);
+          if (rand < 50){
+            System.out.println(service.guessPhrase(username, input, seq));
+          }
         }
       } else if (args.length == 3) {
         if (args[0].equalsIgnoreCase("start")) {
           System.out.println(
               service.startGame(username, Integer.parseInt(args[1]), Integer.parseInt(args[2]), seq));
+          seq++;
+          int rand = new Random().nextInt(100);
+          if (rand < 50){
+            System.out.println(service.startGame(username, Integer.parseInt(args[1]), Integer.parseInt(args[2]), seq));
+          }
         } else {
           System.out.println(service.guessPhrase(username, input, seq));
+          seq++;
+          int rand = new Random().nextInt(100);
+          if (rand < 50){
+            System.out.println(service.guessPhrase(username, input, seq));
+          }
         }
       } else {
         System.out.println(service.guessPhrase(username, input, seq));
+        seq++;
+        int rand = new Random().nextInt(100);
+        if (rand < 50){
+          System.out.println(service.guessPhrase(username, input, seq));
+        }
       }
     }
   }
@@ -223,4 +300,5 @@ public class Client extends UnicastRemoteObject implements ClientListener {
   public void ping() throws RemoteException {
     //System.out.println("pong");
   }
+
 }
