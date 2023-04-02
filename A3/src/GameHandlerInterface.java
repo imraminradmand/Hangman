@@ -28,11 +28,11 @@ public interface GameHandlerInterface extends Remote {
 
   String restartGame(String player, int seq) throws RemoteException;
 
-  String addWord(String word, int seq) throws RemoteException;
+  String addWord(String player, String word, int seq) throws RemoteException;
 
-  String removeWord(String word, int seq) throws RemoteException;
+  String removeWord(String player, String word, int seq) throws RemoteException;
 
-  String checkWord(String word, int seq) throws RemoteException;
+  String checkWord(String player, String word, int seq) throws RemoteException;
 
   int login(String username, String password, int seq) throws RemoteException;
 
@@ -42,7 +42,7 @@ public interface GameHandlerInterface extends Remote {
 
   String getScore(String username, String password, int seq) throws RemoteException;
 
-  void addClientListener(ClientListener client, String username, int seq) throws RemoteException;
+  void addClientListener(ClientListener client, String username) throws RemoteException;
 
   void ping() throws RemoteException;
 
