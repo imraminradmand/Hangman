@@ -56,8 +56,8 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
         return sequenceError;
     }
     playerSequences.remove(player);
-    playerSequences.put(player, seq);
-    System.out.println(lastSeq + " " + playerSequences.get(player));
+    playerSequences.put(player, seq-1);
+
 
     String randomWord = wordService.getPhrase(number_of_words);
     System.out.println(randomWord);
@@ -85,14 +85,14 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
     if (Math.abs(lastSeq - seq) == 1){
       return sequenceError;
     }
-    playerSequences.remove(player);
-    playerSequences.put(player, seq);
-    System.out.println(playerSequences.get(player));
+
     if (gameState != null) {
       int attempts = gameState.getAttempts();
       if (attempts < 2) {
         return endGame(player, seq);
       }
+      playerSequences.remove(player);
+      playerSequences.put(player, seq-1);
       if (gameState.guessLetter(Character.toLowerCase(letter))) {
         if (gameState.getStringifyedWord()
             .contains("Usage: start <number of letters> <attempts>")) {
@@ -130,14 +130,15 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
     if (Math.abs(lastSeq - seq) == 1){
       return sequenceError;
     }
-    playerSequences.remove(player);
-    playerSequences.put(player, seq);
+
 
     if (gameState != null) {
       int attempts = gameState.getAttempts();
       if (attempts == 0) {
         return endGame(player, seq);
       }
+      playerSequences.remove(player);
+      playerSequences.put(player, seq-1);
       if (phrase.equalsIgnoreCase(gameState.getWord())) {
         accountService.updateScore(gameState.getUsername());
         removeGameState(gameState.getUsername());
@@ -165,7 +166,7 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
       return sequenceError;
     }
     playerSequences.remove(player);
-    playerSequences.put(player, seq);
+    playerSequences.put(player, seq-1);
 
     GameObject gameState = getPlayerState(player);
     removeGameState(player);
@@ -191,7 +192,7 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
       return sequenceError;
     }
     playerSequences.remove(player);
-    playerSequences.put(player, seq);
+    playerSequences.put(player, seq-1);
 
     String response = "";
     GameObject gameState = getPlayerState(player);
@@ -223,7 +224,7 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
 
     boolean status = wordService.addWord(word);
     playerSequences.remove(player);
-    playerSequences.put(player, seq);
+    playerSequences.put(player, seq-1);
     if (status){
       return "Word added.";
     }else{
@@ -249,7 +250,7 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
 
     boolean status = wordService.removeWord(word);
     playerSequences.remove(player);
-    playerSequences.put(player, seq);
+    playerSequences.put(player, seq-1);
     if (status){
       return "Word removed.";
     }else{
@@ -275,7 +276,7 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
 
     boolean status = wordService.checkWord(word);
     playerSequences.remove(player);
-    playerSequences.put(player, seq);
+    playerSequences.put(player, seq-1);
     if (status){
       return "Word exists.";
     }else{
@@ -363,7 +364,7 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
     }
 
     playerSequences.remove(username);
-    playerSequences.put(username, seq);
+    playerSequences.put(username, seq-1);
     return "Your high score is " + accountService.readFromFile(username, password);
   }
 

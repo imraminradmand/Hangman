@@ -39,13 +39,13 @@ public class Client extends UnicastRemoteObject implements ClientListener {
    */
   public static void main(String[] args) throws IOException, NotBoundException {
 
-    /*if (args.length < 1) {
+    if (args.length < 1) {
       System.out.println("Usage: java Client <server ip>");
       System.exit(0);
-    }*/
+    }
 
     GameHandlerInterface service = (GameHandlerInterface) Naming.lookup(
-        "rmi://localhost" /*+ args[0]*/ + ":4777" + "/GameServer");
+        "rmi://" + args[0] + ":4777" + "/GameServer");
 
     Client client = new Client(service);
 
@@ -129,7 +129,7 @@ public class Client extends UnicastRemoteObject implements ClientListener {
         seq++;
         int rand = new Random().nextInt(100);
         if (rand < 50){
-          service.logOut(username, seq);
+          service.logOut(username, seq-1);
         }
 
         break;
@@ -145,7 +145,7 @@ public class Client extends UnicastRemoteObject implements ClientListener {
           seq++;
           int rand = new Random().nextInt(100);
           if (rand < 50){
-            System.out.println(service.restartGame(username, seq));
+            System.out.println(service.restartGame(username, seq-1));
           }
 
         } else if (args[0].equals("#")) {
@@ -153,7 +153,7 @@ public class Client extends UnicastRemoteObject implements ClientListener {
           seq++;
           int rand = new Random().nextInt(100);
           if (rand < 50){
-            System.out.println(service.endGame(username, seq));
+            System.out.println(service.endGame(username, seq-1));
           }
 
         } else if (args[0].equals("!help")) {
@@ -163,7 +163,7 @@ public class Client extends UnicastRemoteObject implements ClientListener {
           seq++;
           int rand = new Random().nextInt(100);
           if (rand < 50){
-            System.out.println(service.getScore(username, password, seq));
+            System.out.println(service.getScore(username, password, seq-1));
           }
 
         } else if (input.length() == 1) {
@@ -171,7 +171,7 @@ public class Client extends UnicastRemoteObject implements ClientListener {
           seq++;
           int rand = new Random().nextInt(100);
           if (rand < 50){
-            System.out.println(service.guessLetter(username, args[0].charAt(0), seq));
+            System.out.println(service.guessLetter(username, args[0].charAt(0), seq-1));
           }
 
         } else {
@@ -179,7 +179,7 @@ public class Client extends UnicastRemoteObject implements ClientListener {
           seq++;
           int rand = new Random().nextInt(100);
           if (rand < 50){
-            System.out.println(service.guessPhrase(username, input, seq));
+            System.out.println(service.guessPhrase(username, input, seq-1));
           }
         }
       } else if (args.length == 2) {
@@ -193,7 +193,7 @@ public class Client extends UnicastRemoteObject implements ClientListener {
           seq++;
           int rand = new Random().nextInt(100);
           if (rand < 50){
-            System.out.println(service.checkWord(username, word, seq));
+            System.out.println(service.checkWord(username, word, seq-1));
           }
 
         } else if (args[0].equals("+")) {
@@ -204,7 +204,7 @@ public class Client extends UnicastRemoteObject implements ClientListener {
           seq++;
           int rand = new Random().nextInt(100);
           if (rand < 50){
-            System.out.println(service.addWord(username, word, seq));
+            System.out.println(service.addWord(username, word, seq-1));
           }
 
         } else if (args[0].equals("-")) {
@@ -215,7 +215,7 @@ public class Client extends UnicastRemoteObject implements ClientListener {
           seq++;
           int rand = new Random().nextInt(100);
           if (rand < 50){
-            System.out.println(service.removeWord(username, word, seq));
+            System.out.println(service.removeWord(username, word, seq-1));
           }
         } else {
           System.out.println(service.guessPhrase(username, input, seq));
@@ -223,7 +223,7 @@ public class Client extends UnicastRemoteObject implements ClientListener {
           seq++;
           int rand = new Random().nextInt(100);
           if (rand < 50){
-            System.out.println(service.guessPhrase(username, input, seq));
+            System.out.println(service.guessPhrase(username, input, seq-1));
           }
         }
       } else if (args.length == 3) {
@@ -233,14 +233,14 @@ public class Client extends UnicastRemoteObject implements ClientListener {
           seq++;
           int rand = new Random().nextInt(100);
           if (rand < 50){
-            System.out.println(service.startGame(username, Integer.parseInt(args[1]), Integer.parseInt(args[2]), seq));
+            System.out.println(service.startGame(username, Integer.parseInt(args[1]), Integer.parseInt(args[2]), seq-1));
           }
         } else {
           System.out.println(service.guessPhrase(username, input, seq));
           seq++;
           int rand = new Random().nextInt(100);
           if (rand < 50){
-            System.out.println(service.guessPhrase(username, input, seq));
+            System.out.println(service.guessPhrase(username, input, seq-1));
           }
         }
       } else {
@@ -248,7 +248,7 @@ public class Client extends UnicastRemoteObject implements ClientListener {
         seq++;
         int rand = new Random().nextInt(100);
         if (rand < 50){
-          System.out.println(service.guessPhrase(username, input, seq));
+          System.out.println(service.guessPhrase(username, input, seq-1));
         }
       }
     }
