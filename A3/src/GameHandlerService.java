@@ -409,7 +409,9 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
         } catch (RemoteException e) {
           try {
             this.removeGameState(username);
-            this.logOut(username, playerSequences.get(username));
+            if (playerSequences.containsKey(username)) {
+              this.logOut(username, playerSequences.get(username));
+            }
           } catch (RemoteException e1) {
             e1.printStackTrace();
           }
@@ -469,4 +471,5 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
     Thread pingServiceT = new Thread(pingService);
     pingServiceT.start();
   }
+
 }
