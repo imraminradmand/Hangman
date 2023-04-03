@@ -14,8 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.StringJoiner;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+
 public class WordService extends UnicastRemoteObject implements WordServiceInterface {
 
   static ArrayList<String> words = new ArrayList<>();
