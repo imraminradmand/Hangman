@@ -20,6 +20,7 @@ import java.util.Scanner;
 public class AccountService extends UnicastRemoteObject implements AccountInterface {
 
   private static final int SCORE_INCREMENT = 100;
+
   protected AccountService() throws RemoteException {
     super();
   }
@@ -104,6 +105,7 @@ public class AccountService extends UnicastRemoteObject implements AccountInterf
 
   /**
    * This method updates the score of a user in the users.txt file.
+   *
    * @param username The user's username.
    * @throws IOException If there is an error writing to the file.
    */

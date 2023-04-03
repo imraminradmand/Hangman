@@ -58,9 +58,7 @@ public class GameObject {
 
   /**
    * This function Stringifies the randomly chosen word so that it contains player guessed letters
-   * along with attempts counter
-   * Example: word => zebra
-   * original response => -----C7 Stringified
+   * along with attempts counter Example: word => zebra original response => -----C7 Stringified
    * response -> --br-C4
    *
    * @return stringified word

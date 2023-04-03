@@ -55,17 +55,17 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
 
     int lastSeq = playerSequences.get(player);
 
-    if (Math.abs(lastSeq - seq) == 1){
+    if (Math.abs(lastSeq - seq) == 1) {
       System.out.println(sequenceError);
       return "!duplicate req";
     }
     playerSequences.remove(player);
-    playerSequences.put(player, seq-1);
-
+    playerSequences.put(player, seq - 1);
 
     String randomWord = wordService.getPhrase(number_of_words);
     System.out.println(randomWord);
-    gameStates.put(player, new GameObject(player, number_of_words, failed_attempt_factor, randomWord));
+    gameStates.put(player,
+        new GameObject(player, number_of_words, failed_attempt_factor, randomWord));
 
     return Objects.requireNonNull(getPlayerState(player)).getStringifyedWord();
   }
@@ -87,7 +87,7 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
 
     int lastSeq = playerSequences.get(player);
 
-    if (Math.abs(lastSeq - seq) == 1){
+    if (Math.abs(lastSeq - seq) == 1) {
       System.out.println(sequenceError);
       return "!duplicate req";
     }
@@ -98,7 +98,7 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
         return endGame(player, seq);
       }
       playerSequences.remove(player);
-      playerSequences.put(player, seq-1);
+      playerSequences.put(player, seq - 1);
       if (gameState.guessLetter(Character.toLowerCase(letter))) {
         if (gameState.getStringifyedWord()
             .contains("Usage: start <number of letters> <attempts>")) {
@@ -134,11 +134,10 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
 
     int lastSeq = playerSequences.get(player);
 
-    if (Math.abs(lastSeq - seq) == 1){
+    if (Math.abs(lastSeq - seq) == 1) {
       System.out.println(sequenceError);
       return "!duplicate req";
     }
-
 
     if (gameState != null) {
       int attempts = gameState.getAttempts();
@@ -146,7 +145,7 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
         return endGame(player, seq);
       }
       playerSequences.remove(player);
-      playerSequences.put(player, seq-1);
+      playerSequences.put(player, seq - 1);
       if (phrase.equalsIgnoreCase(gameState.getWord())) {
         accountService.updateScore(gameState.getUsername());
         removeGameState(gameState.getUsername());
@@ -170,12 +169,12 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
 
     int lastSeq = playerSequences.get(player);
 
-    if (Math.abs(lastSeq - seq) == 1){
+    if (Math.abs(lastSeq - seq) == 1) {
       System.out.println(sequenceError);
       return "!duplicate req";
     }
     playerSequences.remove(player);
-    playerSequences.put(player, seq-1);
+    playerSequences.put(player, seq - 1);
 
     GameObject gameState = getPlayerState(player);
     removeGameState(player);
@@ -197,12 +196,12 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
 
     int lastSeq = playerSequences.get(player);
 
-    if (Math.abs(lastSeq - seq) == 1){
+    if (Math.abs(lastSeq - seq) == 1) {
       System.out.println(sequenceError);
       return "!duplicate req";
     }
     playerSequences.remove(player);
-    playerSequences.put(player, seq-1);
+    playerSequences.put(player, seq - 1);
 
     String response = "";
     GameObject gameState = getPlayerState(player);
@@ -228,17 +227,17 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
 
     int lastSeq = playerSequences.get(player);
 
-    if (Math.abs(lastSeq - seq) == 1){
+    if (Math.abs(lastSeq - seq) == 1) {
       System.out.println(sequenceError);
       return "!duplicate req";
     }
 
     boolean status = wordService.addWord(word);
     playerSequences.remove(player);
-    playerSequences.put(player, seq-1);
-    if (status){
+    playerSequences.put(player, seq - 1);
+    if (status) {
       return "Word added.";
-    }else{
+    } else {
       return "Word already exists.";
     }
   }
@@ -255,17 +254,17 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
 
     int lastSeq = playerSequences.get(player);
 
-    if (Math.abs(lastSeq - seq) == 1){
+    if (Math.abs(lastSeq - seq) == 1) {
       System.out.println(sequenceError);
       return "!duplicate req";
     }
 
     boolean status = wordService.removeWord(word);
     playerSequences.remove(player);
-    playerSequences.put(player, seq-1);
-    if (status){
+    playerSequences.put(player, seq - 1);
+    if (status) {
       return "Word removed.";
-    }else{
+    } else {
       return "Word does not exist.";
     }
   }
@@ -282,17 +281,17 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
 
     int lastSeq = playerSequences.get(player);
 
-    if (Math.abs(lastSeq - seq) == 1){
+    if (Math.abs(lastSeq - seq) == 1) {
       System.out.println(sequenceError);
       return "!duplicate req";
     }
 
     boolean status = wordService.checkWord(word);
     playerSequences.remove(player);
-    playerSequences.put(player, seq-1);
-    if (status){
+    playerSequences.put(player, seq - 1);
+    if (status) {
       return "Word exists.";
-    }else{
+    } else {
       return "Word does not exist.";
     }
   }
@@ -372,13 +371,13 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
   public String getScore(String username, String password, int seq) throws RemoteException {
     int lastSeq = playerSequences.get(username);
 
-    if (Math.abs(lastSeq - seq) == 1){
+    if (Math.abs(lastSeq - seq) == 1) {
       System.out.println(sequenceError);
       return "!duplicate req";
     }
 
     playerSequences.remove(username);
-    playerSequences.put(username, seq-1);
+    playerSequences.put(username, seq - 1);
     return "Your high score is " + accountService.readFromFile(username, password);
   }
 
@@ -471,5 +470,4 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
     Thread pingServiceT = new Thread(pingService);
     pingServiceT.start();
   }
-
 }

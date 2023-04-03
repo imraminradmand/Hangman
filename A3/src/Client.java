@@ -12,20 +12,16 @@ import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-
 import java.util.Random;
-import java.util.function.Function;
-
 import java.util.Timer;
 import java.util.TimerTask;
-
 
 public class Client extends UnicastRemoteObject implements ClientListener {
 
   private final GameHandlerInterface service;
   private String username;
   private String password;
-  private boolean canProceed;
+  private final boolean canProceed;
 
   private Integer seq = new Random().nextInt(50);
 
@@ -154,8 +150,8 @@ public class Client extends UnicastRemoteObject implements ClientListener {
         service.logOut(username, seq);
         seq++;
         int rand = new Random().nextInt(100);
-        if (rand < 50){
-          service.logOut(username, seq-1);
+        if (rand < 50) {
+          service.logOut(username, seq - 1);
         }
 
         break;
@@ -170,20 +166,22 @@ public class Client extends UnicastRemoteObject implements ClientListener {
           System.out.println(service.restartGame(username, seq));
           seq++;
           int rand = new Random().nextInt(100);
-          if (rand < 50){
-            String output = (service.restartGame(username, seq-1));
-            if(output.charAt(0) != '!')
+          if (rand < 50) {
+            String output = (service.restartGame(username, seq - 1));
+            if (output.charAt(0) != '!') {
               System.out.println(output);
+            }
           }
 
         } else if (args[0].equals("#")) {
           System.out.println(service.endGame(username, seq));
           seq++;
           int rand = new Random().nextInt(100);
-          if (rand < 50){
-            String output = (service.endGame(username, seq-1));
-            if(output.charAt(0) != '!')
+          if (rand < 50) {
+            String output = (service.endGame(username, seq - 1));
+            if (output.charAt(0) != '!') {
               System.out.println(output);
+            }
           }
 
         } else if (args[0].equals("!help")) {
@@ -192,30 +190,33 @@ public class Client extends UnicastRemoteObject implements ClientListener {
           System.out.println(service.getScore(username, password, seq));
           seq++;
           int rand = new Random().nextInt(100);
-          if (rand < 50){
-            String output = (service.getScore(username, password, seq-1));
-            if(output.charAt(0) != '!')
+          if (rand < 50) {
+            String output = (service.getScore(username, password, seq - 1));
+            if (output.charAt(0) != '!') {
               System.out.println(output);
+            }
           }
 
         } else if (input.length() == 1) {
           System.out.println(service.guessLetter(username, args[0].charAt(0), seq));
           seq++;
           int rand = new Random().nextInt(100);
-          if (rand < 50){
-            String output = (service.guessLetter(username, args[0].charAt(0), seq-1));
-            if(output.charAt(0) != '!')
+          if (rand < 50) {
+            String output = (service.guessLetter(username, args[0].charAt(0), seq - 1));
+            if (output.charAt(0) != '!') {
               System.out.println(output);
+            }
           }
 
         } else {
           System.out.println(service.guessPhrase(username, input, seq));
           seq++;
           int rand = new Random().nextInt(100);
-          if (rand < 50){
-            String output = (service.guessPhrase(username, input, seq-1));
-            if(output.charAt(0) != '!')
+          if (rand < 50) {
+            String output = (service.guessPhrase(username, input, seq - 1));
+            if (output.charAt(0) != '!') {
               System.out.println(output);
+            }
           }
         }
       } else if (args.length == 2) {
@@ -228,78 +229,87 @@ public class Client extends UnicastRemoteObject implements ClientListener {
 
           seq++;
           int rand = new Random().nextInt(100);
-          if (rand < 50){
-            String output = (service.checkWord(username, word, seq-1));
-            if(output.charAt(0) != '!')
+          if (rand < 50) {
+            String output = (service.checkWord(username, word, seq - 1));
+            if (output.charAt(0) != '!') {
               System.out.println(output);
+            }
           }
 
         } else if (args[0].equals("+")) {
           String word = args[1];
-          String response = service.addWord(username,word,seq);
-          System.out.println(word + ": " + (response ));
+          String response = service.addWord(username, word, seq);
+          System.out.println(word + ": " + (response));
 
           seq++;
           int rand = new Random().nextInt(100);
-          if (rand < 50){
-            String output = (service.addWord(username, word, seq-1));
-            if(output.charAt(0) != '!')
+          if (rand < 50) {
+            String output = (service.addWord(username, word, seq - 1));
+            if (output.charAt(0) != '!') {
               System.out.println(output);
+            }
           }
 
         } else if (args[0].equals("-")) {
           String word = args[1];
           String response = service.removeWord(username, word, seq);
-          System.out.println(word + ": " + (response ));
+          System.out.println(word + ": " + (response));
 
           seq++;
           int rand = new Random().nextInt(100);
-          if (rand < 50){
+          if (rand < 50) {
 
-            String output = (service.removeWord(username, word, seq-1));
-            if(output.charAt(0) != '!')
+            String output = (service.removeWord(username, word, seq - 1));
+            if (output.charAt(0) != '!') {
               System.out.println(output);
+            }
           }
         } else {
           System.out.println(service.guessPhrase(username, input, seq));
 
           seq++;
           int rand = new Random().nextInt(100);
-          if (rand < 50){
-            String output = service.guessPhrase(username, input, seq-1);
-            if(output.charAt(0) != '!')
+          if (rand < 50) {
+            String output = service.guessPhrase(username, input, seq - 1);
+            if (output.charAt(0) != '!') {
               System.out.println(output);
+            }
           }
         }
       } else if (args.length == 3) {
         if (args[0].equalsIgnoreCase("start")) {
           System.out.println(
-              service.startGame(username, Integer.parseInt(args[1]), Integer.parseInt(args[2]), seq));
+              service.startGame(username, Integer.parseInt(args[1]), Integer.parseInt(args[2]),
+                  seq));
           seq++;
           int rand = new Random().nextInt(100);
-          if (rand < 50){
-            String output = (service.startGame(username, Integer.parseInt(args[1]), Integer.parseInt(args[2]), seq-1));
-            if(output.charAt(0) != '!')
+          if (rand < 50) {
+            String output = (service.startGame(username, Integer.parseInt(args[1]),
+                Integer.parseInt(args[2]), seq - 1));
+            if (output.charAt(0) != '!') {
               System.out.println(output);
+            }
           }
         } else {
           System.out.println(service.guessPhrase(username, input, seq));
           seq++;
           int rand = new Random().nextInt(100);
-          if (rand < 50){
-            String output = (service.guessPhrase(username, input, seq-1));
-            if(output.charAt(0) != '!')
+          if (rand < 50) {
+            String output = (service.guessPhrase(username, input, seq - 1));
+            if (output.charAt(0) != '!') {
               System.out.println(output);
+            }
           }
         }
       } else {
         System.out.println(service.guessPhrase(username, input, seq));
         seq++;
         int rand = new Random().nextInt(100);
-        if (rand < 50){
-          String output = (service.guessPhrase(username, input, seq-1));
-          if(output.charAt(0) != '!')
+        if (rand < 50) {
+          String output = (service.guessPhrase(username, input, seq - 1));
+          if (output.charAt(0) != '!') {
             System.out.println(output);
+          }
         }
       }
     }
