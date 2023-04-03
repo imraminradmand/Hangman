@@ -56,7 +56,7 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
     int lastSeq = playerSequences.get(player);
 
     if (Math.abs(lastSeq - seq) == 1){
-        return sequenceError;
+      System.out.println(sequenceError);
     }
     playerSequences.remove(player);
     playerSequences.put(player, seq-1);
@@ -87,7 +87,7 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
     int lastSeq = playerSequences.get(player);
 
     if (Math.abs(lastSeq - seq) == 1){
-      return sequenceError;
+      System.out.println(sequenceError);
     }
 
     if (gameState != null) {
@@ -114,7 +114,7 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
       }
       return "Incorrect guess!\n" + gameState.getStringifyedWord();
     }
-    return "Gamestate is null, try starting a new game!";
+    return "Start a new game!";
   }
 
   /**
@@ -132,7 +132,7 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
     int lastSeq = playerSequences.get(player);
 
     if (Math.abs(lastSeq - seq) == 1){
-      return sequenceError;
+      System.out.println(sequenceError);
     }
 
 
@@ -167,7 +167,7 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
     int lastSeq = playerSequences.get(player);
 
     if (Math.abs(lastSeq - seq) == 1){
-      return sequenceError;
+      System.out.println(sequenceError);
     }
     playerSequences.remove(player);
     playerSequences.put(player, seq-1);
@@ -193,7 +193,7 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
     int lastSeq = playerSequences.get(player);
 
     if (Math.abs(lastSeq - seq) == 1){
-      return sequenceError;
+      System.out.println(sequenceError);
     }
     playerSequences.remove(player);
     playerSequences.put(player, seq-1);
@@ -223,7 +223,7 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
     int lastSeq = playerSequences.get(player);
 
     if (Math.abs(lastSeq - seq) == 1){
-      return sequenceError;
+      System.out.println(sequenceError);
     }
 
     boolean status = wordService.addWord(word);
@@ -249,7 +249,7 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
     int lastSeq = playerSequences.get(player);
 
     if (Math.abs(lastSeq - seq) == 1){
-      return sequenceError;
+      System.out.println(sequenceError);
     }
 
     boolean status = wordService.removeWord(word);
@@ -275,7 +275,7 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
     int lastSeq = playerSequences.get(player);
 
     if (Math.abs(lastSeq - seq) == 1){
-      return sequenceError;
+      System.out.println(sequenceError);
     }
 
     boolean status = wordService.checkWord(word);
@@ -364,7 +364,7 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
     int lastSeq = playerSequences.get(username);
 
     if (Math.abs(lastSeq - seq) == 1){
-      return sequenceError;
+      System.out.println(sequenceError);
     }
 
     playerSequences.remove(username);
