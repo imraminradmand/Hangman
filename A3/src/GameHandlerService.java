@@ -57,6 +57,7 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
 
     if (Math.abs(lastSeq - seq) == 1){
       System.out.println(sequenceError);
+      return "!duplicate req";
     }
     playerSequences.remove(player);
     playerSequences.put(player, seq-1);
