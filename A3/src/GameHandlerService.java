@@ -88,6 +88,7 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
 
     if (Math.abs(lastSeq - seq) == 1){
       System.out.println(sequenceError);
+      return "!duplicate req";
     }
 
     if (gameState != null) {
@@ -110,6 +111,7 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
         }
         return gameState.getStringifyedWord();
       } else if (gameState.alreadyGuessed(Character.toLowerCase(letter))) {
+        System.out.println(playerSequences.get(player));
         return "Letter already guessed\n" + gameState.getStringifyedWord();
       }
       return "Incorrect guess!\n" + gameState.getStringifyedWord();
@@ -133,6 +135,7 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
 
     if (Math.abs(lastSeq - seq) == 1){
       System.out.println(sequenceError);
+      return "!duplicate req";
     }
 
 
@@ -168,6 +171,7 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
 
     if (Math.abs(lastSeq - seq) == 1){
       System.out.println(sequenceError);
+      return "!duplicate req";
     }
     playerSequences.remove(player);
     playerSequences.put(player, seq-1);
@@ -194,6 +198,7 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
 
     if (Math.abs(lastSeq - seq) == 1){
       System.out.println(sequenceError);
+      return "!duplicate req";
     }
     playerSequences.remove(player);
     playerSequences.put(player, seq-1);
@@ -224,6 +229,7 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
 
     if (Math.abs(lastSeq - seq) == 1){
       System.out.println(sequenceError);
+      return "!duplicate req";
     }
 
     boolean status = wordService.addWord(word);
@@ -250,6 +256,7 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
 
     if (Math.abs(lastSeq - seq) == 1){
       System.out.println(sequenceError);
+      return "!duplicate req";
     }
 
     boolean status = wordService.removeWord(word);
@@ -276,6 +283,7 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
 
     if (Math.abs(lastSeq - seq) == 1){
       System.out.println(sequenceError);
+      return "!duplicate req";
     }
 
     boolean status = wordService.checkWord(word);
@@ -365,6 +373,7 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
 
     if (Math.abs(lastSeq - seq) == 1){
       System.out.println(sequenceError);
+      return "!duplicate req";
     }
 
     playerSequences.remove(username);

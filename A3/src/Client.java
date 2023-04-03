@@ -171,7 +171,9 @@ public class Client extends UnicastRemoteObject implements ClientListener {
           seq++;
           int rand = new Random().nextInt(100);
           if (rand < 50){
-            System.out.println(service.restartGame(username, seq-1));
+            String output = (service.restartGame(username, seq-1));
+            if(output.charAt(0) != '!')
+              System.out.println(output);
           }
 
         } else if (args[0].equals("#")) {
@@ -179,7 +181,9 @@ public class Client extends UnicastRemoteObject implements ClientListener {
           seq++;
           int rand = new Random().nextInt(100);
           if (rand < 50){
-            System.out.println(service.endGame(username, seq-1));
+            String output = (service.endGame(username, seq-1));
+            if(output.charAt(0) != '!')
+              System.out.println(output);
           }
 
         } else if (args[0].equals("!help")) {
@@ -189,7 +193,9 @@ public class Client extends UnicastRemoteObject implements ClientListener {
           seq++;
           int rand = new Random().nextInt(100);
           if (rand < 50){
-            System.out.println(service.getScore(username, password, seq-1));
+            String output = (service.getScore(username, password, seq-1));
+            if(output.charAt(0) != '!')
+              System.out.println(output);
           }
 
         } else if (input.length() == 1) {
@@ -197,7 +203,9 @@ public class Client extends UnicastRemoteObject implements ClientListener {
           seq++;
           int rand = new Random().nextInt(100);
           if (rand < 50){
-            System.out.println(service.guessLetter(username, args[0].charAt(0), seq-1));
+            String output = (service.guessLetter(username, args[0].charAt(0), seq-1));
+            if(output.charAt(0) != '!')
+              System.out.println(output);
           }
 
         } else {
@@ -205,7 +213,9 @@ public class Client extends UnicastRemoteObject implements ClientListener {
           seq++;
           int rand = new Random().nextInt(100);
           if (rand < 50){
-            System.out.println(service.guessPhrase(username, input, seq-1));
+            String output = (service.guessPhrase(username, input, seq-1));
+            if(output.charAt(0) != '!')
+              System.out.println(output);
           }
         }
       } else if (args.length == 2) {
@@ -219,7 +229,9 @@ public class Client extends UnicastRemoteObject implements ClientListener {
           seq++;
           int rand = new Random().nextInt(100);
           if (rand < 50){
-            System.out.println(service.checkWord(username, word, seq-1));
+            String output = (service.checkWord(username, word, seq-1));
+            if(output.charAt(0) != '!')
+              System.out.println(output);
           }
 
         } else if (args[0].equals("+")) {
@@ -230,7 +242,9 @@ public class Client extends UnicastRemoteObject implements ClientListener {
           seq++;
           int rand = new Random().nextInt(100);
           if (rand < 50){
-            System.out.println(service.addWord(username, word, seq-1));
+            String output = (service.addWord(username, word, seq-1));
+            if(output.charAt(0) != '!')
+              System.out.println(output);
           }
 
         } else if (args[0].equals("-")) {
@@ -241,7 +255,10 @@ public class Client extends UnicastRemoteObject implements ClientListener {
           seq++;
           int rand = new Random().nextInt(100);
           if (rand < 50){
-            System.out.println(service.removeWord(username, word, seq-1));
+
+            String output = (service.removeWord(username, word, seq-1));
+            if(output.charAt(0) != '!')
+              System.out.println(output);
           }
         } else {
           System.out.println(service.guessPhrase(username, input, seq));
@@ -249,7 +266,9 @@ public class Client extends UnicastRemoteObject implements ClientListener {
           seq++;
           int rand = new Random().nextInt(100);
           if (rand < 50){
-            System.out.println(service.guessPhrase(username, input, seq-1));
+            String output = service.guessPhrase(username, input, seq-1);
+            if(output.charAt(0) != '!')
+              System.out.println(output);
           }
         }
       } else if (args.length == 3) {
@@ -259,14 +278,18 @@ public class Client extends UnicastRemoteObject implements ClientListener {
           seq++;
           int rand = new Random().nextInt(100);
           if (rand < 50){
-            System.out.println(service.startGame(username, Integer.parseInt(args[1]), Integer.parseInt(args[2]), seq-1));
+            String output = (service.startGame(username, Integer.parseInt(args[1]), Integer.parseInt(args[2]), seq-1));
+            if(output.charAt(0) != '!')
+              System.out.println(output);
           }
         } else {
           System.out.println(service.guessPhrase(username, input, seq));
           seq++;
           int rand = new Random().nextInt(100);
           if (rand < 50){
-            System.out.println(service.guessPhrase(username, input, seq-1));
+            String output = (service.guessPhrase(username, input, seq-1));
+            if(output.charAt(0) != '!')
+              System.out.println(output);
           }
         }
       } else {
@@ -274,7 +297,9 @@ public class Client extends UnicastRemoteObject implements ClientListener {
         seq++;
         int rand = new Random().nextInt(100);
         if (rand < 50){
-          System.out.println(service.guessPhrase(username, input, seq-1));
+          String output = (service.guessPhrase(username, input, seq-1));
+          if(output.charAt(0) != '!')
+            System.out.println(output);
         }
       }
     }
