@@ -18,4 +18,6 @@ public interface WordServiceInterface extends Remote {
   boolean removeWord(String word) throws RemoteException;
 
   boolean checkWord(String word) throws RemoteException;
+
+  boolean isAlive() throws RemoteException;
 }

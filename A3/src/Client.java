@@ -12,19 +12,26 @@ import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+
 import java.util.Random;
 import java.util.function.Function;
+
+import java.util.Timer;
+import java.util.TimerTask;
+
 
 public class Client extends UnicastRemoteObject implements ClientListener {
 
   private final GameHandlerInterface service;
   private String username;
   private String password;
+  private boolean canProceed;
 
   private Integer seq = new Random().nextInt(50);
 
   public Client(GameHandlerInterface service) throws RemoteException {
     this.service = service;
+    this.canProceed = true;
   }
 
 
@@ -53,13 +60,32 @@ public class Client extends UnicastRemoteObject implements ClientListener {
 
   }
 
-  public void clientStart() throws IOException, NotBoundException {
+  public void clientStart() throws IOException {
 
     InputStreamReader inputStreamReader = new InputStreamReader(System.in);
     BufferedReader stdin = new BufferedReader(inputStreamReader);
 
-    while (true) {
+    // every 5 seconds call the server for a serviceStatus message
+    Timer timer = new Timer();
+    timer.scheduleAtFixedRate(new TimerTask() {
+      @Override
+      public void run() {
+        if (canProceed) {
+          try {
+            boolean result = service.serviceStatus();
 
+            if (!result) {
+              System.out.println("One of our services have gone down :( - come back again later");
+              System.exit(1);
+            }
+          } catch (RemoteException e) {
+            e.printStackTrace();
+          }
+        }
+      }
+    }, 0, 5000);
+
+    while (true) {
       System.out.println(
           "USAGE: login <username> <password> OR register <username> <password> OR exit");
       String input = stdin.readLine();
