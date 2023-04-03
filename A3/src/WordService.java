@@ -109,6 +109,11 @@ public class WordService extends UnicastRemoteObject implements WordServiceInter
     return words.contains(word);
   }
 
+  @Override
+  public boolean isAlive() throws RemoteException {
+    return true;
+  }
+
   private void writeOut() throws RemoteException {
     try (FileWriter writer = new FileWriter("words.txt")) {
       for (String str : words) {

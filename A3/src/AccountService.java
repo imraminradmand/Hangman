@@ -130,4 +130,9 @@ public class AccountService extends UnicastRemoteObject implements AccountInterf
       writer.write(sb.toString());
     }
   }
+
+  @Override
+  public boolean isAlive() throws RemoteException {
+    return true;
+  }
 }

@@ -16,4 +16,6 @@ public interface AccountInterface extends Remote {
   String readFromFile(String username, String password) throws RemoteException;
 
   void updateScore(String username) throws IOException;
+
+  boolean isAlive() throws RemoteException;
 }

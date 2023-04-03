@@ -46,4 +46,5 @@ public interface GameHandlerInterface extends Remote {
 
   void ping() throws RemoteException;
 
+  boolean serviceStatus() throws RemoteException;
 }

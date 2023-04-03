@@ -25,12 +25,15 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
   private final WordServiceInterface wordService;
   private final HashMap<String, Integer> playerSequences = new HashMap<>();
   private final String sequenceError = "ERROR: Sequence numbers out of order, operation failed";
+  private boolean servicesAreAlive;
 
   protected GameHandlerService() throws RemoteException {
     super();
     try {
       accountService = (AccountInterface) Naming.lookup("rmi://localhost:4777" + "/AccountService");
       wordService = (WordServiceInterface) Naming.lookup("rmi://localhost:4777" + "/WordService");
+      servicesAreAlive = true;
+      serviceCheck();
     } catch (NotBoundException | MalformedURLException e) {
       throw new RuntimeException(e);
     }
@@ -62,6 +65,7 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
     String randomWord = wordService.getPhrase(number_of_words);
     System.out.println(randomWord);
     gameStates.put(player, new GameObject(player, number_of_words, failed_attempt_factor, randomWord));
+
     return Objects.requireNonNull(getPlayerState(player)).getStringifyedWord();
   }
 
@@ -419,5 +423,40 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
   @Override
   public void ping() throws RemoteException {
     //System.out.println("pong");
+  }
+
+  @Override
+  public boolean serviceStatus() throws RemoteException {
+    return servicesAreAlive;
+  }
+
+  private void serviceCheck() throws RemoteException {
+    Runnable pingService = () -> {
+      while (true) {
+        try {
+          wordService.isAlive();
+          accountService.isAlive();
+          servicesAreAlive = true;
+          serviceStatus();
+          try {
+            Thread.sleep(2000);
+          } catch (InterruptedException e) {
+            e.printStackTrace();
+          }
+        } catch (RemoteException e) {
+          System.out.println("Either word or account service are unavailable");
+          try {
+            servicesAreAlive = false;
+            serviceStatus();
+          } catch (RemoteException ex) {
+            throw new RuntimeException(ex);
+          }
+          return;
+        }
+      }
+    };
+
+    Thread pingServiceT = new Thread(pingService);
+    pingServiceT.start();
   }
 }
