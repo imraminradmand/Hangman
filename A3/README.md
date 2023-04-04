@@ -37,7 +37,7 @@ failed to send a heart-beat in a timely manner.
 **Client**: Client facing interface, allowing for communication with the GameServer.
 
 ### Component Diagram
-![protocol](https://user-images.githubusercontent.com/69999501/223893650-28d4de48-014b-4d4c-844d-eaff8852b5a9.png)
+![protocol](https://user-images.githubusercontent.com/69999501/229677265-9915c526-e9da-4353-8391-9b4a1fed241c.png)
 
 ### Direction of method invocations
 #### Client - Server
