@@ -27,7 +27,7 @@ public class WordService extends UnicastRemoteObject implements WordServiceInter
   void populateWords() throws RemoteException {
     try {
 
-      File myObj = new File("words.txt");
+      File myObj = new File("../words.txt");
       Scanner myReader = new Scanner(myObj);
       while (myReader.hasNextLine()) {
         words.add(myReader.nextLine());
