@@ -152,8 +152,14 @@ The server will invoke the `ping` method from the client every 2 seconds to ensu
   * Returns - boolean to represent if service is alive
 #### Server - Client: 
 
-##### AccountService : None
-##### WordService: None
+##### AccountService : 
+* `isAlive(): boolean`
+  * Used to check if the service is alive
+  * Returns - boolean to represent if service is alive
+##### WordService: 
+* `isAlive(): boolean`
+  * Used to check if the service is alive
+  * Returns - boolean to represent if service is alive
 ##### GameHandlerService:
 * `ping(): void`
   * ping client for heartbeat checks
