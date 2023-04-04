@@ -53,7 +53,7 @@ The client will invoke the following methods on the GameServer:
 * `getScore` - get current highscore
 * `restartGame` - start a new game
 * `endGame` - end current game
-* `serviceStatus` - get status of all services
+* `serviceStatus` - get status of all services - accountService and wordService
 
 The client will "ping" the server every 5 seconds to get a status update on the `wordService` and `accountService`.
 
@@ -85,19 +85,19 @@ The server will invoke the `ping` method from the client every 2 seconds to ensu
 * `getPhrase(length:int): String`
   * Receives - number of words to generate for a phrase
   * Returns - a phrase that contains `length` words
-* `addWord(word:String): String`
+* `addWord(word:String): Boolean`
   * Synchronized method
   * Receives - word to add to repository
   * Returns - boolean based on success or faliure of adding word
-* `removeWord(word:String): boolean`
+* `removeWord(word:String): Boolean`
   * Synchronized method
   * Receives - word to remove
   * Returns - boolean based on success or failure of removing word
-* `checkWord(word:String): boolean`
+* `checkWord(word:String): Boolean`
   * Synchronized method
   * Receives - word to check
   * Returns - boolean based on success or failure of existance of word
-* `isAlive(): boolean`
+* `isAlive(): Boolean`
   * Used to check if the service is alive
   * Returns - boolean to represent if service is alive
   
