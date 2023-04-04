@@ -50,7 +50,7 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
    * @throws RemoteException - if the remote method call fails
    */
   @Override
-  public String startGame(String player, int number_of_words, int failed_attempt_factor, int seq)
+  public synchronized String startGame(String player, int number_of_words, int failed_attempt_factor, int seq)
       throws RemoteException {
 
     int lastSeq = playerSequences.get(player);
@@ -165,7 +165,7 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
    * @throws RemoteException - if the remote method call fails
    */
   @Override
-  public String endGame(String player, int seq) throws RemoteException {
+  public synchronized String endGame(String player, int seq) throws RemoteException {
 
     int lastSeq = playerSequences.get(player);
 
@@ -382,12 +382,12 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
   }
 
 
-  private GameObject getPlayerState(String username) {
+  private synchronized GameObject getPlayerState(String username) {
     return gameStates.getOrDefault(username, null);
   }
 
 
-  private void removeGameState(String username) {
+  private synchronized void removeGameState(String username) {
     gameStates.remove(username);
   }
 
