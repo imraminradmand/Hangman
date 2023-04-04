@@ -133,6 +133,13 @@ public class AccountService extends UnicastRemoteObject implements AccountInterf
     }
   }
 
+  /**
+   * This method checks if the service is alive.
+   *
+   * @return True if the server is alive, false otherwise.
+   * @throws RemoteException If there is a communication-related exception that may occur during the
+   *                         execution of a remote method call.
+   */
   @Override
   public boolean isAlive() throws RemoteException {
     return true;

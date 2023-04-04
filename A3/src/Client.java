@@ -72,7 +72,7 @@ public class Client extends UnicastRemoteObject implements ClientListener {
 
             if (!result) {
               System.out.println("One of our services have gone down :( - come back again later");
-              System.exit(1);
+              System.exit(0);
             }
           } catch (RemoteException e) {
             e.printStackTrace();

@@ -436,6 +436,12 @@ public class GameHandlerService extends UnicastRemoteObject implements GameHandl
     //System.out.println("pong");
   }
 
+  /**
+   * This method is used to check if the wordService and accountService are alive.
+   *
+   * @return true if the server is alive, false otherwise
+   * @throws RemoteException - if the remote method call fails
+   */
   @Override
   public boolean serviceStatus() throws RemoteException {
     return servicesAreAlive;

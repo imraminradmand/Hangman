@@ -110,6 +110,12 @@ public class WordService extends UnicastRemoteObject implements WordServiceInter
     return words.contains(word);
   }
 
+  /**
+   * Checks if the service is alive
+   *
+   * @return - true if the service is alive, false if the service is not alive
+   * @throws RemoteException - if the remote method call fails
+   */
   @Override
   public boolean isAlive() throws RemoteException {
     return true;
